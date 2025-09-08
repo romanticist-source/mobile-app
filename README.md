@@ -1,131 +1,112 @@
-# Welcome to your Expo app 👋
+# Miso Mobile App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+React Native mobile application with Storybook integration for component development and testing.
 
-## Get started
+## 🚀 Getting Started
 
-1. Install dependencies
+1.  **Install dependencies**
 
-   ```bash
-   npm install
-   ```
+    ```shell
+    yarn install
+    ```
 
-2. Start the app
+2.  **Run the app**
 
-   ```bash
-   npx expo start
-   ```
+    ```shell
+    # Start the development server
+    yarn start
 
-In the output, you'll find options to open the app in a
+    # Run on specific platform
+    yarn ios
+    yarn android
+    yarn web
+    ```
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+3.  **Storybook Development**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+    ```shell
+    # Start Storybook
+    yarn storybook
 
-## Get a fresh project
+    # Run Storybook on specific platform
+    yarn storybook:ios
+    yarn storybook:android
+    ```
 
-When you're ready, run:
+    Access Storybook at `http://localhost:8081` when running in web mode.
 
-```bash
-npm run reset-project
+## 📱 Tech Stack
+
+- **React Native** - Cross-platform mobile development
+- **Expo** - Development platform and tools
+- **Expo Router** - File-based routing
+- **Storybook** - Component development and testing
+- **TypeScript** - Type safety
+- **Yarn** - Package management
+
+## 🧩 Project Structure
+
+```
+├── app/                    # App screens and routing
+├── components/             # Reusable components
+│   ├── ui/                # UI components
+│   └── *.stories.jsx      # Storybook stories
+├── assets/                # Images, fonts, etc.
+├── constants/             # App constants
+├── hooks/                 # Custom hooks
+└── .storybook/            # Storybook configuration
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 🔧 Available Scripts
 
-## Learn more
+- `yarn start` - Start the Expo development server
+- `yarn ios` - Run on iOS simulator
+- `yarn android` - Run on Android emulator
+- `yarn web` - Run in web browser
+- `yarn storybook` - Start Storybook
+- `yarn storybook:ios` - Run Storybook on iOS
+- `yarn storybook:android` - Run Storybook on Android
+- `yarn storybook-generate` - Generate Storybook stories index
 
-To learn more about developing your project with Expo, look at the following resources:
+## 📝 Development
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+### Creating Components
 
-## Join the community
+1. Create your component in the `components/` directory
+2. Add a corresponding `.stories.jsx` file for Storybook
+3. Export your component and stories following existing patterns
 
-Join our community of developers creating universal apps.
+### Using Storybook
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-# mobile-app
+Storybook is configured to automatically discover stories in the `components/` directory with the pattern `**/*.stories.?(ts|tsx|js|jsx)`.
 
-<p align="center">
-  <a href="https://www.chromatic.com/">
-    <img alt="Chromatic" src="https://avatars2.githubusercontent.com/u/24584319?s=200&v=4" width="60" />
-  </a>
-</p>
+To create a new story:
 
-<h1 align="center">
-  Chromatic's Intro to Storybook React Native template
-</h1>
+```javascript
+import { YourComponent } from './YourComponent';
 
-This template ships with the main React Native and Storybook configuration files you'll need to get up and running fast.
+const meta = {
+  title: 'Components/YourComponent',
+  component: YourComponent,
+};
 
-## 🚅 Quick start
+export default meta;
 
-1.  **Create the application.**
+export const Default = {
+  args: {
+    // component props
+  },
+};
+```
 
-    Use [degit](https://github.com/Rich-Harris/degit) to get this template.
+## 🤝 Contributing
 
-    ```shell
-    # Clone the template
-    npx degit chromaui/intro-storybook-react-native-template#main taskbox
-    ```
+1. Create a feature branch
+2. Make your changes
+3. Add/update Storybook stories for new components
+4. Test on multiple platforms
+5. Submit a pull request
 
-1.  **Install the dependencies.**
+## 📄 License
 
-    Navigate into your new site’s directory and install the necessary dependencies.
-
-    ```shell
-    # Navigate to the directory
-    cd taskbox/
-
-    # Install the dependencies
-    yarn
-    ```
-
-1.  **Open the source code and start editing!**
-
-    Open the `taskbox` directory in your code editor of choice and building your first component!
-
-1.  **Browse your stories!**
-
-    Run `yarn storybook:ios` for ios or `yarn storybook:android` for android to see your component's stories on your emulator or device.
-
-## 🔎 What's inside?
-
-A quick look at the top-level files and directories included with this template.
-
-    .
-    ├── .gitignore
-    ├── LICENSE
-    ├── README.md
-    ├── App.jsx
-    ├── app.config.js
-    ├── yarn.lock
-    ├── package.json
-    ├── babel.config.js
-
-1.  **`.gitignore`**: This file tells git which files it should not track or maintain during the development process of your project.
-
-2.  **`LICENSE`**: The template is licensed under the MIT licence.
-
-3.  **`README.md`**: A text file containing useful reference information about the project.
-
-4. **`App.jsx`**: This is the entry point of your app.  
-
-5. **`app.config.js`**: This is the configuration file for Expo that allows you to customize your app.
-
-6. **`yarn.lock`**: This is an automatically generated file based on the exact versions of your npm dependencies that were installed.
-
-## Contribute
-
-If you encounter an issue with the template, we encourage you to open an issue in this template's repository.
-
-## Learning Storybook
-
-1. Read our introductory tutorial at [Learn Storybook](https://storybook.js.org/tutorials/intro-to-storybook/react-native/en/get-started/).
-2. Learn how to transform your component libraries into design systems in our [Design Systems for Developers](https://storybook.js.org/tutorials/design-systems-for-developers/) tutorial.
-3. See our official documentation at [Storybook](https://storybook.js.org/).
-# mobile-app
+MIT License - see LICENSE file for details.
