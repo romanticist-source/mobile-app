@@ -46,7 +46,9 @@
     "storybook-generate": "sb-rn-get-stories -js",
     "storybook": "cross-env STORYBOOK_ENABLED='true' expo start",
     "storybook:ios": "cross-env STORYBOOK_ENABLED='true' expo start --ios",
-    "storybook:android": "cross-env STORYBOOK_ENABLED='true' expo start --android"
+    "storybook:android": "cross-env STORYBOOK_ENABLED='true' expo start --android",
+    "build": "expo export"
+
   },
   "version": "1.0.0",
   "private": true,
