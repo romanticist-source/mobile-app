@@ -2,6 +2,7 @@ import { LogBox, StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
 import "expo-router/entry";
 import { Link } from "expo-router";
+import NotificationTest from "./app/test/notification/test";
 LogBox.ignoreAllLogs();
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Text>Open up App.tsx to start working on your app!</Text>
       <button></button>
       <Link href="/test/notification/test">testページへ</Link>
+      <NotificationTest />
     </View>
   );
 }
