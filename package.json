@@ -2,6 +2,7 @@
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
     "@expo/vector-icons": "^14.0.3",
+    "@imaimai17468/digital-agency-icons-react": "^0.0.3",
     "@tamagui/config": "^1.137.2",
     "@types/react": "~18.2.79",
     "expo": "~51.0.39",
