@@ -43,8 +43,7 @@ export function BottomNavigation({ activeTab = 'home', onTabPress }: BottomNavig
           router.push('/user/share');
           break;
         case 'settings':
-          // TODO: Implement settings page
-          console.log('Settings page not yet implemented');
+          router.push('/user/settings');
           break;
       }
     }
