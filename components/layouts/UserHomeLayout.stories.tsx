@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { UserHomeLayout } from "./UserHomeLayout";
+import { UserHomeLayout } from "./UserHomeLayout/UserHomeLayout";
 import React from "react";
-import { ThemedText } from "@/components/ThemedText";
+import { ThemedText } from "@/components/ThemedText/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { StyleSheet } from "react-native";
 

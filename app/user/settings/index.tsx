@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation';
-import { AppHeader } from '@/components/layouts/AppHeader';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 
 interface SettingItem {
   id: string;

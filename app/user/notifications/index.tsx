@@ -1,14 +1,14 @@
-import { AppHeader } from '@/components/layouts/AppHeader';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Notification } from './(components)/NotificationCard';
-import { NotificationsActionsBar } from './(components)/NotificationsActionsBar';
-import { NotificationsFilters } from './(components)/NotificationsFilters';
-import { NotificationsList } from './(components)/NotificationsList';
-import { NotificationsPagination } from './(components)/NotificationsPagination';
+import { Notification } from './(components)/NotificationCard/NotificationCard';
+import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
+import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
+import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
+import { NotificationsPagination } from './(components)/NotificationsPagination/NotificationsPagination';
 import { styles } from './styles';
 
 export function NotificationsScreen() {

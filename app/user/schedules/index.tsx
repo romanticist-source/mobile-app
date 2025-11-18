@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { View } from 'react-native';
 import { Stack } from 'expo-router';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation';
-import { AppHeader } from '@/components/layouts/AppHeader';
-import { Schedule } from './(components)/ScheduleCard';
-import { NextScheduleCard } from './(components)/NextScheduleCard';
-import { SchedulesPageHeader } from './(components)/SchedulesPageHeader';
-import { SchedulesSearchBar } from './(components)/SchedulesSearchBar';
-import { SchedulesList } from './(components)/SchedulesList';
-import { AddScheduleModal } from './(components)/AddScheduleModal';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { Schedule } from './(components)/ScheduleCard/ScheduleCard';
+import { NextScheduleCard } from './(components)/NextScheduleCard/NextScheduleCard';
+import { SchedulesPageHeader } from './(components)/SchedulesPageHeader/SchedulesPageHeader';
+import { SchedulesSearchBar } from './(components)/SchedulesSearchBar/SchedulesSearchBar';
+import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
+import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
+import { styles } from './styles';
 
 export default function SchedulesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -90,14 +91,3 @@ export default function SchedulesScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  section: {
-    paddingHorizontal: 16,
-    marginTop: 16,
-  },
-});
