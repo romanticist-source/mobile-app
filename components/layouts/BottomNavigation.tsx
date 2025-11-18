@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
 export type NavTab = 'home' | 'schedule' | 'share' | 'notification' | 'settings';
 
@@ -9,9 +10,32 @@ interface BottomNavigationProps {
 }
 
 export function BottomNavigation({ activeTab = 'home', onTabPress }: BottomNavigationProps) {
+  const router = useRouter();
+
   const handlePress = (tab: NavTab) => {
     if (onTabPress) {
       onTabPress(tab);
+    } else {
+      // Default navigation behavior
+      switch (tab) {
+        case 'home':
+          router.push('/user');
+          break;
+        case 'schedule':
+          router.push('/user/schedules');
+          break;
+        case 'notification':
+          router.push('/user/notifications');
+          break;
+        case 'share':
+          // TODO: Implement share page
+          console.log('Share page not yet implemented');
+          break;
+        case 'settings':
+          // TODO: Implement settings page
+          console.log('Settings page not yet implemented');
+          break;
+      }
     }
   };
 
