@@ -1,9 +1,10 @@
+import { mockCaregivers, mockHealthCardData } from '@/_api/__mock__/share';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
-import { styles } from './styles';
 import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { styles } from './styles';
 
 type TabType = 'health' | 'emergency';
 
@@ -11,16 +12,16 @@ export default function ShareScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('health');
   const [isEditing, setIsEditing] = useState(false);
 
-  // Health card data states
-  const [healthConditions, setHealthConditions] = useState(['高血圧', '糖尿病', '軽度の身体障害', '心臓病']);
+  // Health card data states - initialized from mock data
+  const [healthConditions, setHealthConditions] = useState(mockHealthCardData.healthConditions);
   const [newCondition, setNewCondition] = useState('');
-  const [bloodType, setBloodType] = useState('A型');
-  const [height, setHeight] = useState('170');
-  const [weight, setWeight] = useState('65');
-  const [allergies, setAllergies] = useState('ペニシリン、花粉');
-  const [medications, setMedications] = useState('降圧剤、ビタミンD');
-  const [disability, setDisability] = useState('軽度の歩行障害');
-  const [notes, setNotes] = useState('長時間の立位は困難、30分ごとに休憩が必要');
+  const [bloodType, setBloodType] = useState(mockHealthCardData.bloodType);
+  const [height, setHeight] = useState(mockHealthCardData.height);
+  const [weight, setWeight] = useState(mockHealthCardData.weight);
+  const [allergies, setAllergies] = useState(mockHealthCardData.allergies);
+  const [medications, setMedications] = useState(mockHealthCardData.medications);
+  const [disability, setDisability] = useState(mockHealthCardData.disability);
+  const [notes, setNotes] = useState(mockHealthCardData.notes);
 
   // Calculate BMI
   const calculateBMI = () => {
@@ -47,41 +48,8 @@ export default function ShareScreen() {
     setIsEditing(!isEditing);
   };
 
-  const caregivers = [
-    {
-      id: '1',
-      name: '山田花子',
-      relation: 'はなちゃん',
-      role: '娘',
-      phone: '090-XXXX-XXXX',
-      email: 'hanako@example.com',
-      avatar: '山',
-      avatarColor: '#FFE4E4',
-      status: 'online',
-    },
-    {
-      id: '2',
-      name: '佐藤健太',
-      relation: 'けんちゃん',
-      role: '息子',
-      phone: '090-YYYY-YYYY',
-      email: '',
-      avatar: '佐',
-      avatarColor: '#FFE4E4',
-      status: 'online',
-    },
-    {
-      id: '3',
-      name: '田中看護師',
-      relation: '田中さん',
-      role: '訪問看護師',
-      phone: '090-ZZZZ-ZZZZ',
-      email: 'tanaka@nursing.com',
-      avatar: '田',
-      avatarColor: '#FFE4E4',
-      status: 'offline',
-    },
-  ];
+  // Caregivers data from mock
+  const caregivers = mockCaregivers;
 
   return (
     <>

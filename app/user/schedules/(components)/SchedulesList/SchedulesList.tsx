@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { ScheduleCard, Schedule } from '../ScheduleCard/ScheduleCard';
+import { ScheduleCard } from '../ScheduleCard/ScheduleCard';
+import type { Schedule } from '@/_schema/schedule';
 import { styles } from './styles';
 
 interface SchedulesListProps {

@@ -1,44 +1,22 @@
+import { mockSchedules } from '@/_api/__mock__/schedule';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { Stack } from 'expo-router';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
-import { Schedule } from './(components)/ScheduleCard/ScheduleCard';
+import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
 import { NextScheduleCard } from './(components)/NextScheduleCard/NextScheduleCard';
+import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
 import { SchedulesPageHeader } from './(components)/SchedulesPageHeader/SchedulesPageHeader';
 import { SchedulesSearchBar } from './(components)/SchedulesSearchBar/SchedulesSearchBar';
-import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
-import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
 import { styles } from './styles';
 
 export default function SchedulesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
 
-  // Sample data
-  const schedules: Schedule[] = [
-    {
-      id: '1',
-      category: '予定',
-      time: '10:00',
-      title: '通院',
-      description: '定期検診',
-    },
-    {
-      id: '2',
-      category: '休息',
-      time: '14:00',
-      title: '休息タイム',
-      description: '30分の休憩',
-    },
-    {
-      id: '3',
-      category: 'トイレ',
-      time: '16:00',
-      title: 'トイレタイミング',
-    },
-  ];
+  const schedules = mockSchedules;
 
   const handleEdit = (scheduleId: string) => {
     console.log('Edit schedule:', scheduleId);

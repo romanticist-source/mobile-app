@@ -1,7 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 import { styles } from './styles';
-import { NotificationCard, Notification } from '../NotificationCard/NotificationCard';
+import { NotificationCard } from '../NotificationCard/NotificationCard';
+import type { Notification } from '@/_schema/notification';
 
 interface NotificationsListProps {
   notifications: Notification[];

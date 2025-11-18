@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-
-export type ScheduleCategory = '予定' | '休息' | 'トイレ';
+import type { ScheduleCategory } from '@/_schema/schedule';
 
 interface CategoryBadgeProps {
   category: ScheduleCategory;
 }
 
-const CATEGORY_COLORS = {
+const CATEGORY_COLORS: Record<ScheduleCategory, { background: string; text: string }> = {
   '予定': {
     background: '#FFE5E5',
     text: '#FF6B6B',
@@ -19,6 +18,22 @@ const CATEGORY_COLORS = {
   'トイレ': {
     background: '#E3F2FD',
     text: '#2196F3',
+  },
+  '服薬': {
+    background: '#FFF3E0',
+    text: '#F57C00',
+  },
+  '食事': {
+    background: '#F3E5F5',
+    text: '#8E24AA',
+  },
+  '運動': {
+    background: '#E8F5E9',
+    text: '#43A047',
+  },
+  'その他': {
+    background: '#F5F5F5',
+    text: '#757575',
   },
 };
 

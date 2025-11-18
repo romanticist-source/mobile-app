@@ -1,10 +1,11 @@
+import { mockNotifications } from '@/_api/__mock__/notification';
+import type { Notification } from '@/_schema/notification';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { Notification } from './(components)/NotificationCard/NotificationCard';
 import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
 import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
 import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
@@ -16,55 +17,7 @@ export default function NotificationsScreen() {
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 3;
 
-  // Sample notifications data
-  const notifications: Notification[] = [
-    {
-      id: '1',
-      title: '心拍数異常',
-      source: 'Apple Watch',
-      timeAgo: '5分前',
-      priority: 'high',
-      status: 'unread',
-      icon: '❤️',
-      badge: '要対応',
-    },
-    {
-      id: '2',
-      title: '疲労度警告',
-      source: 'ヘルスモニター',
-      timeAgo: '12分前',
-      priority: 'medium',
-      status: 'unread',
-      icon: '❤️',
-    },
-    {
-      id: '3',
-      title: '休憩時間です',
-      source: '休憩スケジューラー',
-      timeAgo: '16分前',
-      priority: 'low',
-      status: 'unread',
-      icon: '🕐',
-    },
-    {
-      id: '4',
-      title: '活動量過多',
-      source: 'アクティビティトラッカー',
-      timeAgo: '25分前',
-      priority: 'medium',
-      status: 'unread',
-      icon: '⚡',
-    },
-    {
-      id: '5',
-      title: 'トイレリマインダー',
-      source: 'スケジュール',
-      timeAgo: '35分前',
-      priority: 'low',
-      status: 'read',
-      icon: '🕐',
-    },
-  ];
+  const notifications = mockNotifications;
 
   const unreadCount = notifications.filter((n) => n.status === 'unread').length;
   const filteredNotifications =

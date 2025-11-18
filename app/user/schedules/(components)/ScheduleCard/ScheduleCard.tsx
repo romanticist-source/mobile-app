@@ -1,15 +1,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { CategoryBadge, ScheduleCategory } from '../CategoryBadge/CategoryBadge';
+import { CategoryBadge } from '../CategoryBadge/CategoryBadge';
+import type { Schedule } from '@/_schema/schedule';
 import { styles } from './styles';
-
-export interface Schedule {
-  id: string;
-  category: ScheduleCategory;
-  time: string;
-  title: string;
-  description?: string;
-}
 
 interface ScheduleCardProps {
   schedule: Schedule;

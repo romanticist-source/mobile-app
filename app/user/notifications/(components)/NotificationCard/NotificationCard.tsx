@@ -1,20 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import type { Notification, NotificationPriority } from '@/_schema/notification';
 import { styles } from './styles';
-
-export type NotificationPriority = 'high' | 'medium' | 'low';
-export type NotificationStatus = 'unread' | 'read';
-
-export interface Notification {
-  id: string;
-  title: string;
-  source: string;
-  timeAgo: string;
-  priority: NotificationPriority;
-  status: NotificationStatus;
-  icon: string;
-  badge?: string;
-}
 
 interface NotificationCardProps {
   notification: Notification;
