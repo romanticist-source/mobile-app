@@ -1,10 +1,12 @@
-import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Stack } from 'expo-router';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation';
 
 export default function UserHomeScreen() {
+  const [showHelpModal, setShowHelpModal] = useState(false);
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -46,7 +48,10 @@ export default function UserHomeScreen() {
           </View>
 
           {/* Help Request Button */}
-          <TouchableOpacity style={styles.helpButton}>
+          <TouchableOpacity
+            style={styles.helpButton}
+            onPress={() => setShowHelpModal(true)}
+          >
             <View style={styles.helpButtonContent}>
               <View style={styles.helpIcon}>
                 <Text style={styles.helpIconText}>⚠</Text>
@@ -124,8 +129,150 @@ export default function UserHomeScreen() {
 
         {/* Bottom Navigation */}
         <BottomNavigation activeTab="home" />
+
+        {/* Help Request Modal */}
+        <HelpRequestModal
+          visible={showHelpModal}
+          onClose={() => setShowHelpModal(false)}
+        />
       </View>
     </>
+  );
+}
+
+// Help Request Modal Component
+interface HelpRequestModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
+
+function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
+  const [includeLocation, setIncludeLocation] = useState(true);
+
+  const handleSendHelp = () => {
+    console.log('Send help request with location:', includeLocation);
+    onClose();
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent={true}
+      onRequestClose={onClose}
+    >
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContainer}>
+          {/* Modal Header */}
+          <View style={styles.modalHeader}>
+            <View style={styles.modalTitleContainer}>
+              <View style={styles.modalWarningIcon}>
+                <Text style={styles.modalWarningIconText}>!</Text>
+              </View>
+              <Text style={styles.modalTitle}>ヘルプ要請の確認</Text>
+            </View>
+            <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
+              <Text style={styles.modalCloseIcon}>✕</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Modal Content */}
+          <View style={styles.modalContent}>
+            {/* Description */}
+            <Text style={styles.modalDescription}>
+              以下の情報を登録済み介助者と緊急連絡先に送信します
+            </Text>
+
+            {/* Recipients Section */}
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSectionTitle}>送信先</Text>
+              <View style={styles.recipientsList}>
+                <View style={styles.recipientItem}>
+                  <View style={[styles.recipientAvatar, { backgroundColor: '#FFE5E5' }]}>
+                    <Text style={[styles.recipientAvatarText, { color: '#FF6B6B' }]}>山</Text>
+                  </View>
+                  <View style={styles.recipientInfo}>
+                    <Text style={styles.recipientName}>山田花子</Text>
+                    <Text style={styles.recipientRelation}>娘</Text>
+                  </View>
+                </View>
+                <View style={styles.recipientItem}>
+                  <View style={[styles.recipientAvatar, { backgroundColor: '#FFE5E5' }]}>
+                    <Text style={[styles.recipientAvatarText, { color: '#FF6B6B' }]}>佐</Text>
+                  </View>
+                  <View style={styles.recipientInfo}>
+                    <Text style={styles.recipientName}>佐藤健太</Text>
+                    <Text style={styles.recipientRelation}>息子</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Information Section */}
+            <View style={styles.modalSection}>
+              <Text style={styles.modalSectionTitle}>送信される情報</Text>
+              <View style={styles.infoList}>
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoBullet}>•</Text>
+                  <Text style={styles.infoText}>現在のバイタルデータ</Text>
+                </View>
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoBullet}>•</Text>
+                  <Text style={styles.infoText}>体調カード情報</Text>
+                </View>
+                <View style={styles.infoItem}>
+                  <Text style={styles.infoBullet}>•</Text>
+                  <Text style={styles.infoText}>緊急連絡先</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Location Section */}
+            <TouchableOpacity
+              style={styles.locationOption}
+              onPress={() => setIncludeLocation(!includeLocation)}
+            >
+              <View style={styles.locationIconContainer}>
+                <Text style={styles.locationIcon}>📍</Text>
+              </View>
+              <View style={styles.locationTextContainer}>
+                <Text style={styles.locationTitle}>位置情報を含めて送信</Text>
+                <Text style={styles.locationSubtitle}>現在地: 自宅</Text>
+              </View>
+              <View style={styles.checkboxContainer}>
+                <View style={[
+                  styles.checkbox,
+                  includeLocation && styles.checkboxChecked
+                ]}>
+                  {includeLocation && (
+                    <Text style={styles.checkboxIcon}>✓</Text>
+                  )}
+                </View>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Modal Footer */}
+          <View style={styles.modalFooter}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onClose}
+            >
+              <Text style={styles.cancelButtonText}>キャンセル</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.sendHelpButton}
+              onPress={handleSendHelp}
+            >
+              <View style={styles.sendHelpButtonContent}>
+                <Text style={styles.sendHelpIcon}>⚠</Text>
+                <Text style={styles.sendHelpButtonText}>ヘルプを送信</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
   );
 }
 
@@ -348,5 +495,227 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     minHeight: 100,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '90%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  modalTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  modalWarningIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FFE5E5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalWarningIconText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  modalCloseButton: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalCloseIcon: {
+    fontSize: 24,
+    color: '#999999',
+  },
+  modalContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+  },
+  modalDescription: {
+    fontSize: 14,
+    color: '#666666',
+    lineHeight: 20,
+    marginBottom: 24,
+  },
+  modalSection: {
+    marginBottom: 24,
+  },
+  modalSectionTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 12,
+  },
+  recipientsList: {
+    gap: 12,
+  },
+  recipientItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    padding: 12,
+    borderRadius: 12,
+  },
+  recipientAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recipientAvatarText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  recipientInfo: {
+    marginLeft: 12,
+  },
+  recipientName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 2,
+  },
+  recipientRelation: {
+    fontSize: 13,
+    color: '#666666',
+  },
+  infoList: {
+    gap: 8,
+  },
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  infoBullet: {
+    fontSize: 16,
+    color: '#FF6B6B',
+    fontWeight: 'bold',
+  },
+  infoText: {
+    fontSize: 14,
+    color: '#333333',
+  },
+  locationOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F7FF',
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  locationIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  locationIcon: {
+    fontSize: 20,
+  },
+  locationTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  locationTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 2,
+  },
+  locationSubtitle: {
+    fontSize: 12,
+    color: '#666666',
+  },
+  checkboxContainer: {
+    marginLeft: 8,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 6,
+    borderWidth: 2,
+    borderColor: '#CCCCCC',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxChecked: {
+    backgroundColor: '#2196F3',
+    borderColor: '#2196F3',
+  },
+  checkboxIcon: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
+  },
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666666',
+  },
+  sendHelpButton: {
+    flex: 1,
+    backgroundColor: '#C84F2A',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sendHelpButtonContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  sendHelpIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
+  },
+  sendHelpButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
 });
