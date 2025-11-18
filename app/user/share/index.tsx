@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { Stack } from 'expo-router';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
+import { Stack } from 'expo-router';
+import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 type TabType = 'health' | 'emergency';
 

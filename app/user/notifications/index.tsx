@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-nati
 import { Stack } from 'expo-router';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation';
-import { NotificationCard, Notification } from '@/components/notifications/NotificationCard';
+import { NotificationCard, Notification } from './(components)/NotificationCard';
 
 export default function NotificationsScreen() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');

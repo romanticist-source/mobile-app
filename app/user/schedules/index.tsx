@@ -3,8 +3,8 @@ import { StyleSheet, View, Text, TouchableOpacity, TextInput, Modal } from 'reac
 import { Stack } from 'expo-router';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation';
-import { ScheduleCard, Schedule } from '@/components/schedules/ScheduleCard';
-import { NextScheduleCard } from '@/components/schedules/NextScheduleCard';
+import { ScheduleCard, Schedule } from './(components)/ScheduleCard';
+import { NextScheduleCard } from './(components)/NextScheduleCard';
 
 export default function SchedulesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
