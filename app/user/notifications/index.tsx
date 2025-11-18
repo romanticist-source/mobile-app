@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import { Stack } from 'expo-router';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation';
 import { AppHeader } from '@/components/layouts/AppHeader';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation';
+import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
+import { Stack } from 'expo-router';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
 import { Notification } from './(components)/NotificationCard';
 import { NotificationsActionsBar } from './(components)/NotificationsActionsBar';
 import { NotificationsFilters } from './(components)/NotificationsFilters';
 import { NotificationsList } from './(components)/NotificationsList';
 import { NotificationsPagination } from './(components)/NotificationsPagination';
+import { styles } from './styles';
 
-export default function NotificationsScreen() {
+export function NotificationsScreen() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 3;
@@ -118,21 +119,3 @@ export default function NotificationsScreen() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-  },
-  pageHeader: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-  },
-  pageTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-});

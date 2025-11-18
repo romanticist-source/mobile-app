@@ -76,6 +76,40 @@ app/
 - Files in `(components)` or `(hooks)` are not routes
 - Each `index.tsx` represents a route at that path level
 
+**Route `index.tsx` Pattern**:
+Route-level `index.tsx` files should serve as screen components that import and compose smaller UI components:
+
+```typescript
+// app/user/notifications/index.tsx (example)
+import { AppHeader } from '@/components/layouts/AppHeader';
+import { NotificationsActionsBar } from './(components)/NotificationsActionsBar';
+import { NotificationsFilters } from './(components)/NotificationsFilters';
+import { NotificationsList } from './(components)/NotificationsList';
+import { styles } from './styles';
+
+export function NotificationsScreen() {
+  // Page-level state and logic
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  // Compose imported components
+  return (
+    <View style={styles.container}>
+      <AppHeader />
+      <NotificationsActionsBar />
+      <NotificationsFilters currentFilter={filter} onFilterChange={setFilter} />
+      <NotificationsList />
+    </View>
+  );
+}
+```
+
+**Key principles**:
+- Import and compose components from `(components)/` folder
+- Keep page-level state management and data flow logic
+- Delegate UI rendering to imported child components
+- Extract styles to separate `styles.ts` file in the same directory
+- The `index.tsx` acts as the orchestration layer for the screen
+
 ### Component Organization
 ```
 components/
