@@ -11,7 +11,7 @@ import { NotificationsList } from './(components)/NotificationsList/Notification
 import { NotificationsPagination } from './(components)/NotificationsPagination/NotificationsPagination';
 import { styles } from './styles';
 
-export function NotificationsScreen() {
+export default function NotificationsScreen() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = 3;
