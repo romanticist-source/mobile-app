@@ -1,8 +1,10 @@
-export default ({ config }) => ({
-  ...config,
-  name: "Storybook Tutorial Template",
-  slug: "storybook-tutorial-template",
-  extra: {
-    storybookEnabled: process.env.STORYBOOK_ENABLED,
+export default {
+  name: "mobile-app",
+  slug: "mobile-app",
+  android: {
+    package: "com.anonymous.storybooktutorialtemplate",
   },
-});
+  ios: {
+    bundleIdentifier: "com.anonymous.storybooktutorialtemplate",
+  },
+};
