@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Stack } from 'expo-router';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout';
+import { BottomNavigation } from '@/components/layouts/BottomNavigation';
 
 export default function UserHomeScreen() {
   return (
@@ -122,28 +123,7 @@ export default function UserHomeScreen() {
         </UserHomeLayout>
 
         {/* Bottom Navigation */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={[styles.navIcon, styles.navIconActive]}>🏠</Text>
-            <Text style={[styles.navLabel, styles.navLabelActive]}>ホーム</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>❓</Text>
-            <Text style={styles.navLabel}>サポート</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>🔗</Text>
-            <Text style={styles.navLabel}>共有</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>🔔</Text>
-            <Text style={styles.navLabel}>通知</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Text style={styles.navIcon}>⚙️</Text>
-            <Text style={styles.navLabel}>設定</Text>
-          </TouchableOpacity>
-        </View>
+        <BottomNavigation activeTab="home" />
       </View>
     </>
   );
@@ -368,42 +348,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 16,
     minHeight: 100,
-  },
-  bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingBottom: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 10,
-  },
-  navItem: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 4,
-  },
-  navIcon: {
-    fontSize: 24,
-    opacity: 0.5,
-  },
-  navIconActive: {
-    opacity: 1,
-  },
-  navLabel: {
-    fontSize: 11,
-    color: '#999999',
-  },
-  navLabelActive: {
-    color: '#FF6B6B',
-    fontWeight: '600',
   },
 });
