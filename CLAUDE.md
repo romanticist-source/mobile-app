@@ -156,16 +156,81 @@ app/user/schedules/
 ```
 
 ### Theming & Styling
-- **Tamagui**: Configured in `app/_layout.tsx` with default v3 config
-- **Theme Provider**: React Navigation themes (Dark/Light) wrap the app
-- **Path Aliases**: `@/*` resolves to project root (configured in `tsconfig.json`)
-- **Constants**: Color schemes and other constants in `constants/Colors.ts`
 
-**Styling Pattern**:
-- Each component has its own `styles.ts` file in the component folder
-- Use React Native's `StyleSheet.create()` for performance optimization
-- Import styles in component: `import { styles } from './styles'`
-- Avoid inline styles unless dynamic or one-off styling is needed
+**Tamagui (Preferred)**:
+- **Configuration**: Custom design tokens defined in `tamagui.config.ts`
+- **Provider**: Configured in `app/_layout.tsx` with light/dark theme support
+- **Components**: Use Tamagui primitives (YStack, XStack, Text, Input, Button, etc.)
+- **Design Tokens**: Access via `$` prefix (e.g., `$primary`, `$background`, `$space4`)
+
+**Design Tokens**:
+```typescript
+// Colors
+$primary              // #FF6B6B (Primary red)
+$primaryLight         // #FFE5E5 (Light red background)
+$success              // #20C9A6 (Green)
+$successLight         // #E0F7F7
+$warning              // #F57C00 (Orange)
+$error                // #FF6B6B
+$info                 // #2196F3 (Blue)
+
+// Backgrounds
+$background           // White (light) / Dark (dark)
+$backgroundSecondary  // #F5F5F5 (light) / Gray 800 (dark)
+$backgroundOverlay    // rgba(0, 0, 0, 0.5)
+
+// Text Colors
+$color                // Primary text color
+$colorSecondary       // Secondary text color
+$colorTertiary        // Tertiary text color
+
+// Other
+$borderColor          // Border color (theme-aware)
+$placeholderColor     // Placeholder text color
+$shadowColor          // Shadow color
+
+// Spacing (multiply of 4px)
+$0, $1, $2, $3, $4, $5, $6, $8, $10, $12, $16, $20
+
+// Radius
+$0, $1, $2, $3, $4, $5, $6, $round
+```
+
+**Tamagui Component Example**:
+```typescript
+import { YStack, XStack, Text, Input, Button } from 'tamagui';
+
+export function ExampleComponent() {
+  return (
+    <YStack padding="$4" gap="$3" backgroundColor="$background">
+      <Text fontSize={18} fontWeight="600" color="$color">
+        Title
+      </Text>
+      <Input
+        placeholder="Enter text"
+        backgroundColor="$backgroundSecondary"
+        borderWidth={1}
+        borderColor="$borderColor"
+        borderRadius="$2"
+        padding="$3"
+      />
+      <Button
+        backgroundColor="$primary"
+        borderRadius="$2"
+        paddingHorizontal="$6"
+        paddingVertical="$3"
+      >
+        <Text color="white" fontWeight="600">Submit</Text>
+      </Button>
+    </YStack>
+  );
+}
+```
+
+**Legacy Styling (StyleSheet)**:
+- Use for components not yet migrated to Tamagui
+- Each component has its own `styles.ts` file
+- Use React Native's `StyleSheet.create()` for performance
 
 Example `styles.ts`:
 ```typescript
@@ -184,6 +249,12 @@ export const styles = StyleSheet.create({
   },
 });
 ```
+
+**When to Use What**:
+- ✅ **Use Tamagui** for new components and modals
+- ✅ **Use Tamagui tokens** for consistent theming
+- ⚠️ **Use StyleSheet** only for legacy components being gradually migrated
+- 🔄 Gradually migrate existing components to Tamagui
 
 ### Storybook Configuration
 - **Discovery**: `.storybook/main.js` finds stories in `components/**/*.stories.?(ts|tsx|js|jsx)`

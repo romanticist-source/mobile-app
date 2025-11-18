@@ -3,17 +3,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { config as defaultConfig } from "@tamagui/config/v3";
-import { createTamagui, TamaguiProvider } from "tamagui";
+import { TamaguiProvider } from 'tamagui';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
-
-const config = createTamagui(defaultConfig);
-type Conf = typeof config;
-// make imports typed
-declare module "@tamagui/core" {
-  interface TamaguiCustomConfig extends Conf {}
-}
+import config from '@/tamagui.config';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -27,7 +20,7 @@ export default function RootLayout() {
   }
 
   return (
-    <TamaguiProvider config={config}>
+    <TamaguiProvider config={config} defaultTheme={colorScheme === 'dark' ? 'dark' : 'light'}>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
