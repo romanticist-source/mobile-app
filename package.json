@@ -13,7 +13,7 @@
     "expo-notifications": "~0.28.19",
     "expo-router": "~3.5.24",
     "expo-splash-screen": "~0.27.7",
-    "expo-status-bar": "^2.2.3",
+    "expo-status-bar": "~1.12.1",
     "expo-web-browser": "~13.0.3",
     "generator-function": "^2.0.1",
     "react": "18.2.0",

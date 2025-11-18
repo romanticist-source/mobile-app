@@ -14,7 +14,8 @@ declare module "@tamagui/core" {
 function App() {
   return (
     <TamaguiProvider config={config}>
-      <View style={styles.container}></View>
+      <View style={styles.container}>
+      </View>
     </TamaguiProvider>
   );
 }
