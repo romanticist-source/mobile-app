@@ -191,6 +191,80 @@ export const styles = StyleSheet.create({
 - **Story Format**: CSF3 format (object exports)
 - If stories don't appear, run `yarn storybook-generate`
 
+### Mock Data & Schemas
+
+**Directory Structure**:
+```
+_schema/              # TypeScript type definitions and interfaces
+├── schedule.ts       # Schedule-related types (Schedule, ScheduleCategory)
+├── notification.ts   # Notification-related types (Notification, NotificationPriority, etc.)
+└── share.ts          # Share screen types (Caregiver, HealthCardData)
+
+api/__mock__/         # Mock data for development and testing
+├── schedule.ts       # mockSchedules array
+├── notification.ts   # mockNotifications array
+└── share.ts          # mockHealthCardData, mockCaregivers
+```
+
+**Pattern**:
+1. **Type definitions** go in `_schema/[domain].ts`
+   - Export only TypeScript interfaces and types
+   - No implementation or data
+   - Use `export type` or `export interface`
+
+2. **Mock data** goes in `api/__mock__/[domain].ts`
+   - Import types from `@/_schema/[domain]`
+   - Export mock data arrays/objects
+   - Use `export const` for data
+
+**Example - Adding new mock data**:
+
+```typescript
+// 1. Define types in _schema/example.ts
+export interface ExampleItem {
+  id: string;
+  name: string;
+  status: 'active' | 'inactive';
+}
+
+// 2. Create mock data in api/__mock__/example.ts
+import type { ExampleItem } from '@/_schema/example';
+
+export const mockExamples: ExampleItem[] = [
+  {
+    id: '1',
+    name: 'Example 1',
+    status: 'active',
+  },
+  {
+    id: '2',
+    name: 'Example 2',
+    status: 'inactive',
+  },
+];
+
+// 3. Use in components
+import { mockExamples } from '@/api/__mock__/example';
+import type { ExampleItem } from '@/_schema/example';
+
+export default function ExampleScreen() {
+  const items = mockExamples;
+  // ...
+}
+```
+
+**Available Mock Data**:
+- `mockSchedules` - Daily schedule items (appointments, rest, toilet, medication, meals)
+- `mockNotifications` - System notifications with priority levels
+- `mockHealthCardData` - User health information and medical details
+- `mockCaregivers` - List of caregivers and emergency contacts
+
+**Important Notes**:
+- NEVER define mock data inline in screen components
+- Always separate types (`_schema/`) from mock data (`api/__mock__/`)
+- Use `@/` path alias for imports: `@/_schema/...` and `@/api/__mock__/...`
+- Mock data should be realistic and representative of actual use cases
+
 ## Important Patterns
 
 ### Adding New Screens
