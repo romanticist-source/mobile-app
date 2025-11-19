@@ -6769,6 +6769,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"expo-blur@npm:~13.0.3":
+  version: 13.0.3
+  resolution: "expo-blur@npm:13.0.3"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/632aea3dda468e0331c8aa9d63aae39c5d9cba7276e0f246da8fc8009a9f9033aa20aab249814d45056057473c6573dd417198e315682997e3a465f902a4c520
+  languageName: node
+  linkType: hard
+
 "expo-constants@npm:~16.0.0, expo-constants@npm:~16.0.2":
   version: 16.0.2
   resolution: "expo-constants@npm:16.0.2"
@@ -6941,6 +6950,17 @@ __metadata:
   version: 1.12.1
   resolution: "expo-status-bar@npm:1.12.1"
   checksum: 10c0/fecd1c1843ef1fadf3007f54e1c778d06cbbe396c9ba7cbbfde88a1eb215847ab39e68b1f32d0d46a906a1abcb8821aa33eefed66d0c4a858a5faf6b6e556416
+  languageName: node
+  linkType: hard
+
+"expo-symbols@npm:~0.1.5":
+  version: 0.1.5
+  resolution: "expo-symbols@npm:0.1.5"
+  dependencies:
+    sf-symbols-typescript: "npm:^2.0.0"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/02c984cf75c740b41191f9ca3d0ed3b1aa489d3e3605e239f0a793f9656b5cee6f004686c48879a8a43793c21fea29ba6647985d371b95cb69c9082feb03d3bb
   languageName: node
   linkType: hard
 
@@ -11457,6 +11477,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sf-symbols-typescript@npm:^2.0.0":
+  version: 2.1.0
+  resolution: "sf-symbols-typescript@npm:2.1.0"
+  checksum: 10c0/b6e2482c2b3ba785aa00770013e343a2175475b9cb7c8703c30a2ec1da8b41acd982db2d953877afb35af32a3dfba337d0b29e703c399cd2138c3cf68685c9c2
+  languageName: node
+  linkType: hard
+
 "shallow-clone@npm:^3.0.0":
   version: 3.0.1
   resolution: "shallow-clone@npm:3.0.1"
@@ -11801,6 +11828,7 @@ __metadata:
     babel-loader: "npm:^9.1.3"
     cross-env: "npm:^7.0.3"
     expo: "npm:~51.0.39"
+    expo-blur: "npm:~13.0.3"
     expo-constants: "npm:~16.0.2"
     expo-device: "npm:~6.0.2"
     expo-font: "npm:~12.0.10"
@@ -11812,6 +11840,7 @@ __metadata:
     expo-router: "npm:~3.5.24"
     expo-splash-screen: "npm:~0.27.7"
     expo-status-bar: "npm:~1.12.1"
+    expo-symbols: "npm:~0.1.5"
     expo-web-browser: "npm:~13.0.3"
     generator-function: "npm:^2.0.1"
     react: "npm:18.2.0"

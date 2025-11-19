@@ -8,11 +8,6 @@ import { StyleSheet } from "react-native";
 const meta: Meta<typeof UserHomeLayout> = {
   title: "Layouts/UserHomeLayout",
   component: UserHomeLayout,
-  argTypes: {
-    username: {
-      control: "text",
-    },
-  },
 };
 
 export default meta;
@@ -35,7 +30,6 @@ const styles = StyleSheet.create({
 
 export const Default: Story = {
   args: {
-    username: "ひらまつ",
     children: (
       <ThemedView>
         <ThemedText type="subtitle">Sample Content</ThemedText>
@@ -49,7 +43,6 @@ export const Default: Story = {
 
 export const WithStats: Story = {
   args: {
-    username: "田中太郎",
     children: (
       <ThemedView>
         <ThemedView style={styles.statsContainer}>
@@ -73,7 +66,6 @@ export const WithStats: Story = {
 
 export const WithLongUsername: Story = {
   args: {
-    username: "とても長いユーザー名の例",
     children: (
       <ThemedView>
         <ThemedText>
@@ -85,7 +77,5 @@ export const WithLongUsername: Story = {
 };
 
 export const EmptyContent: Story = {
-  args: {
-    username: "User",
-  },
+  args: {},
 };
