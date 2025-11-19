@@ -9,13 +9,10 @@ import { Text, View } from 'react-native';
 import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
 import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
 import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
-import { NotificationsPagination } from './(components)/NotificationsPagination/NotificationsPagination';
 import { styles } from './styles';
 
 export default function NotificationsScreen() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 3;
 
   const notifications = mockNotifications;
 
@@ -58,12 +55,6 @@ export default function NotificationsScreen() {
           <NotificationsList
             alerts={filteredNotifications}
             onNotificationPress={handleNotificationPress}
-          />
-
-          <NotificationsPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
           />
         </UserHomeLayout>
 

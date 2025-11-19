@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Modal as RNModal } from 'react-native';
+import { Platform, Modal as RNModal, TouchableWithoutFeedback } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useController, useFormContext } from 'react-hook-form';
 import { YStack, XStack, Text, Button, Input, Label } from 'tamagui';
@@ -104,7 +104,7 @@ export function FormDateTimePicker({
         />
       )}
 
-      {/* iOS: Modal Picker */}
+      {/* iOS: Apple-style Modal Picker */}
       {show && Platform.OS === 'ios' && (
         <RNModal
           transparent
@@ -112,49 +112,109 @@ export function FormDateTimePicker({
           visible={show}
           onRequestClose={handleDismiss}
         >
-          <YStack
-            flex={1}
-            backgroundColor="rgba(0, 0, 0, 0.5)"
-            justifyContent="flex-end"
-            onPress={handleDismiss}
-          >
+          <TouchableWithoutFeedback onPress={handleDismiss}>
             <YStack
-              backgroundColor="$background"
-              borderTopLeftRadius="$6"
-              borderTopRightRadius="$6"
-              paddingBottom="$10"
+              flex={1}
+              backgroundColor="rgba(0, 0, 0, 0.4)"
+              justifyContent="flex-end"
             >
-              <XStack
-                justifyContent="space-between"
-                alignItems="center"
-                paddingHorizontal="$4"
-                paddingVertical="$4"
-                borderBottomWidth={1}
-                borderBottomColor="$borderColor"
-              >
-                <Text fontSize="$6" fontWeight="600" color="$color">
-                  {label || '時刻を選択'}
-                </Text>
-                <Button
-                  size="$3"
-                  chromeless
-                  color="$blue10"
-                  fontWeight="600"
-                  onPress={handleDismiss}
+              <TouchableWithoutFeedback>
+                <YStack
+                  backgroundColor="#F9F9F9"
+                  borderTopLeftRadius="$6"
+                  borderTopRightRadius="$6"
+                  overflow="hidden"
                 >
-                  完了
-                </Button>
-              </XStack>
-              <DateTimePicker
-                value={value || new Date()}
-                mode={mode}
-                display="spinner"
-                onChange={handleChange}
-                themeVariant="light"
-              />
+                  {/* Header with Done button - Apple style */}
+                  <XStack
+                    justifyContent="space-between"
+                    alignItems="center"
+                    paddingHorizontal="$4"
+                    paddingVertical="$3"
+                    backgroundColor="#FAFAFA"
+                    borderBottomWidth={0.5}
+                    borderBottomColor="rgba(60, 60, 67, 0.12)"
+                  >
+                    <Button
+                      size="$3"
+                      chromeless
+                      color="#007AFF"
+                      fontSize="$5"
+                      fontWeight="400"
+                      onPress={handleDismiss}
+                      pressStyle={{ opacity: 0.6 }}
+                    >
+                      キャンセル
+                    </Button>
+                    <Text
+                      fontSize="$4"
+                      fontWeight="600"
+                      color="#000000"
+                      opacity={0.85}
+                    >
+                      {label || '時刻を選択'}
+                    </Text>
+                    <Button
+                      size="$3"
+                      chromeless
+                      color="#007AFF"
+                      fontSize="$5"
+                      fontWeight="600"
+                      onPress={handleDismiss}
+                      pressStyle={{ opacity: 0.6 }}
+                    >
+                      完了
+                    </Button>
+                  </XStack>
+
+                  {/* Date/Time Picker - Apple style spinner */}
+                  <YStack
+                    backgroundColor="#FFFFFF"
+                    paddingVertical="$2"
+                  >
+                    <DateTimePicker
+                      value={value || new Date()}
+                      mode={mode}
+                      display="spinner"
+                      onChange={handleChange}
+                      themeVariant="light"
+                      locale="ja-JP"
+                      style={{
+                        height: 216,
+                        backgroundColor: '#FFFFFF',
+                      }}
+                    />
+                  </YStack>
+
+                  {/* Bottom safe area */}
+                  <YStack
+                    backgroundColor="#FFFFFF"
+                    height={34}
+                  />
+                </YStack>
+              </TouchableWithoutFeedback>
             </YStack>
-          </YStack>
+          </TouchableWithoutFeedback>
         </RNModal>
+      )}
+
+      {/* Web: Fallback to native input */}
+      {show && Platform.OS === 'web' && (
+        <YStack
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex={1000}
+        >
+          <DateTimePicker
+            value={value || new Date()}
+            mode={mode}
+            display="default"
+            onChange={handleChange}
+          />
+        </YStack>
       )}
     </YStack>
   );
