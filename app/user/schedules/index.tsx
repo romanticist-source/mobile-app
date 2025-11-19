@@ -1,4 +1,4 @@
-import { mockSchedules } from '@/_api/__mock__/schedule';
+import { mockSchedules } from '@/api/__mock__/schedule';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';

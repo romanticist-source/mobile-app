@@ -2,8 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { styles } from './styles';
 import { NotificationCard } from '../NotificationCard/NotificationCard';
-import type { Notification } from '@/_schema/notification';
-import { AlertHistory } from '@/_schema';
+import type { AlertHistory } from '@/_schema/alert';
 
 interface NotificationsListProps {
   alerts: AlertHistory[];

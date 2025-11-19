@@ -2,33 +2,27 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import type { AlertHistory } from '@/_schema/alert';
 import { styles } from './styles';
-import { NotificationPriority } from '@/_schema/notification';
 
 interface NotificationCardProps {
   alert: AlertHistory;
   onPress?: () => void;
 }
 
-const PRIORITY_COLORS = {
-  high: '#FF6B6B',
-  medium: '#FF9ECD',
-  low: '#2196F3',
+// importance: 1 = 低優先度 (low), 2 = 中優先度 (medium), 3 = 高優先度 (high)
+const PRIORITY_COLORS: Record<number, string> = {
+  1: '#2196F3', // low - blue
+  2: '#FF9ECD', // medium - pink
+  3: '#FF6B6B', // high - red
 };
 
-const STATUS_COLORS = {
-  unread: (priority: NotificationPriority) => PRIORITY_COLORS[priority],
-  read: '#CCCCCC',
-};
+const DEFAULT_COLOR = '#CCCCCC';
 
 export function NotificationCard({ alert, onPress }: NotificationCardProps) {
-  const isUnread = alert.importance === 1;
-  const dotColor = isUnread
-    ? PRIORITY_COLORS[alert.importance]
-    : STATUS_COLORS.read;
+  // Get color based on importance level
+  const priorityColor = PRIORITY_COLORS[alert.importance] || DEFAULT_COLOR;
 
-  const borderColor = isUnread
-    ? PRIORITY_COLORS[alert.importance]
-    : '#E0E0E0';
+  const dotColor = priorityColor;
+  const borderColor = priorityColor;
 
   return (
     <TouchableOpacity

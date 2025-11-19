@@ -10,6 +10,14 @@ interface ScheduleCardProps {
   onDelete?: () => void;
 }
 
+// Helper function to format ISO date string to time (HH:MM)
+const formatTime = (isoString: string): string => {
+  const date = new Date(isoString);
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+};
+
 export function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
   return (
     <View style={styles.card}>
@@ -18,7 +26,7 @@ export function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) 
           <CategoryBadge category={schedule.scheduleType} />
           <View style={styles.timeContainer}>
             <Text style={styles.timeIcon}>🕐</Text>
-            <Text style={styles.time}>{schedule.startAt}</Text>
+            <Text style={styles.time}>{formatTime(schedule.startAt)}</Text>
           </View>
         </View>
         <View style={styles.actions}>

@@ -1,2 +1,2 @@
 export { NotificationCard } from './NotificationCard/NotificationCard';
-export type { Notification, NotificationPriority, NotificationStatus } from '@/_schema/notification';
+export type { AlertHistory } from '@/_schema/alert';

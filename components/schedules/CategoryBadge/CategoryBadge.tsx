@@ -4,7 +4,7 @@ import type { ScheduleCategory } from '@/_schema/schedule';
 import { styles } from './styles';
 
 interface CategoryBadgeProps {
-  category: ScheduleCategory;
+  category: string; // Accept string from UserSchedule.scheduleType
 }
 
 const CATEGORY_COLORS: Record<ScheduleCategory, { background: string; text: string }> = {
@@ -38,8 +38,13 @@ const CATEGORY_COLORS: Record<ScheduleCategory, { background: string; text: stri
   },
 };
 
+const DEFAULT_COLORS = {
+  background: '#F5F5F5',
+  text: '#757575',
+};
+
 export function CategoryBadge({ category }: CategoryBadgeProps) {
-  const colors = CATEGORY_COLORS[category];
+  const colors = CATEGORY_COLORS[category as ScheduleCategory] || DEFAULT_COLORS;
 
   return (
     <View style={[styles.badge, { backgroundColor: colors.background }]}>

@@ -1,11 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
 import { ScheduleCard } from '../ScheduleCard/ScheduleCard';
-import type { Schedule } from '@/_schema/schedule';
+import type { UserSchedule } from '@/_schema/schedule';
 import { styles } from './styles';
 
 interface SchedulesListProps {
-  schedules: Schedule[];
+  schedules: UserSchedule[];
   onEdit: (scheduleId: string) => void;
   onDelete: (scheduleId: string) => void;
 }

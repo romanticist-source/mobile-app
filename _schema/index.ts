@@ -9,4 +9,3 @@ export * from './user-status-card';
 export * from './schedule';
 export * from './alert';
 export * from './help-card';
-export * from './api';

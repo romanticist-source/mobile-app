@@ -1,4 +1,4 @@
-import { mockCaregivers, mockHealthCardData } from '@/_api/__mock__/share';
+import { mockCaregivers, mockHealthCardData } from '@/api/__mock__/share';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
