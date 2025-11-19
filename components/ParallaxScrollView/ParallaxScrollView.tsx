@@ -1,6 +1,4 @@
 import type { PropsWithChildren, ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
-import { styles } from './styles';
 import Animated, {
   interpolate,
   useAnimatedRef,
@@ -46,7 +44,7 @@ export default function ParallaxScrollView({
   });
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView flex={1}>
       <Animated.ScrollView
         ref={scrollRef}
         scrollEventThrottle={16}
@@ -54,13 +52,13 @@ export default function ParallaxScrollView({
         contentContainerStyle={{ paddingBottom: bottom }}>
         <Animated.View
           style={[
-            styles.header,
+            { height: HEADER_HEIGHT, overflow: 'hidden' },
             { backgroundColor: headerBackgroundColor[colorScheme] },
             headerAnimatedStyle,
           ]}>
           {headerImage}
         </Animated.View>
-        <ThemedView style={styles.content}>{children}</ThemedView>
+        <ThemedView flex={1} padding="$8" gap="$4" overflow="hidden">{children}</ThemedView>
       </Animated.ScrollView>
     </ThemedView>
   );

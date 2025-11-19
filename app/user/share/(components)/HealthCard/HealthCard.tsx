@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View
-} from 'react-native';
-import { styles } from './styles';
+import { XStack, YStack, Text, Input } from 'tamagui';
 
 export interface HealthCardData {
   healthConditions: string[];
@@ -42,177 +36,333 @@ export function HealthCard({
   calculateBMI,
 }: HealthCardProps) {
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardHeaderIcon}>👤</Text>
-        <Text style={styles.cardHeaderText}>体調カード</Text>
-        <TouchableOpacity style={styles.editButton} onPress={onToggleEdit}>
+    <YStack
+      backgroundColor="$background"
+      borderRadius="$3"
+      borderWidth={1}
+      borderColor="$borderColor"
+      overflow="hidden"
+    >
+      <XStack
+        alignItems="center"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+        borderBottomWidth={1}
+        borderBottomColor="$backgroundSecondary"
+        gap="$2"
+      >
+        <Text fontSize={16} color="$primary">👤</Text>
+        <Text flex={1} fontSize={16} fontWeight="600" color="$primary">
+          体調カード
+        </Text>
+        <XStack
+          alignItems="center"
+          gap="$1"
+          pressStyle={{ opacity: 0.7 }}
+          onPress={onToggleEdit}
+        >
           {isEditing ? (
             <>
-              <Text style={styles.editButtonIcon}>✓</Text>
-              <Text style={styles.editButtonText}>完了</Text>
+              <Text fontSize={14}>✓</Text>
+              <Text fontSize={14} color="$primary">完了</Text>
             </>
           ) : (
             <>
-              <Text style={styles.editButtonIcon}>✏️</Text>
-              <Text style={styles.editButtonText}>編集</Text>
+              <Text fontSize={14}>✏️</Text>
+              <Text fontSize={14} color="$primary">編集</Text>
             </>
           )}
-        </TouchableOpacity>
-      </View>
+        </XStack>
+      </XStack>
 
-      <View style={styles.cardBody}>
+      <YStack padding="$4">
         {/* User Info */}
-        <View style={styles.userInfo}>
-          <View style={styles.userAvatar}>
-            <Text style={styles.userAvatarText}>山</Text>
+        <XStack alignItems="center" gap="$3" marginBottom="$5">
+          <YStack
+            width={48}
+            height={48}
+            borderRadius={24}
+            backgroundColor="$primaryLight"
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
+          >
+            <Text fontSize={20} fontWeight="bold" color="$primary">山</Text>
             {isEditing && (
-              <View style={styles.cameraIconContainer}>
-                <Text style={styles.cameraIcon}>📷</Text>
-              </View>
+              <YStack
+                position="absolute"
+                bottom={-2}
+                right={-2}
+                width={20}
+                height={20}
+                borderRadius={10}
+                backgroundColor="$primary"
+                alignItems="center"
+                justifyContent="center"
+                borderWidth={2}
+                borderColor="$background"
+              >
+                <Text fontSize={10}>📷</Text>
+              </YStack>
             )}
-          </View>
-          <Text style={styles.userName2}>山田太郎</Text>
-        </View>
+          </YStack>
+          <Text fontSize={18} fontWeight="600" color="$color">
+            山田太郎
+          </Text>
+        </XStack>
 
         {/* Health Conditions */}
-        <Text style={styles.sectionLabel}>病状・疾患</Text>
-        <View style={styles.tagsContainer}>
+        <Text fontSize={13} color="$colorSecondary" marginBottom="$2">
+          病状・疾患
+        </Text>
+        <XStack flexWrap="wrap" gap="$2" marginBottom="$5">
           {data.healthConditions.map((condition, index) => (
-            <View key={index} style={styles.tag}>
-              <Text style={styles.tagText}>{condition}</Text>
+            <XStack
+              key={index}
+              alignItems="center"
+              paddingHorizontal="$3"
+              paddingVertical="$1.5"
+              backgroundColor="$primaryLight"
+              borderRadius="$4"
+              gap="$1.5"
+            >
+              <Text fontSize={13} color="$primary" fontWeight="500">
+                {condition}
+              </Text>
               {isEditing && (
-                <TouchableOpacity onPress={() => onRemoveCondition(index)}>
-                  <Text style={styles.removeTagIcon}>×</Text>
-                </TouchableOpacity>
+                <Text
+                  fontSize={16}
+                  color="$primary"
+                  fontWeight="bold"
+                  pressStyle={{ opacity: 0.7 }}
+                  onPress={() => onRemoveCondition(index)}
+                >
+                  ×
+                </Text>
               )}
-            </View>
+            </XStack>
           ))}
-        </View>
+        </XStack>
 
         {isEditing && (
-          <View style={styles.addConditionContainer}>
-            <TextInput
-              style={styles.addConditionInput}
+          <XStack alignItems="center" gap="$2" marginBottom="$5">
+            <Input
+              flex={1}
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={14}
+              color="$color"
+              backgroundColor="$background"
               placeholder="新しい病状を追加..."
               value={newCondition}
               onChangeText={onNewConditionChange}
             />
-            <TouchableOpacity
-              style={styles.addConditionButton}
+            <YStack
+              width={36}
+              height={36}
+              borderRadius={18}
+              backgroundColor="$primary"
+              alignItems="center"
+              justifyContent="center"
+              pressStyle={{ opacity: 0.7 }}
               onPress={onAddCondition}
             >
-              <Text style={styles.addConditionButtonText}>+</Text>
-            </TouchableOpacity>
-          </View>
+              <Text fontSize={20} color="white" fontWeight="bold">
+                +
+              </Text>
+            </YStack>
+          </XStack>
         )}
 
         {/* Details */}
-        <Text style={styles.sectionTitle}>詳細情報</Text>
+        <Text fontSize={15} fontWeight="600" color="$color" marginBottom="$3">
+          詳細情報
+        </Text>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>血液型</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            血液型
+          </Text>
           {isEditing ? (
-            <TextInput
-              style={styles.detailInput}
+            <Input
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={15}
+              color="$color"
+              backgroundColor="$background"
               value={data.bloodType}
               onChangeText={(value) => onDataChange('bloodType', value)}
             />
           ) : (
-            <Text style={styles.detailValue}>{data.bloodType}</Text>
+            <Text fontSize={15} color="$color">
+              {data.bloodType}
+            </Text>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>身長・体重</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            身長・体重
+          </Text>
           {isEditing ? (
-            <View style={styles.heightWeightContainer}>
-              <TextInput
-                style={styles.heightWeightInput}
+            <XStack alignItems="center" gap="$2">
+              <Input
+                flex={1}
+                borderWidth={1}
+                borderColor="$borderColor"
+                borderRadius="$2"
+                paddingHorizontal="$3"
+                paddingVertical="$2"
+                fontSize={15}
+                color="$color"
+                backgroundColor="$background"
                 value={data.height}
                 onChangeText={(value) => onDataChange('height', value)}
                 keyboardType="numeric"
                 placeholder="170"
               />
-              <Text style={styles.heightWeightSeparator}>/</Text>
-              <TextInput
-                style={styles.heightWeightInput}
+              <Text fontSize={15} color="$colorSecondary">/</Text>
+              <Input
+                flex={1}
+                borderWidth={1}
+                borderColor="$borderColor"
+                borderRadius="$2"
+                paddingHorizontal="$3"
+                paddingVertical="$2"
+                fontSize={15}
+                color="$color"
+                backgroundColor="$background"
                 value={data.weight}
                 onChangeText={(value) => onDataChange('weight', value)}
                 keyboardType="numeric"
                 placeholder="65"
               />
-            </View>
+            </XStack>
           ) : (
-            <Text style={styles.detailValue}>
+            <Text fontSize={15} color="$color">
               {data.height}cm / {data.weight}kg
             </Text>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>BMI</Text>
-          <Text style={styles.detailValue}>{calculateBMI()}</Text>
-        </View>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            BMI
+          </Text>
+          <Text fontSize={15} color="$color">
+            {calculateBMI()}
+          </Text>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>アレルギー</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            アレルギー
+          </Text>
           {isEditing ? (
-            <TextInput
-              style={styles.detailInput}
+            <Input
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={15}
+              color="$color"
+              backgroundColor="$background"
               value={data.allergies}
               onChangeText={(value) => onDataChange('allergies', value)}
               placeholder="ペニシリン、花粉"
             />
           ) : (
-            <Text style={styles.detailValue}>{data.allergies}</Text>
+            <Text fontSize={15} color="$color">
+              {data.allergies}
+            </Text>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>服用薬</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            服用薬
+          </Text>
           {isEditing ? (
-            <TextInput
-              style={styles.detailInput}
+            <Input
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={15}
+              color="$color"
+              backgroundColor="$background"
               value={data.medications}
               onChangeText={(value) => onDataChange('medications', value)}
               placeholder="降圧剤、ビタミンD"
             />
           ) : (
-            <Text style={styles.detailValue}>{data.medications}</Text>
+            <Text fontSize={15} color="$color">
+              {data.medications}
+            </Text>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>障害情報</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            障害情報
+          </Text>
           {isEditing ? (
-            <TextInput
-              style={styles.detailInput}
+            <Input
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={15}
+              color="$color"
+              backgroundColor="$background"
               value={data.disability}
               onChangeText={(value) => onDataChange('disability', value)}
               placeholder="軽度の歩行障害"
             />
           ) : (
-            <Text style={styles.detailValue}>{data.disability}</Text>
+            <Text fontSize={15} color="$color">
+              {data.disability}
+            </Text>
           )}
-        </View>
+        </YStack>
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>注意事項</Text>
+        <YStack marginBottom="$4">
+          <Text fontSize={13} color="$colorSecondary" marginBottom="$1">
+            注意事項
+          </Text>
           {isEditing ? (
-            <TextInput
-              style={[styles.detailInput, styles.detailInputMultiline]}
+            <Input
+              borderWidth={1}
+              borderColor="$borderColor"
+              borderRadius="$2"
+              paddingHorizontal="$3"
+              paddingVertical="$2"
+              fontSize={15}
+              color="$color"
+              backgroundColor="$background"
               value={data.notes}
               onChangeText={(value) => onDataChange('notes', value)}
               placeholder="長時間の立位は困難、30分ごとに休憩が必要"
               multiline
+              minHeight={60}
             />
           ) : (
-            <Text style={styles.detailValue}>{data.notes}</Text>
+            <Text fontSize={15} color="$color">
+              {data.notes}
+            </Text>
           )}
-        </View>
-      </View>
-    </View>
+        </YStack>
+      </YStack>
+    </YStack>
   );
 }
 

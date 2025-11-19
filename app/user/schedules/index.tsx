@@ -4,13 +4,12 @@ import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNa
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { YStack } from 'tamagui';
 import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
 import { NextScheduleCard } from './(components)/NextScheduleCard/NextScheduleCard';
 import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
 import { SchedulesPageHeader } from './(components)/SchedulesPageHeader/SchedulesPageHeader';
 import { SchedulesSearchBar } from './(components)/SchedulesSearchBar/SchedulesSearchBar';
-import { styles } from './styles';
 
 export default function SchedulesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,7 +29,7 @@ export default function SchedulesScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
+      <YStack flex={1} backgroundColor="$backgroundSecondary">
         <UserHomeLayout>
           <AppHeader />
 
@@ -40,12 +39,12 @@ export default function SchedulesScreen() {
           />
 
           {/* Next Schedule Card */}
-          <View style={styles.section}>
+          <YStack paddingHorizontal="$4" marginTop="$4">
             <NextScheduleCard
               title="午後のリハビリテーション"
               time="14:00 - 15:00"
             />
-          </View>
+          </YStack>
 
           <SchedulesSearchBar
             value={searchQuery}
@@ -65,7 +64,7 @@ export default function SchedulesScreen() {
           visible={showAddModal}
           onClose={() => setShowAddModal(false)}
         />
-      </View>
+      </YStack>
     </>
   );
 }

@@ -5,12 +5,11 @@ import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNa
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { YStack, Text } from 'tamagui';
 import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
 import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
 import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
 import { NotificationsPagination } from './(components)/NotificationsPagination/NotificationsPagination';
-import { styles } from './styles';
 
 export default function NotificationsScreen() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
@@ -36,14 +35,21 @@ export default function NotificationsScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
+      <YStack flex={1} backgroundColor="$backgroundSecondary">
         <UserHomeLayout>
           <AppHeader />
 
           {/* Page Title */}
-          <View style={styles.pageHeader}>
-            <Text style={styles.pageTitle}>通知</Text>
-          </View>
+          <YStack
+            paddingHorizontal="$4"
+            paddingTop="$6"
+            paddingBottom="$4"
+            backgroundColor="$background"
+          >
+            <Text fontSize={28} fontWeight="bold" color="$color">
+              通知
+            </Text>
+          </YStack>
 
           <NotificationsActionsBar
             unreadCount={unreadCount}
@@ -68,7 +74,7 @@ export default function NotificationsScreen() {
         </UserHomeLayout>
 
         <BottomNavigation activeTab="notification" />
-      </View>
+      </YStack>
     </>
   );
 }

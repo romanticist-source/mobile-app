@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { YStack, XStack, Text, Button } from 'tamagui';
 import { CategoryBadge } from '../CategoryBadge/CategoryBadge';
 import type { Schedule } from '@/_schema/schedule';
-import { styles } from './styles';
 
 interface ScheduleCardProps {
   schedule: Schedule;
@@ -12,33 +11,63 @@ interface ScheduleCardProps {
 
 export function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
   return (
-    <View style={styles.card}>
-      <View style={styles.content}>
-        <View style={styles.leftSection}>
+    <YStack
+      backgroundColor="$background"
+      borderRadius="$3"
+      padding="$4"
+      marginBottom="$3"
+      shadowColor="$shadowColor"
+      shadowOffset={{ width: 0, height: 1 }}
+      shadowOpacity={0.05}
+      shadowRadius={3}
+      elevation={2}
+    >
+      <XStack
+        justifyContent="space-between"
+        alignItems="flex-start"
+        marginBottom="$2"
+      >
+        <XStack alignItems="center" gap="$3">
           <CategoryBadge category={schedule.category} />
-          <View style={styles.timeContainer}>
-            <Text style={styles.timeIcon}>🕐</Text>
-            <Text style={styles.time}>{schedule.time}</Text>
-          </View>
-        </View>
-        <View style={styles.actions}>
+          <XStack alignItems="center" gap="$1">
+            <Text fontSize={14}>🕐</Text>
+            <Text fontSize={14} color="$colorSecondary">
+              {schedule.time}
+            </Text>
+          </XStack>
+        </XStack>
+        <XStack gap="$3">
           {onEdit && (
-            <TouchableOpacity onPress={onEdit} style={styles.actionButton}>
-              <Text style={styles.actionIcon}>✏️</Text>
-            </TouchableOpacity>
+            <Button
+              padding="$1"
+              backgroundColor="transparent"
+              onPress={onEdit}
+              unstyled
+            >
+              <Text fontSize={20}>✏️</Text>
+            </Button>
           )}
           {onDelete && (
-            <TouchableOpacity onPress={onDelete} style={styles.actionButton}>
-              <Text style={styles.actionIcon}>🗑️</Text>
-            </TouchableOpacity>
+            <Button
+              padding="$1"
+              backgroundColor="transparent"
+              onPress={onDelete}
+              unstyled
+            >
+              <Text fontSize={20}>🗑️</Text>
+            </Button>
           )}
-        </View>
-      </View>
-      <Text style={styles.title}>{schedule.title}</Text>
+        </XStack>
+      </XStack>
+      <Text fontSize={16} fontWeight="600" color="$color" marginBottom="$1">
+        {schedule.title}
+      </Text>
       {schedule.description && (
-        <Text style={styles.description}>{schedule.description}</Text>
+        <Text fontSize={14} color="$colorSecondary">
+          {schedule.description}
+        </Text>
       )}
-    </View>
+    </YStack>
   );
 }
 

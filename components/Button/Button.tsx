@@ -1,6 +1,6 @@
 import React from "react";
-import { TouchableOpacity, Text, GestureResponderEvent } from "react-native";
-import { styles } from './styles';
+import { GestureResponderEvent } from "react-native";
+import { Button as TamaguiButton, Text } from "tamagui";
 
 type ButtonProps = {
   title: string;
@@ -10,13 +10,18 @@ type ButtonProps = {
 
 export const Button: React.FC<ButtonProps> = ({ title, onPress, variant = "primary" }) => {
   return (
-    <TouchableOpacity
-      style={[styles.button, variant === "secondary" && styles.secondary]}
+    <TamaguiButton
+      backgroundColor={variant === "primary" ? "$primary" : "$colorSecondary"}
+      paddingVertical="$2.5"
+      paddingHorizontal="$5"
+      borderRadius="$2"
       onPress={onPress}
-      activeOpacity={0.8}
+      pressStyle={{ opacity: 0.8 }}
     >
-      <Text style={styles.text}>{title}</Text>
-    </TouchableOpacity>
+      <Text color="white" fontSize={16} textAlign="center">
+        {title}
+      </Text>
+    </TamaguiButton>
   );
 };
 

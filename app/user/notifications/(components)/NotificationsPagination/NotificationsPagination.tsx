@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { XStack, Text } from 'tamagui';
 
 interface NotificationsPaginationProps {
   currentPage: number;
@@ -25,40 +24,48 @@ export function NotificationsPagination({
     }
   };
 
+  const isPrevDisabled = currentPage === 1;
+  const isNextDisabled = currentPage === totalPages;
+
   return (
-    <View style={styles.pagination}>
-      <TouchableOpacity
-        style={styles.paginationButton}
-        disabled={currentPage === 1}
-        onPress={handlePrevious}
+    <XStack
+      justifyContent="space-between"
+      alignItems="center"
+      paddingHorizontal="$4"
+      paddingVertical="$5"
+    >
+      <XStack
+        paddingHorizontal="$3"
+        paddingVertical="$2"
+        pressStyle={{ opacity: isPrevDisabled ? 1 : 0.7 }}
+        onPress={isPrevDisabled ? undefined : handlePrevious}
       >
         <Text
-          style={[
-            styles.paginationButtonText,
-            currentPage === 1 && styles.paginationButtonDisabled,
-          ]}
+          fontSize={14}
+          fontWeight="600"
+          color={isPrevDisabled ? "$borderColor" : "$color"}
         >
           ‹ 前へ
         </Text>
-      </TouchableOpacity>
-      <Text style={styles.pageInfo}>
+      </XStack>
+      <Text fontSize={14} color="$colorSecondary">
         {currentPage} / {totalPages} ページ
       </Text>
-      <TouchableOpacity
-        style={styles.paginationButton}
-        disabled={currentPage === totalPages}
-        onPress={handleNext}
+      <XStack
+        paddingHorizontal="$3"
+        paddingVertical="$2"
+        pressStyle={{ opacity: isNextDisabled ? 1 : 0.7 }}
+        onPress={isNextDisabled ? undefined : handleNext}
       >
         <Text
-          style={[
-            styles.paginationButtonText,
-            currentPage === totalPages && styles.paginationButtonDisabled,
-          ]}
+          fontSize={14}
+          fontWeight="600"
+          color={isNextDisabled ? "$borderColor" : "$color"}
         >
           次へ ›
         </Text>
-      </TouchableOpacity>
-    </View>
+      </XStack>
+    </XStack>
   );
 }
 

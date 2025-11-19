@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { styles } from './styles';
+import { XStack, Text } from 'tamagui';
 
 type FilterType = 'all' | 'unread';
 
@@ -17,30 +16,51 @@ export function NotificationsFilters({
     onFilterChange(currentFilter === 'all' ? 'unread' : 'all');
   };
 
+  const isActive = currentFilter === 'unread';
+
   return (
-    <View style={styles.filtersContainer}>
-      <TouchableOpacity style={styles.filterDropdown}>
-        <Text style={styles.filterDropdownText}>すべて</Text>
-        <Text style={styles.dropdownArrow}>⌄</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[
-          styles.filterButton,
-          currentFilter === 'unread' && styles.filterButtonActive,
-        ]}
+    <XStack
+      gap="$3"
+      paddingHorizontal="$4"
+      paddingTop="$4"
+      paddingBottom="$2"
+    >
+      <XStack
+        flex={1}
+        alignItems="center"
+        justifyContent="space-between"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+        borderRadius="$2"
+        backgroundColor="$background"
+        borderWidth={1}
+        borderColor="$borderColor"
+      >
+        <Text fontSize={14} color="$color">すべて</Text>
+        <Text fontSize={16} color="$colorSecondary">⌄</Text>
+      </XStack>
+      <XStack
+        alignItems="center"
+        gap="$1.5"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+        borderRadius="$2"
+        backgroundColor={isActive ? "$primary" : "$background"}
+        borderWidth={1}
+        borderColor={isActive ? "$primary" : "$borderColor"}
+        pressStyle={{ opacity: 0.7 }}
         onPress={toggleFilter}
       >
-        <Text style={styles.filterIcon}>🔍</Text>
+        <Text fontSize={14}>🔍</Text>
         <Text
-          style={[
-            styles.filterButtonText,
-            currentFilter === 'unread' && styles.filterButtonTextActive,
-          ]}
+          fontSize={14}
+          fontWeight="600"
+          color={isActive ? "white" : "$colorSecondary"}
         >
           未読のみ
         </Text>
-      </TouchableOpacity>
-    </View>
+      </XStack>
+    </XStack>
   );
 }
 

@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { styles } from './styles';
+import { YStack, Text, getTokens } from 'tamagui';
 import type { ScheduleCategory } from '@/_schema/schedule';
 
 interface CategoryBadgeProps {
@@ -9,32 +8,32 @@ interface CategoryBadgeProps {
 
 const CATEGORY_COLORS: Record<ScheduleCategory, { background: string; text: string }> = {
   '予定': {
-    background: '#FFE5E5',
-    text: '#FF6B6B',
+    background: '$primaryLight',
+    text: '$primary',
   },
   '休息': {
-    background: '#E0F7F7',
-    text: '#20C9A6',
+    background: '$categoryRestBg',
+    text: '$categoryRest',
   },
   'トイレ': {
-    background: '#E3F2FD',
-    text: '#2196F3',
+    background: '$categoryToiletBg',
+    text: '$categoryToilet',
   },
   '服薬': {
-    background: '#FFF3E0',
-    text: '#F57C00',
+    background: '$categoryMedicineBg',
+    text: '$categoryMedicine',
   },
   '食事': {
-    background: '#F3E5F5',
-    text: '#8E24AA',
+    background: '$categoryFoodBg',
+    text: '$categoryFood',
   },
   '運動': {
-    background: '#E8F5E9',
-    text: '#43A047',
+    background: '$categoryExerciseBg',
+    text: '$categoryExercise',
   },
   'その他': {
-    background: '#F5F5F5',
-    text: '#757575',
+    background: '$backgroundSecondary',
+    text: '$colorSecondary',
   },
 };
 
@@ -42,9 +41,17 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
   const colors = CATEGORY_COLORS[category];
 
   return (
-    <View style={[styles.badge, { backgroundColor: colors.background }]}>
-      <Text style={[styles.badgeText, { color: colors.text }]}>{category}</Text>
-    </View>
+    <YStack
+      paddingHorizontal="$3"
+      paddingVertical="$1"
+      borderRadius="$3"
+      alignSelf="flex-start"
+      backgroundColor={colors.background}
+    >
+      <Text fontSize={12} fontWeight="600" color={colors.text}>
+        {category}
+      </Text>
+    </YStack>
   );
 }
 

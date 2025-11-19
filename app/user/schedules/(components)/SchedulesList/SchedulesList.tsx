@@ -1,8 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
+import { YStack } from 'tamagui';
 import { ScheduleCard } from '../ScheduleCard/ScheduleCard';
 import type { Schedule } from '@/_schema/schedule';
-import { styles } from './styles';
 
 interface SchedulesListProps {
   schedules: Schedule[];
@@ -16,7 +15,7 @@ export function SchedulesList({
   onDelete,
 }: SchedulesListProps) {
   return (
-    <View style={styles.section}>
+    <YStack paddingHorizontal="$4" marginTop="$4">
       {schedules.map((schedule) => (
         <ScheduleCard
           key={schedule.id}
@@ -25,7 +24,7 @@ export function SchedulesList({
           onDelete={() => onDelete(schedule.id)}
         />
       ))}
-    </View>
+    </YStack>
   );
 }
 
