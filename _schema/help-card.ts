@@ -1,13 +1,14 @@
 import { z } from 'zod';
+import { idSchema, userIdSchema } from '@/_util/validations';
 
 // User Help Card Schemas
 export const UserHelpCardSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
+  id: idSchema,
+  userId: userIdSchema,
 });
 
 export const CreateUserHelpCardSchema = z.object({
-  userId: z.string(),
+  userId: userIdSchema,
 });
 
 // Export inferred types

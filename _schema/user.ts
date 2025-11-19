@@ -1,34 +1,51 @@
 import { z } from 'zod';
+import {
+  idSchema,
+  nameSchema,
+  ageSchema,
+  emailSchema,
+  passwordSchema,
+  booleanSchema,
+  isoDateStringSchema,
+  optionalNameSchema,
+  optionalAgeSchema,
+  optionalEmailSchema,
+  optionalPasswordSchema,
+  optionalAddressSchema,
+  optionalCommentSchema,
+  nullableStringSchema,
+  nullableCommentSchema,
+} from '@/_util/validations';
 
 // User Schemas
 export const UserSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  age: z.number(),
-  mail: z.string(),
-  address: z.string().nullable(),
-  comment: z.string().nullable(),
-  createdAt: z.string(),
-  updatedAt: z.string(),
-  isDeleted: z.boolean(),
+  id: idSchema,
+  name: nameSchema,
+  age: ageSchema,
+  mail: emailSchema,
+  address: nullableStringSchema,
+  comment: nullableCommentSchema,
+  createdAt: isoDateStringSchema,
+  updatedAt: isoDateStringSchema,
+  isDeleted: booleanSchema,
 });
 
 export const CreateUserSchema = z.object({
-  name: z.string(),
-  age: z.number(),
-  mail: z.string(),
-  password: z.string(),
-  address: z.string().optional(),
-  comment: z.string().optional(),
+  name: nameSchema,
+  age: ageSchema,
+  mail: emailSchema,
+  password: passwordSchema,
+  address: optionalAddressSchema,
+  comment: optionalCommentSchema,
 });
 
 export const UpdateUserSchema = z.object({
-  name: z.string().optional(),
-  age: z.number().optional(),
-  mail: z.string().optional(),
-  password: z.string().optional(),
-  address: z.string().optional(),
-  comment: z.string().optional(),
+  name: optionalNameSchema,
+  age: optionalAgeSchema,
+  mail: optionalEmailSchema,
+  password: optionalPasswordSchema,
+  address: optionalAddressSchema,
+  comment: optionalCommentSchema,
 });
 
 // Export inferred types

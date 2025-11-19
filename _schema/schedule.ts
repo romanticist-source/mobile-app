@@ -1,62 +1,79 @@
 import { z } from 'zod';
+import {
+  idSchema,
+  userIdSchema,
+  titleSchema,
+  descriptionSchema,
+  booleanSchema,
+  numberSchema,
+  isoDateStringSchema,
+  nullableTitleSchema,
+  nullableDescriptionSchema,
+  optionalTitleSchema,
+  optionalDescriptionSchema,
+  optionalBooleanSchema,
+  optionalNumberSchema,
+  optionalIsoDateStringSchema,
+  optionalNullableStringSchema,
+} from '@/_util/validations';
 
 // Schedule Category Type
 export type ScheduleCategory = '予定' | '休息' | 'トイレ' | '服薬' | '食事' | '運動' | 'その他';
 
 // User Schedule Schemas
 export const UserScheduleSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  title: z.string().nullable(),
-  description: z.string().nullable(),
-  scheduleType: z.string(),
-  isRepeat: z.boolean(),
-  startAt: z.string(),
+  id: idSchema,
+  userId: userIdSchema,
+  title: nullableTitleSchema,
+  description: nullableDescriptionSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }),
+  isRepeat: booleanSchema,
+  startAt: isoDateStringSchema,
 });
 
 export const CreateUserScheduleSchema = z.object({
-  userId: z.string(),
-  title: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
-  scheduleType: z.string(),
-  isRepeat: z.boolean(),
-  startAt: z.string(),
+  userId: userIdSchema,
+  title: optionalNullableStringSchema,
+  description: optionalNullableStringSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }),
+  isRepeat: booleanSchema,
+  startAt: isoDateStringSchema,
 });
 
 export const UpdateUserScheduleSchema = z.object({
-  title: z.string().nullable().optional(),
-  description: z.string().nullable().optional(),
-  scheduleType: z.string().optional(),
-  isRepeat: z.boolean().optional(),
-  startAt: z.string().optional(),
+  title: optionalNullableStringSchema,
+  description: optionalNullableStringSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }).optional(),
+  isRepeat: optionalBooleanSchema,
+  startAt: optionalIsoDateStringSchema,
 });
 
 // User Repeat Schedule Schemas
 export const UserRepeatScheduleSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  title: z.string(),
-  description: z.string(),
-  scheduleType: z.string(),
-  interval: z.number(),
-  scheduleTime: z.string(),
+  id: idSchema,
+  userId: userIdSchema,
+  title: titleSchema,
+  description: descriptionSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }),
+  interval: numberSchema,
+  scheduleTime: z.string().min(1, { message: 'Schedule time is required' }),
 });
 
 export const CreateUserRepeatScheduleSchema = z.object({
-  userId: z.string(),
-  title: z.string(),
-  description: z.string(),
-  scheduleType: z.string(),
-  interval: z.number(),
-  scheduleTime: z.string(),
+  userId: userIdSchema,
+  title: titleSchema,
+  description: descriptionSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }),
+  interval: numberSchema,
+  scheduleTime: z.string().min(1, { message: 'Schedule time is required' }),
 });
 
 export const UpdateUserRepeatScheduleSchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  scheduleType: z.string().optional(),
-  interval: z.number().optional(),
-  scheduleTime: z.string().optional(),
+  title: optionalTitleSchema,
+  description: optionalDescriptionSchema,
+  scheduleType: z.string().min(1, { message: 'Schedule type is required' }).optional(),
+  interval: optionalNumberSchema,
+  scheduleTime: z.string().min(1, { message: 'Schedule time is required' }).optional(),
 });
 
 // Export inferred types

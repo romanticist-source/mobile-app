@@ -1,29 +1,42 @@
 import { z } from 'zod';
+import {
+  idSchema,
+  nameSchema,
+  nicknameSchema,
+  phoneNumberSchema,
+  emailSchema,
+  relationshipSchema,
+  optionalNameSchema,
+  optionalNicknameSchema,
+  optionalPhoneNumberSchema,
+  optionalEmailSchema,
+  optionalRelationshipSchema,
+} from '@/_util/validations';
 
 // Helper Schemas
 export const HelperSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  nickname: z.string(),
-  phoneNumber: z.string(),
-  email: z.string(),
-  relationship: z.string(),
+  id: idSchema,
+  name: nameSchema,
+  nickname: nicknameSchema,
+  phoneNumber: phoneNumberSchema,
+  email: emailSchema,
+  relationship: relationshipSchema,
 });
 
 export const CreateHelperSchema = z.object({
-  name: z.string(),
-  nickname: z.string(),
-  phoneNumber: z.string(),
-  email: z.string(),
-  relationship: z.string(),
+  name: nameSchema,
+  nickname: nicknameSchema,
+  phoneNumber: phoneNumberSchema,
+  email: emailSchema,
+  relationship: relationshipSchema,
 });
 
 export const UpdateHelperSchema = z.object({
-  name: z.string().optional(),
-  nickname: z.string().optional(),
-  phoneNumber: z.string().optional(),
-  email: z.string().optional(),
-  relationship: z.string().optional(),
+  name: optionalNameSchema,
+  nickname: optionalNicknameSchema,
+  phoneNumber: optionalPhoneNumberSchema,
+  email: optionalEmailSchema,
+  relationship: optionalRelationshipSchema,
 });
 
 // Export inferred types

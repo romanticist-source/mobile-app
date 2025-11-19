@@ -1,41 +1,48 @@
 import { z } from 'zod';
+import {
+  idSchema,
+  userIdSchema,
+  nameSchema,
+  nullableStringSchema,
+  optionalNullableStringSchema,
+} from '@/_util/validations';
 
 // User Status Card Schemas
 export const UserStatusCardSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  bloodType: z.string().nullable(),
-  allergy: z.string().nullable(),
-  medicine: z.string().nullable(),
+  id: idSchema,
+  userId: userIdSchema,
+  bloodType: nullableStringSchema,
+  allergy: nullableStringSchema,
+  medicine: nullableStringSchema,
 });
 
 export const CreateUserStatusCardSchema = z.object({
-  userId: z.string(),
-  bloodType: z.string().nullable().optional(),
-  allergy: z.string().nullable().optional(),
-  medicine: z.string().nullable().optional(),
+  userId: userIdSchema,
+  bloodType: optionalNullableStringSchema,
+  allergy: optionalNullableStringSchema,
+  medicine: optionalNullableStringSchema,
 });
 
 export const UpdateUserStatusCardSchema = z.object({
-  bloodType: z.string().nullable().optional(),
-  allergy: z.string().nullable().optional(),
-  medicine: z.string().nullable().optional(),
+  bloodType: optionalNullableStringSchema,
+  allergy: optionalNullableStringSchema,
+  medicine: optionalNullableStringSchema,
 });
 
 // User Status Card Disease Schemas
 export const UserStatusCardDiseaseSchema = z.object({
-  id: z.string(),
-  userStatusCardId: z.string(),
-  name: z.string(),
+  id: idSchema,
+  userStatusCardId: idSchema,
+  name: nameSchema,
 });
 
 export const CreateUserStatusCardDiseaseSchema = z.object({
-  userStatusCardId: z.string(),
-  name: z.string(),
+  userStatusCardId: idSchema,
+  name: nameSchema,
 });
 
 export const UpdateUserStatusCardDiseaseSchema = z.object({
-  name: z.string(),
+  name: nameSchema,
 });
 
 // Export inferred types

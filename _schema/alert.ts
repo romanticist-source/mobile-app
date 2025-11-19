@@ -1,29 +1,40 @@
 import { z } from 'zod';
+import {
+  idSchema,
+  userIdSchema,
+  titleSchema,
+  descriptionSchema,
+  numberSchema,
+  isoDateStringSchema,
+  optionalTitleSchema,
+  optionalDescriptionSchema,
+  optionalNumberSchema,
+} from '@/_util/validations';
 
 // Alert History Schemas
 export const AlertHistorySchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  title: z.string(),
-  description: z.string(),
-  importance: z.number(),
-  alertType: z.string(),
-  createdAt: z.string(),
+  id: idSchema,
+  userId: userIdSchema,
+  title: titleSchema,
+  description: descriptionSchema,
+  importance: numberSchema,
+  alertType: z.string().min(1, { message: 'Alert type is required' }),
+  createdAt: isoDateStringSchema,
 });
 
 export const CreateAlertHistorySchema = z.object({
-  userId: z.string(),
-  title: z.string(),
-  description: z.string(),
-  importance: z.number(),
-  alertType: z.string(),
+  userId: userIdSchema,
+  title: titleSchema,
+  description: descriptionSchema,
+  importance: numberSchema,
+  alertType: z.string().min(1, { message: 'Alert type is required' }),
 });
 
 export const UpdateAlertHistorySchema = z.object({
-  title: z.string().optional(),
-  description: z.string().optional(),
-  importance: z.number().optional(),
-  alertType: z.string().optional(),
+  title: optionalTitleSchema,
+  description: optionalDescriptionSchema,
+  importance: optionalNumberSchema,
+  alertType: z.string().min(1, { message: 'Alert type is required' }).optional(),
 });
 
 // Export inferred types
