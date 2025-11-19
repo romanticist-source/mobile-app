@@ -54,11 +54,30 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
+  saveButton: {
+    padding: xs,
+  },
+  saveButtonText: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: lg,
+    paddingTop: md,
+  },
+  switchField: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: md,
+    marginBottom: md,
+  },
+  switchLabel: {
+    fontSize: fontMd,
+    fontWeight: '500',
+    color: textPrimary,
   },
   iconContainer: {
     width: iconContainerSize,

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Modal,
   View,
   Text,
-  TextInput,
   TouchableOpacity,
 } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Form, FormInput, FormTextArea, FormDateTimePicker } from '@/components/forms';
+import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
 
 interface AddScheduleModalProps {
@@ -14,15 +17,22 @@ interface AddScheduleModalProps {
 }
 
 export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
-  const [title, setTitle] = useState('');
-  const [startTime] = useState('');
-  const [endTime] = useState('');
-  const [memo, setMemo] = useState('');
+  const form = useForm<AddScheduleFormData>({
+    resolver: zodResolver(addScheduleFormSchema),
+    defaultValues: {
+      title: '',
+      scheduleType: '予定',
+      isRepeat: false,
+      memo: '',
+    },
+  });
 
-  const handleSave = () => {
-    console.log('Save schedule:', { title, startTime, endTime, memo });
+  const handleSave = form.handleSubmit((data) => {
+    console.log('Save schedule:', data);
+    // TODO: API call to save schedule
+    form.reset();
     onClose();
-  };
+  });
 
   return (
     <Modal
@@ -44,36 +54,28 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
         </View>
 
         {/* Modal Content */}
-        <View style={styles.modalContent}>
-          {/* Title Field */}
-          <View style={styles.formField}>
-            <Text style={styles.fieldLabel}>タイトル</Text>
-            <TextInput
-              style={styles.fieldInput}
-              value={title}
-              onChangeText={setTitle}
-              placeholder=""
-              placeholderTextColor="#CCCCCC"
-            />
-          </View>
+        <Form form={form} onSubmit={handleSave} style={styles.modalContent}>
+          <FormInput
+            name="title"
+            label="タイトル"
+            required
+            placeholder="スケジュールのタイトルを入力"
+          />
 
-          {/* Start Time Field */}
-          <View style={styles.formField}>
-            <Text style={styles.fieldLabel}>開始</Text>
-            <TouchableOpacity style={styles.fieldInput}>
-              <Text style={styles.fieldPlaceholder}>{startTime || ''}</Text>
-            </TouchableOpacity>
-          </View>
+          <FormDateTimePicker
+            name="startTime"
+            label="開始"
+            required
+            mode="time"
+          />
 
-          {/* End Time Field */}
-          <View style={styles.formField}>
-            <Text style={styles.fieldLabel}>終了</Text>
-            <TouchableOpacity style={styles.fieldInput}>
-              <Text style={styles.fieldPlaceholder}>{endTime || ''}</Text>
-            </TouchableOpacity>
-          </View>
+          <FormDateTimePicker
+            name="endTime"
+            label="終了"
+            required
+            mode="time"
+          />
 
-          {/* Repeat Field */}
           <View style={styles.formField}>
             <Text style={styles.fieldLabel}>繰り返し</Text>
             <TouchableOpacity style={styles.fieldSelector}>
@@ -82,20 +84,13 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
             </TouchableOpacity>
           </View>
 
-          {/* Memo Field */}
-          <View style={styles.formField}>
-            <Text style={styles.fieldLabel}>メモ</Text>
-            <TextInput
-              style={[styles.fieldInput, styles.fieldTextArea]}
-              value={memo}
-              onChangeText={setMemo}
-              placeholder="備考や注意事項を入力..."
-              placeholderTextColor="#CCCCCC"
-              multiline
-              numberOfLines={4}
-            />
-          </View>
-        </View>
+          <FormTextArea
+            name="memo"
+            label="メモ"
+            placeholder="備考や注意事項を入力..."
+            numberOfLines={4}
+          />
+        </Form>
       </View>
     </Modal>
   );

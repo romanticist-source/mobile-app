@@ -54,11 +54,29 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
+  saveButton: {
+    padding: xs,
+  },
+  saveButtonText: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
   content: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingHorizontal: lg,
+    paddingTop: md,
+  },
+  infoBox: {
+    backgroundColor: '#FFF3CD',
+    borderRadius: 8,
+    padding: md,
+    marginTop: md,
+  },
+  infoText: {
+    fontSize: 13,
+    color: '#856404',
+    lineHeight: 18,
   },
   iconContainer: {
     width: iconContainerSize,
