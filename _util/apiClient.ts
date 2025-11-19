@@ -8,9 +8,16 @@ const createApiError = (errorMessage: string, errorCode: number) => {
     return error;
 };
 
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+
 // Axiosクライアントのインスタンスを作成
 const createApiClient = (): AxiosInstance => {
-    const client = axios.create();
+    const client = axios.create({
+        baseURL: API_BASE_URL,
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
 
     // 成功時のハンドラー
     const handleSuccess = (response: AxiosResponse) => response;
@@ -53,6 +60,15 @@ export const apiPost = async (url: string, data?: unknown) => {
 export const apiPut = async (url: string, data?: unknown) => {
     try {
         const response = await apiClient.put(url, data);
+        return response.data;
+    } catch (error) {
+        return Promise.reject(error);
+    }
+};
+
+export const apiPatch = async (url: string, data?: unknown) => {
+    try {
+        const response = await apiClient.patch(url, data);
         return response.data;
     } catch (error) {
         return Promise.reject(error);

@@ -265,6 +265,161 @@ export default function ExampleScreen() {
 - Use `@/` path alias for imports: `@/_schema/...` and `@/api/__mock__/...`
 - Mock data should be realistic and representative of actual use cases
 
+### API Client Functions
+
+**Directory Structure**:
+```
+api/                           # API client functions (generated from OpenAPI)
+├── users.ts                    # Users API endpoints
+├── helpers.ts                  # Helpers API endpoints
+├── emergency-contacts.ts       # Emergency Contacts API endpoints
+├── user-status-cards.ts        # User Status Cards + Diseases API endpoints
+├── user-schedules.ts           # User Schedules + Repeat Schedules API endpoints
+├── alerts.ts                   # Alert History API endpoints
+├── user-help-cards.ts          # User Help Cards API endpoints
+├── helpers.ts                  # Shared API helper utilities
+└── index.ts                    # Barrel export
+
+_util/
+└── apiClient.ts                # Base API client with helper functions
+```
+
+**API Function Pattern**:
+All API functions follow a consistent pattern based on the OpenAPI specification (`/backend/openapi.json`):
+
+```typescript
+/**
+ * [Resource Name] API
+ * HAL Backend API - [Resource] endpoints
+ */
+
+import { apiGet, apiPost, apiPut, apiDelete, apiPatch } from '@/_util/apiClient';
+import type { Resource, CreateResource, UpdateResource } from '@/_schema';
+
+// GET all resources
+export const getResources = async (): Promise<Resource[]> => {
+  return apiGet('/resources');
+};
+
+// POST create resource
+export const createResource = async (data: CreateResource): Promise<Resource> => {
+  return apiPost('/resources', data);
+};
+
+// GET resource by ID
+export const getResourceById = async (id: string): Promise<Resource> => {
+  return apiGet(`/resources/${id}`);
+};
+
+// PUT update resource
+export const updateResource = async (id: string, data: UpdateResource): Promise<Resource> => {
+  return apiPut(`/resources/${id}`, data);
+};
+
+// DELETE resource
+export const deleteResource = async (id: string): Promise<{ success: boolean }> => {
+  return apiDelete(`/resources/${id}`);
+};
+```
+
+**Available API Client Helpers** (from `@/_util/apiClient`):
+- `apiGet<T>(url: string): Promise<T>` - HTTP GET requests
+- `apiPost<T>(url: string, data: any): Promise<T>` - HTTP POST requests
+- `apiPut<T>(url: string, data: any): Promise<T>` - HTTP PUT requests
+- `apiPatch<T>(url: string, data?: any): Promise<T>` - HTTP PATCH requests
+- `apiDelete<T>(url: string): Promise<T>` - HTTP DELETE requests
+
+**Naming Conventions**:
+- Function names follow REST conventions: `get`, `create`, `update`, `delete`
+- Use descriptive suffixes: `ById`, `ByEmail`, `ByUserId`, etc.
+- Group related endpoints in the same file (e.g., status cards + diseases)
+- Keep function names concise but clear about what they do
+
+**Example - User Status Cards API** (`_api/user-status-cards.ts`):
+
+```typescript
+import { apiGet, apiPost, apiPut, apiDelete } from '@/_util/apiClient';
+import type {
+  UserStatusCard,
+  CreateUserStatusCard,
+  UpdateUserStatusCard,
+  UserStatusCardDisease,
+  CreateUserStatusCardDisease,
+  UpdateUserStatusCardDisease,
+} from '@/_schema';
+
+// User Status Cards
+export const getUserStatusCards = async (): Promise<UserStatusCard[]> => {
+  return apiGet('/user-status-cards/status-cards');
+};
+
+export const createUserStatusCard = async (data: CreateUserStatusCard): Promise<UserStatusCard> => {
+  return apiPost('/user-status-cards/status-cards', data);
+};
+
+export const getUserStatusCardById = async (id: string): Promise<UserStatusCard> => {
+  return apiGet(`/user-status-cards/status-cards/${id}`);
+};
+
+export const updateUserStatusCard = async (id: string, data: UpdateUserStatusCard): Promise<UserStatusCard> => {
+  return apiPut(`/user-status-cards/status-cards/${id}`, data);
+};
+
+export const deleteUserStatusCard = async (id: string): Promise<{ success: boolean }> => {
+  return apiDelete(`/user-status-cards/status-cards/${id}`);
+};
+
+export const getUserStatusCardByUserId = async (userId: string): Promise<UserStatusCard> => {
+  return apiGet(`/user-status-cards/status-cards/user/${userId}`);
+};
+
+// User Status Card Diseases
+export const getUserStatusCardDiseases = async (): Promise<UserStatusCardDisease[]> => {
+  return apiGet('/user-status-cards/diseases');
+};
+
+export const createUserStatusCardDisease = async (data: CreateUserStatusCardDisease): Promise<UserStatusCardDisease> => {
+  return apiPost('/user-status-cards/diseases', data);
+};
+
+export const getUserStatusCardDiseaseById = async (id: string): Promise<UserStatusCardDisease> => {
+  return apiGet(`/user-status-cards/diseases/${id}`);
+};
+
+export const updateUserStatusCardDisease = async (
+  id: string,
+  data: UpdateUserStatusCardDisease
+): Promise<UserStatusCardDisease> => {
+  return apiPut(`/user-status-cards/diseases/${id}`, data);
+};
+
+export const deleteUserStatusCardDisease = async (id: string): Promise<{ success: boolean }> => {
+  return apiDelete(`/user-status-cards/diseases/${id}`);
+};
+
+export const getUserStatusCardDiseasesByStatusCardId = async (statusCardId: string): Promise<UserStatusCardDisease[]> => {
+  return apiGet(`/user-status-cards/diseases/status-card/${statusCardId}`);
+};
+```
+
+**Generating API Functions from OpenAPI**:
+1. Reference the OpenAPI specification at `/backend/openapi.json`
+2. For each endpoint group (tag), create a corresponding file in `_api/`
+3. Import required types from `@/_schema`
+4. Use appropriate HTTP method helper (`apiGet`, `apiPost`, etc.)
+5. Match endpoint paths exactly as defined in OpenAPI
+6. Use TypeScript generics for proper type safety
+7. Group related endpoints (e.g., main resource + sub-resources) in the same file
+
+**Important Notes**:
+- ALWAYS use the API client helpers from `@/_util/apiClient`
+- NEVER make raw fetch calls or use axios directly
+- Import types from `@/_schema`, not from the API files
+- Keep one endpoint group per file for maintainability
+- Use descriptive function names that clearly indicate the operation
+- All API functions should be async and return Promises
+- Include proper JSDoc comments for complex endpoints
+
 ## Important Patterns
 
 ### Adding New Screens
