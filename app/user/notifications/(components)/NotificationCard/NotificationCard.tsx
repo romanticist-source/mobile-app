@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import type { Notification, NotificationPriority } from '@/_schema/notification';
+import type { AlertHistory } from '@/_schema/alert';
 import { styles } from './styles';
+import { NotificationPriority } from '@/_schema/notification';
 
 interface NotificationCardProps {
-  notification: Notification;
+  alert: AlertHistory;
   onPress?: () => void;
 }
 
@@ -19,14 +20,14 @@ const STATUS_COLORS = {
   read: '#CCCCCC',
 };
 
-export function NotificationCard({ notification, onPress }: NotificationCardProps) {
-  const isUnread = notification.status === 'unread';
+export function NotificationCard({ alert, onPress }: NotificationCardProps) {
+  const isUnread = alert.importance === 1;
   const dotColor = isUnread
-    ? PRIORITY_COLORS[notification.priority]
+    ? PRIORITY_COLORS[alert.importance]
     : STATUS_COLORS.read;
 
   const borderColor = isUnread
-    ? PRIORITY_COLORS[notification.priority]
+    ? PRIORITY_COLORS[alert.importance]
     : '#E0E0E0';
 
   return (
@@ -41,21 +42,16 @@ export function NotificationCard({ notification, onPress }: NotificationCardProp
       <View style={styles.leftSection}>
         <View style={[styles.dot, { backgroundColor: dotColor }]} />
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>{notification.icon}</Text>
+          <Text style={styles.icon}>{alert.alertType}</Text>
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{notification.title}</Text>
-          {notification.badge && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>{notification.badge}</Text>
-            </View>
-          )}
+          <Text style={styles.title}>{alert.title}</Text>
         </View>
         <Text style={styles.meta}>
-          {notification.source} • {notification.timeAgo}
+          {alert.alertType} • {alert.createdAt}
         </Text>
       </View>
 

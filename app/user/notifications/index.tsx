@@ -1,5 +1,5 @@
-import { mockNotifications } from '@/_api/__mock__/notification';
-import type { Notification } from '@/_schema/notification';
+import { mockNotifications } from '@/api/__mock__/alert';
+import type { AlertHistory } from '@/_schema/alert';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
@@ -19,17 +19,17 @@ export default function NotificationsScreen() {
 
   const notifications = mockNotifications;
 
-  const unreadCount = notifications.filter((n) => n.status === 'unread').length;
+  const unreadCount = notifications.filter((n) => n.importance === 1).length;
   const filteredNotifications =
     filter === 'unread'
-      ? notifications.filter((n) => n.status === 'unread')
+      ? notifications.filter((n) => n.importance === 1)
       : notifications;
 
   const handleMarkAllRead = () => {
     console.log('Mark all as read');
   };
 
-  const handleNotificationPress = (notification: Notification) => {
+  const handleNotificationPress = (notification: AlertHistory) => {
     console.log('Notification pressed:', notification.id);
   };
 
@@ -56,7 +56,7 @@ export default function NotificationsScreen() {
           />
 
           <NotificationsList
-            notifications={filteredNotifications}
+            alerts={filteredNotifications}
             onNotificationPress={handleNotificationPress}
           />
 
