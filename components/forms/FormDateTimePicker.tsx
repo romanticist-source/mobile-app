@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Platform, Modal } from 'react-native';
+import { Platform, Modal as RNModal } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useController, useFormContext } from 'react-hook-form';
-import { styles } from './styles';
+import { YStack, XStack, Text, Button, Input, Label } from 'tamagui';
 
 interface FormDateTimePickerProps {
   name: string;
@@ -59,23 +59,40 @@ export function FormDateTimePicker({
   };
 
   return (
-    <View style={styles.formField}>
+    <YStack gap="$2" marginBottom="$4">
       {label && (
-        <Text style={styles.fieldLabel}>
+        <Label htmlFor={name} fontSize="$3" fontWeight="500" color="$color">
           {label}
-          {required && <Text style={styles.required}>*</Text>}
+          {required && (
+            <Text color="$red10" marginLeft="$1">
+              *
+            </Text>
+          )}
+        </Label>
+      )}
+
+      <Input
+        id={name}
+        value={formatValue(value)}
+        placeholder="選択してください"
+        editable={false}
+        onPress={() => setShow(true)}
+        pressStyle={{ borderColor: '$blue9' }}
+        borderColor={error ? '$red9' : '$borderColor'}
+        backgroundColor="$background"
+        color="$color"
+        fontSize="$4"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+        borderRadius="$4"
+        cursor="pointer"
+      />
+
+      {error && (
+        <Text color="$red10" fontSize="$2" marginTop="$1">
+          {error.message}
         </Text>
       )}
-      <TouchableOpacity
-        style={[styles.fieldInput, styles.dateTimePickerButton, error && styles.fieldInputError]}
-        onPress={() => setShow(true)}
-      >
-        <Text style={value ? styles.fieldValue : styles.fieldPlaceholder}>
-          {formatValue(value) || '選択してください'}
-        </Text>
-        <Text style={styles.dateTimePickerIcon}>🕐</Text>
-      </TouchableOpacity>
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
 
       {/* Android: Native Picker */}
       {show && Platform.OS === 'android' && (
@@ -89,35 +106,56 @@ export function FormDateTimePicker({
 
       {/* iOS: Modal Picker */}
       {show && Platform.OS === 'ios' && (
-        <Modal
+        <RNModal
           transparent
           animationType="slide"
           visible={show}
           onRequestClose={handleDismiss}
         >
-          <TouchableOpacity
-            style={styles.modalOverlay}
-            activeOpacity={1}
+          <YStack
+            flex={1}
+            backgroundColor="rgba(0, 0, 0, 0.5)"
+            justifyContent="flex-end"
             onPress={handleDismiss}
           >
-            <View style={styles.modalContent}>
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>{label || '時刻を選択'}</Text>
-                <TouchableOpacity onPress={handleDismiss}>
-                  <Text style={styles.modalDoneButton}>完了</Text>
-                </TouchableOpacity>
-              </View>
+            <YStack
+              backgroundColor="$background"
+              borderTopLeftRadius="$6"
+              borderTopRightRadius="$6"
+              paddingBottom="$10"
+            >
+              <XStack
+                justifyContent="space-between"
+                alignItems="center"
+                paddingHorizontal="$4"
+                paddingVertical="$4"
+                borderBottomWidth={1}
+                borderBottomColor="$borderColor"
+              >
+                <Text fontSize="$6" fontWeight="600" color="$color">
+                  {label || '時刻を選択'}
+                </Text>
+                <Button
+                  size="$3"
+                  chromeless
+                  color="$blue10"
+                  fontWeight="600"
+                  onPress={handleDismiss}
+                >
+                  完了
+                </Button>
+              </XStack>
               <DateTimePicker
                 value={value || new Date()}
                 mode={mode}
                 display="spinner"
                 onChange={handleChange}
-                style={styles.iosPicker}
+                themeVariant="light"
               />
-            </View>
-          </TouchableOpacity>
-        </Modal>
+            </YStack>
+          </YStack>
+        </RNModal>
       )}
-    </View>
+    </YStack>
   );
 }

@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, TextInput, TextInputProps } from 'react-native';
+import { TextInputProps } from 'react-native';
 import { useController, useFormContext } from 'react-hook-form';
-import { styles } from './styles';
+import { YStack, Input, Label, Text } from 'tamagui';
 
 interface FormInputProps extends Omit<TextInputProps, 'value' | 'onChangeText'> {
   name: string;
@@ -20,22 +20,43 @@ export function FormInput({ name, label, required, ...rest }: FormInputProps) {
   });
 
   return (
-    <View style={styles.formField}>
+    <YStack gap="$2" marginBottom="$4">
       {label && (
-        <Text style={styles.fieldLabel}>
+        <Label htmlFor={name} fontSize="$3" fontWeight="500" color="$color">
           {label}
-          {required && <Text style={styles.required}>*</Text>}
-        </Text>
+          {required && (
+            <Text color="$red10" marginLeft="$1">
+              *
+            </Text>
+          )}
+        </Label>
       )}
-      <TextInput
-        style={[styles.fieldInput, error && styles.fieldInputError]}
+
+      <Input
+        id={name}
         value={value}
         onChangeText={onChange}
         onBlur={onBlur}
-        placeholderTextColor="#CCCCCC"
+        placeholderTextColor="$gray9"
+        borderColor={error ? '$red9' : '$borderColor'}
+        backgroundColor="$background"
+        color="$color"
+        fontSize="$4"
+        paddingHorizontal="$4"
+        paddingVertical="$3"
+        borderRadius="$4"
+        focusStyle={{
+          borderColor: '$blue9',
+          outlineWidth: 0,
+        }}
         {...rest}
       />
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
-    </View>
+
+      {error && (
+        <Text color="$red10" fontSize="$2" marginTop="$1">
+          {error.message}
+        </Text>
+      )}
+    </YStack>
   );
 }

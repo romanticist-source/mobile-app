@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useController, useFormContext } from 'react-hook-form';
-import { styles } from './styles';
+import { YStack, Label, Text, XStack } from 'tamagui';
 
 export interface SelectOption {
   label: string;
@@ -34,18 +34,33 @@ export function FormSelect({
   });
 
   return (
-    <View style={styles.formField}>
+    <YStack gap="$2" marginBottom="$4">
       {label && (
-        <Text style={styles.fieldLabel}>
+        <Label htmlFor={name} fontSize="$3" fontWeight="500" color="$color">
           {label}
-          {required && <Text style={styles.required}>*</Text>}
-        </Text>
+          {required && (
+            <Text color="$red10" marginLeft="$1">
+              *
+            </Text>
+          )}
+        </Label>
       )}
-      <View style={[styles.fieldInput, error && styles.fieldInputError, styles.pickerContainer]}>
+
+      <XStack
+        borderWidth={1}
+        borderColor={error ? '$red9' : '$borderColor'}
+        borderRadius="$4"
+        backgroundColor="$background"
+        overflow="hidden"
+      >
         <Picker
           selectedValue={value}
           onValueChange={onChange}
-          style={styles.picker}
+          style={{
+            flex: 1,
+            height: Platform.OS === 'ios' ? 200 : 48,
+            color: '#333333',
+          }}
         >
           <Picker.Item
             label={placeholder}
@@ -61,8 +76,13 @@ export function FormSelect({
             />
           ))}
         </Picker>
-      </View>
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
-    </View>
+      </XStack>
+
+      {error && (
+        <Text color="$red10" fontSize="$2" marginTop="$1">
+          {error.message}
+        </Text>
+      )}
+    </YStack>
   );
 }
