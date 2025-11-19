@@ -3,9 +3,21 @@ import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput } from '@/components/forms';
+import { Form, FormInput, FormSelect, SelectOption } from '@/components/forms';
 import { CreateEmergencyContactSchema, CreateEmergencyContact } from '@/_schema/emergency-contact';
 import { styles } from './styles';
+
+const relationshipOptions: SelectOption[] = [
+  { label: '配偶者', value: '配偶者' },
+  { label: '父', value: '父' },
+  { label: '母', value: '母' },
+  { label: '息子', value: '息子' },
+  { label: '娘', value: '娘' },
+  { label: '兄弟', value: '兄弟' },
+  { label: '姉妹', value: '姉妹' },
+  { label: '友人', value: '友人' },
+  { label: 'その他', value: 'その他' },
+];
 
 export default function EmergencyContactScreen() {
   const router = useRouter();
@@ -53,7 +65,7 @@ export default function EmergencyContactScreen() {
 
         {/* Content */}
         <ScrollView style={styles.content}>
-          <Form form={form} onSubmit={handleSave}>
+          <Form form={form}>
             <FormInput
               name="name"
               label="名前"
@@ -61,11 +73,12 @@ export default function EmergencyContactScreen() {
               placeholder="山田 花子"
             />
 
-            <FormInput
+            <FormSelect
               name="relationship"
               label="続柄"
               required
-              placeholder="配偶者、子供、など"
+              options={relationshipOptions}
+              placeholder="続柄を選択"
             />
 
             <FormInput

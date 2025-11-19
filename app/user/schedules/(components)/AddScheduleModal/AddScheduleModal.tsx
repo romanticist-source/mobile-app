@@ -7,9 +7,26 @@ import {
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea, FormDateTimePicker } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, SelectOption } from '@/components/forms';
 import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
+
+const scheduleTypeOptions: SelectOption[] = [
+  { label: '予定', value: '予定' },
+  { label: '休息', value: '休息' },
+  { label: 'トイレ', value: 'トイレ' },
+  { label: '服薬', value: '服薬' },
+  { label: '食事', value: '食事' },
+  { label: '運動', value: '運動' },
+  { label: 'その他', value: 'その他' },
+];
+
+const repeatOptions: SelectOption[] = [
+  { label: 'しない', value: 'none' },
+  { label: '毎日', value: 'daily' },
+  { label: '毎週', value: 'weekly' },
+  { label: '毎月', value: 'monthly' },
+];
 
 interface AddScheduleModalProps {
   visible: boolean;
@@ -17,12 +34,31 @@ interface AddScheduleModalProps {
 }
 
 export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
+  // デフォルトの開始時刻（現在時刻から1時間後）
+  const getDefaultStartTime = () => {
+    const now = new Date();
+    now.setHours(now.getHours() + 1);
+    now.setMinutes(0);
+    now.setSeconds(0);
+    now.setMilliseconds(0);
+    return now;
+  };
+
+  // デフォルトの終了時刻（開始時刻から1時間後）
+  const getDefaultEndTime = () => {
+    const start = getDefaultStartTime();
+    start.setHours(start.getHours() + 1);
+    return start;
+  };
+
   const form = useForm<AddScheduleFormData>({
     resolver: zodResolver(addScheduleFormSchema),
     defaultValues: {
       title: '',
-      scheduleType: '予定',
-      isRepeat: false,
+      scheduleType: '',
+      startTime: getDefaultStartTime(),
+      endTime: getDefaultEndTime(),
+      repeatPattern: 'none',
       memo: '',
     },
   });
@@ -54,12 +90,20 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
         </View>
 
         {/* Modal Content */}
-        <Form form={form} onSubmit={handleSave} style={styles.modalContent}>
+        <Form form={form} style={styles.modalContent}>
           <FormInput
             name="title"
             label="タイトル"
             required
             placeholder="スケジュールのタイトルを入力"
+          />
+
+          <FormSelect
+            name="scheduleType"
+            label="カテゴリ"
+            required
+            options={scheduleTypeOptions}
+            placeholder="カテゴリを選択"
           />
 
           <FormDateTimePicker
@@ -76,13 +120,12 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
             mode="time"
           />
 
-          <View style={styles.formField}>
-            <Text style={styles.fieldLabel}>繰り返し</Text>
-            <TouchableOpacity style={styles.fieldSelector}>
-              <Text style={styles.fieldSelectorText}>しない</Text>
-              <Text style={styles.fieldSelectorArrow}>›</Text>
-            </TouchableOpacity>
-          </View>
+          <FormSelect
+            name="repeatPattern"
+            label="繰り返し"
+            options={repeatOptions}
+            placeholder="繰り返しパターンを選択"
+          />
 
           <FormTextArea
             name="memo"

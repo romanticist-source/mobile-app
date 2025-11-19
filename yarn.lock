@@ -2376,6 +2376,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-picker/picker@npm:2.7.5":
+  version: 2.7.5
+  resolution: "@react-native-picker/picker@npm:2.7.5"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/461cee92d2aeebe64a33948b61b2d8706663c09c3d18181fc32c2650f27096cd02d0b1a69d32fb567d60be74e71a01b1b19eb0202b3b1b1e06f0a748b849ed7a
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.74.87":
   version: 0.74.87
   resolution: "@react-native/assets-registry@npm:0.74.87"
@@ -11847,6 +11857,7 @@ __metadata:
     "@react-native-async-storage/async-storage": "npm:1.23.1"
     "@react-native-community/datetimepicker": "npm:8.0.1"
     "@react-native-community/slider": "npm:4.5.2"
+    "@react-native-picker/picker": "npm:2.7.5"
     "@storybook/addon-ondevice-actions": "npm:^8.3.5"
     "@storybook/addon-ondevice-controls": "npm:^8.3.5"
     "@storybook/react-native": "npm:^8.3.5"

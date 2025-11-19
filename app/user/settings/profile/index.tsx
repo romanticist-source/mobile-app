@@ -50,7 +50,7 @@ export default function ProfileSettingsScreen() {
 
         {/* Content */}
         <ScrollView style={styles.content}>
-          <Form form={form} onSubmit={handleSave}>
+          <Form form={form}>
             <FormInput
               name="name"
               label="名前"

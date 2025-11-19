@@ -3,9 +3,16 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormSelect, SelectOption } from '@/components/forms';
 import { UpdateUserStatusCardSchema, UpdateUserStatusCard } from '@/_schema/user-status-card';
 import { styles } from './styles';
+
+const bloodTypeOptions: SelectOption[] = [
+  { label: 'A型', value: 'A' },
+  { label: 'B型', value: 'B' },
+  { label: 'O型', value: 'O' },
+  { label: 'AB型', value: 'AB' },
+];
 
 export default function HealthProfileScreen() {
   const router = useRouter();
@@ -48,11 +55,12 @@ export default function HealthProfileScreen() {
 
         {/* Content */}
         <ScrollView style={styles.content}>
-          <Form form={form} onSubmit={handleSave}>
-            <FormInput
+          <Form form={form}>
+            <FormSelect
               name="bloodType"
               label="血液型"
-              placeholder="A型、B型、O型、AB型"
+              options={bloodTypeOptions}
+              placeholder="血液型を選択"
             />
 
             <FormTextArea

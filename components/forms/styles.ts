@@ -44,4 +44,56 @@ export const styles = StyleSheet.create({
     color: '#FF3B30',
     marginTop: 4,
   },
+  pickerContainer: {
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    overflow: 'hidden',
+  },
+  picker: {
+    width: '100%',
+    height: 48,
+  },
+  dateTimePickerButton: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateTimePickerIcon: {
+    fontSize: 20,
+    color: '#666666',
+  },
+  iosPicker: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+    paddingBottom: 40,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E5E5',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  modalDoneButton: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#007AFF',
+  },
 });
