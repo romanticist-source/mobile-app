@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Schedule Category Type
+export type ScheduleCategory = '予定' | '休息' | 'トイレ' | '服薬' | '食事' | '運動' | 'その他';
+
 // User Schedule Schemas
 export const UserScheduleSchema = z.object({
   id: z.string(),

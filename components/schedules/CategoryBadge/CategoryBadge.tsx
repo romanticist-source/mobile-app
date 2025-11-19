@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import type { ScheduleCategory } from '@/_schema/schedule';
+import { styles } from './styles';
 
 interface CategoryBadgeProps {
   category: ScheduleCategory;
@@ -46,16 +47,3 @@ export function CategoryBadge({ category }: CategoryBadgeProps) {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  badge: {
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: 'flex-start',
-  },
-  badgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-});
