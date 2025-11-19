@@ -34,7 +34,7 @@ export function NotificationsList({
   };
 
   return (
-    <View style={styles.notificationsList}>
+    <View style={styles.container}>
       <View style={styles.notificationsList}>
         {currentAlerts.map((alert) => (
           <NotificationCard
