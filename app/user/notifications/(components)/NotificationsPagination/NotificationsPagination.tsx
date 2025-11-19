@@ -1,5 +1,6 @@
 import React from 'react';
-import { XStack, Text } from 'tamagui';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { styles } from './styles';
 
 interface NotificationsPaginationProps {
   currentPage: number;
@@ -24,48 +25,40 @@ export function NotificationsPagination({
     }
   };
 
-  const isPrevDisabled = currentPage === 1;
-  const isNextDisabled = currentPage === totalPages;
-
   return (
-    <XStack
-      justifyContent="space-between"
-      alignItems="center"
-      paddingHorizontal="$4"
-      paddingVertical="$5"
-    >
-      <XStack
-        paddingHorizontal="$3"
-        paddingVertical="$2"
-        pressStyle={{ opacity: isPrevDisabled ? 1 : 0.7 }}
-        onPress={isPrevDisabled ? undefined : handlePrevious}
+    <View style={styles.pagination}>
+      <TouchableOpacity
+        style={styles.paginationButton}
+        disabled={currentPage === 1}
+        onPress={handlePrevious}
       >
         <Text
-          fontSize={14}
-          fontWeight="600"
-          color={isPrevDisabled ? "$borderColor" : "$color"}
+          style={[
+            styles.paginationButtonText,
+            currentPage === 1 && styles.paginationButtonDisabled,
+          ]}
         >
           ‹ 前へ
         </Text>
-      </XStack>
-      <Text fontSize={14} color="$colorSecondary">
+      </TouchableOpacity>
+      <Text style={styles.pageInfo}>
         {currentPage} / {totalPages} ページ
       </Text>
-      <XStack
-        paddingHorizontal="$3"
-        paddingVertical="$2"
-        pressStyle={{ opacity: isNextDisabled ? 1 : 0.7 }}
-        onPress={isNextDisabled ? undefined : handleNext}
+      <TouchableOpacity
+        style={styles.paginationButton}
+        disabled={currentPage === totalPages}
+        onPress={handleNext}
       >
         <Text
-          fontSize={14}
-          fontWeight="600"
-          color={isNextDisabled ? "$borderColor" : "$color"}
+          style={[
+            styles.paginationButtonText,
+            currentPage === totalPages && styles.paginationButtonDisabled,
+          ]}
         >
           次へ ›
         </Text>
-      </XStack>
-    </XStack>
+      </TouchableOpacity>
+    </View>
   );
 }
 

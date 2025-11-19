@@ -1,54 +1,34 @@
-import { Text, type TextProps as TamaguiTextProps } from 'tamagui';
+import { Text, type TextProps } from 'react-native';
+import { styles } from './styles';
 
-export type ThemedTextProps = Omit<TamaguiTextProps, 'color'> & {
+import { useThemeColor } from '@/hooks/useThemeColor';
+
+export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
   type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
 };
 
 export function ThemedText({
+  style,
   lightColor,
   darkColor,
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const getTypeProps = () => {
-    switch (type) {
-      case 'title':
-        return {
-          fontSize: 32,
-          fontWeight: 'bold' as const,
-          lineHeight: 32,
-        };
-      case 'subtitle':
-        return {
-          fontSize: 20,
-          fontWeight: 'bold' as const,
-        };
-      case 'defaultSemiBold':
-        return {
-          fontSize: 16,
-          lineHeight: 24,
-          fontWeight: '600' as const,
-        };
-      case 'link':
-        return {
-          fontSize: 16,
-          lineHeight: 30,
-          color: '$info',
-        };
-      default:
-        return {
-          fontSize: 16,
-          lineHeight: 24,
-        };
-    }
-  };
+  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
 
   return (
     <Text
-      color="$color"
-      {...getTypeProps()}
+      style={[
+        { color },
+        type === 'default' ? styles.default : undefined,
+        type === 'title' ? styles.title : undefined,
+        type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
+        type === 'subtitle' ? styles.subtitle : undefined,
+        type === 'link' ? styles.link : undefined,
+        style,
+      ]}
       {...rest}
     />
   );

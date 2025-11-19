@@ -1,5 +1,6 @@
 import React from 'react';
-import { XStack, Text } from 'tamagui';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { styles } from './styles';
 
 type TabType = 'health' | 'emergency';
 
@@ -9,55 +10,50 @@ interface ShareTabsProps {
 }
 
 export function ShareTabs({ activeTab, onTabChange }: ShareTabsProps) {
-  const isHealthActive = activeTab === 'health';
-  const isEmergencyActive = activeTab === 'emergency';
-
   return (
-    <XStack paddingHorizontal="$4" paddingTop="$4" gap="$3">
-      <XStack
-        flex={1}
-        alignItems="center"
-        justifyContent="center"
-        paddingVertical="$3"
-        backgroundColor={isHealthActive ? "$primaryLight" : "$background"}
-        borderRadius="$2"
-        borderWidth={1}
-        borderColor={isHealthActive ? "$primary" : "$borderColor"}
-        gap="$1.5"
-        pressStyle={{ opacity: 0.7 }}
+    <View style={styles.tabsContainer}>
+      <TouchableOpacity
+        style={[styles.tab, activeTab === 'health' && styles.tabActive]}
         onPress={() => onTabChange('health')}
       >
-        <Text fontSize={16}>👤</Text>
         <Text
-          fontSize={14}
-          fontWeight="600"
-          color={isHealthActive ? "$primary" : "$colorSecondary"}
+          style={[
+            styles.tabIcon,
+            activeTab === 'health' && styles.tabIconActive,
+          ]}
+        >
+          👤
+        </Text>
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === 'health' && styles.tabTextActive,
+          ]}
         >
           体調カード
         </Text>
-      </XStack>
-      <XStack
-        flex={1}
-        alignItems="center"
-        justifyContent="center"
-        paddingVertical="$3"
-        backgroundColor={isEmergencyActive ? "$primaryLight" : "$background"}
-        borderRadius="$2"
-        borderWidth={1}
-        borderColor={isEmergencyActive ? "$primary" : "$borderColor"}
-        gap="$1.5"
-        pressStyle={{ opacity: 0.7 }}
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={[styles.tab, activeTab === 'emergency' && styles.tabActive]}
         onPress={() => onTabChange('emergency')}
       >
-        <Text fontSize={16}>❤️</Text>
         <Text
-          fontSize={14}
-          fontWeight="600"
-          color={isEmergencyActive ? "$primary" : "$colorSecondary"}
+          style={[
+            styles.tabIcon,
+            activeTab === 'emergency' && styles.tabIconActive,
+          ]}
+        >
+          ❤️
+        </Text>
+        <Text
+          style={[
+            styles.tabText,
+            activeTab === 'emergency' && styles.tabTextActive,
+          ]}
         >
           緊急ヘルプカード
         </Text>
-      </XStack>
-    </XStack>
+      </TouchableOpacity>
+    </View>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
-import { YStack } from 'tamagui';
+import { View } from 'react-native';
+import { styles } from './styles';
 import { NotificationCard } from '../NotificationCard/NotificationCard';
 import type { Notification } from '@/_schema/notification';
 
@@ -13,7 +14,7 @@ export function NotificationsList({
   onNotificationPress,
 }: NotificationsListProps) {
   return (
-    <YStack paddingHorizontal="$4" paddingTop="$4">
+    <View style={styles.notificationsList}>
       {notifications.map((notification) => (
         <NotificationCard
           key={notification.id}
@@ -21,7 +22,7 @@ export function NotificationsList({
           onPress={() => onNotificationPress(notification)}
         />
       ))}
-    </YStack>
+    </View>
   );
 }
 

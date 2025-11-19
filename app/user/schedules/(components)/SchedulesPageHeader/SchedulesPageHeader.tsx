@@ -1,6 +1,6 @@
 import React from 'react';
-import { XStack, YStack, Text, Button } from 'tamagui';
-
+import { View, Text, TouchableOpacity,  } from 'react-native';
+import { styles } from './styles';
 interface SchedulesPageHeaderProps {
   date: string;
   onAddPress: () => void;
@@ -11,42 +11,18 @@ export function SchedulesPageHeader({
   onAddPress,
 }: SchedulesPageHeaderProps) {
   return (
-    <XStack
-      justifyContent="space-between"
-      alignItems="flex-start"
-      paddingHorizontal="$4"
-      paddingTop="$6"
-      paddingBottom="$4"
-      backgroundColor="$background"
-    >
-      <YStack flex={1}>
-        <XStack alignItems="center" gap="$2" marginBottom="$1">
-          <Text fontSize={24}>📅</Text>
-          <Text fontSize={24} fontWeight="bold" color="$color">
-            スケジュール管理
-          </Text>
-        </XStack>
-        <Text fontSize={14} color="$colorSecondary">
-          {date}
-        </Text>
-      </YStack>
-      <Button
-        backgroundColor="$primary"
-        paddingHorizontal="$5"
-        paddingVertical="$2.5"
-        borderRadius="$5"
-        shadowColor="$shadowColor"
-        shadowOffset={{ width: 0, height: 2 }}
-        shadowOpacity={0.2}
-        shadowRadius={4}
-        elevation={3}
-        onPress={onAddPress}
-      >
-        <Text color="white" fontSize={14} fontWeight="bold">
-          + 追加
-        </Text>
-      </Button>
-    </XStack>
+    <View style={styles.pageHeader}>
+      <View style={styles.titleSection}>
+        <View style={styles.titleRow}>
+          <Text style={styles.pageIcon}>📅</Text>
+          <Text style={styles.pageTitle}>スケジュール管理</Text>
+        </View>
+        <Text style={styles.pageDate}>{date}</Text>
+      </View>
+      <TouchableOpacity style={styles.addButton} onPress={onAddPress}>
+        <Text style={styles.addButtonText}>+ 追加</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 

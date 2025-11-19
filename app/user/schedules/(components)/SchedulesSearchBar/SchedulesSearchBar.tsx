@@ -1,6 +1,6 @@
 import React from 'react';
-import { YStack, XStack, Text, Input } from 'tamagui';
-
+import { View, Text, TextInput,  } from 'react-native';
+import { styles } from './styles';
 interface SchedulesSearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
@@ -11,29 +11,18 @@ export function SchedulesSearchBar({
   onChangeText,
 }: SchedulesSearchBarProps) {
   return (
-    <YStack paddingHorizontal="$4" marginTop="$4">
-      <XStack
-        alignItems="center"
-        backgroundColor="$backgroundSecondary"
-        borderRadius="$3"
-        paddingHorizontal="$4"
-        paddingVertical="$3"
-        gap="$2"
-      >
-        <Text fontSize={16}>🔍</Text>
-        <Input
-          flex={1}
-          fontSize={14}
-          color="$color"
+    <View style={styles.section}>
+      <View style={styles.searchContainer}>
+        <Text style={styles.searchIcon}>🔍</Text>
+        <TextInput
+          style={styles.searchInput}
           placeholder="スケジュールを検索..."
-          placeholderTextColor="$colorSecondary"
+          placeholderTextColor="#999999"
           value={value}
           onChangeText={onChangeText}
-          borderWidth={0}
-          backgroundColor="transparent"
         />
-      </XStack>
-    </YStack>
+      </View>
+    </View>
   );
 }
 

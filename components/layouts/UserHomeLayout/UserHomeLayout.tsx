@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { YStack, ScrollView } from 'tamagui';
+import { ScrollView, View } from 'react-native';
+import { styles } from './styles';
 
 interface UserHomeLayoutProps {
   children?: ReactNode;
@@ -7,11 +8,11 @@ interface UserHomeLayoutProps {
 
 export function UserHomeLayout({ children }: UserHomeLayoutProps) {
   return (
-    <YStack flex={1} backgroundColor="$backgroundSecondary">
-      <ScrollView flex={1} contentContainerStyle={{ paddingBottom: 100 }}>
+    <View style={styles.container}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {children}
       </ScrollView>
-    </YStack>
+    </View>
   );
 }
 

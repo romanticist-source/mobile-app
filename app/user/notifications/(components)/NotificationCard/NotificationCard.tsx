@@ -1,6 +1,7 @@
 import React from 'react';
-import { XStack, YStack, Text } from 'tamagui';
+import { View, Text, TouchableOpacity } from 'react-native';
 import type { Notification, NotificationPriority } from '@/_schema/notification';
+import { styles } from './styles';
 
 interface NotificationCardProps {
   notification: Notification;
@@ -29,60 +30,37 @@ export function NotificationCard({ notification, onPress }: NotificationCardProp
     : '#E0E0E0';
 
   return (
-    <XStack
-      alignItems="center"
-      backgroundColor="$background"
-      borderRadius="$3"
-      padding="$4"
-      marginBottom="$3"
-      gap="$3"
-      borderWidth={1.5}
-      borderColor={borderColor}
-      pressStyle={{ opacity: 0.7 }}
+    <TouchableOpacity
+      style={[
+        styles.card,
+        { borderColor, borderWidth: 1.5 },
+      ]}
       onPress={onPress}
+      activeOpacity={0.7}
     >
-      <XStack alignItems="center" gap="$3">
-        <YStack
-          width={8}
-          height={8}
-          borderRadius={4}
-          backgroundColor={dotColor}
-        />
-        <YStack
-          width={24}
-          height={24}
-          alignItems="center"
-          justifyContent="center"
-        >
-          <Text fontSize={20}>{notification.icon}</Text>
-        </YStack>
-      </XStack>
+      <View style={styles.leftSection}>
+        <View style={[styles.dot, { backgroundColor: dotColor }]} />
+        <View style={styles.iconContainer}>
+          <Text style={styles.icon}>{notification.icon}</Text>
+        </View>
+      </View>
 
-      <YStack flex={1} gap="$1">
-        <XStack alignItems="center" gap="$2">
-          <Text flex={1} fontSize={16} fontWeight="600" color="$color">
-            {notification.title}
-          </Text>
+      <View style={styles.content}>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>{notification.title}</Text>
           {notification.badge && (
-            <YStack
-              backgroundColor="$primaryLight"
-              paddingHorizontal="$2"
-              paddingVertical={2}
-              borderRadius="$1"
-            >
-              <Text fontSize={12} fontWeight="600" color="$primary">
-                {notification.badge}
-              </Text>
-            </YStack>
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{notification.badge}</Text>
+            </View>
           )}
-        </XStack>
-        <Text fontSize={14} color="$colorSecondary">
+        </View>
+        <Text style={styles.meta}>
           {notification.source} • {notification.timeAgo}
         </Text>
-      </YStack>
+      </View>
 
-      <Text fontSize={24} color="$borderColor">›</Text>
-    </XStack>
+      <Text style={styles.arrow}>›</Text>
+    </TouchableOpacity>
   );
 }
 
