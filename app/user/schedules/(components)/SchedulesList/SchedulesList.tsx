@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { ScheduleCard } from '../ScheduleCard/ScheduleCard';
 import { Pagination } from '@/components/ui/Pagination/Pagination';
 import type { UserSchedule } from '@/_schema/schedule';
+import { usePagination } from '@/hooks/usePagination';
 import { styles } from './styles';
 
 interface SchedulesListProps {
@@ -18,22 +19,13 @@ export function SchedulesList({
   onDelete,
   itemsPerPage = 5,
 }: SchedulesListProps) {
-  const [currentPage, setCurrentPage] = useState(1);
-
-  // Calculate pagination values
-  const totalPages = Math.ceil(schedules.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentSchedules = schedules.slice(startIndex, endIndex);
-
-  // Reset to page 1 when schedules change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [schedules.length]);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  const {
+    currentPage,
+    totalPages,
+    currentItems: currentSchedules,
+    setCurrentPage,
+    totalItems,
+  } = usePagination(schedules, { itemsPerPage });
 
   return (
     <View style={styles.container}>
@@ -51,9 +43,9 @@ export function SchedulesList({
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={handlePageChange}
+        onPageChange={setCurrentPage}
         itemsPerPage={itemsPerPage}
-        totalItems={schedules.length}
+        totalItems={totalItems}
       />
     </View>
   );
