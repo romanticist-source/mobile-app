@@ -29,3 +29,18 @@ export const deleteAlert = async (id: string): Promise<{ success: boolean }> => 
 export const getAlertsByUserId = async (userId: string): Promise<AlertHistory[]> => {
   return apiGet(`/alerts/user/${userId}`);
 };
+
+// User alert history (read/unread tracking)
+export interface UserAlertHistory {
+  userId: string;
+  alertId: string;
+  isChecked: boolean;
+}
+
+export const getUserAlertHistory = async (userId: string): Promise<UserAlertHistory[]> => {
+  return apiGet(`/alerts/user-history/${userId}`);
+};
+
+export const markAlertAsCheckedByUser = async (alertHistoryId: string, userId: string): Promise<{ message: string }> => {
+  return apiPost(`/alerts/${alertHistoryId}/check-by-user/${userId}`, {});
+};

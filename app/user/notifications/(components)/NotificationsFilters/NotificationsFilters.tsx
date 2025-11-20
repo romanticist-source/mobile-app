@@ -1,40 +1,102 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, Modal, FlatList, Pressable } from 'react-native';
 import { styles } from './styles';
-
-type FilterType = 'all' | 'unread';
+import {
+  type AlertTypeFilter,
+  type ReadFilter,
+  ALERT_TYPE_OPTIONS,
+} from '../../(hooks)/useNotifications';
 
 interface NotificationsFiltersProps {
-  currentFilter: FilterType;
-  onFilterChange: (filter: FilterType) => void;
+  alertTypeFilter: AlertTypeFilter;
+  readFilter: ReadFilter;
+  onAlertTypeFilterChange: (filter: AlertTypeFilter) => void;
+  onReadFilterChange: (filter: ReadFilter) => void;
 }
 
 export function NotificationsFilters({
-  currentFilter,
-  onFilterChange,
+  alertTypeFilter,
+  readFilter,
+  onAlertTypeFilterChange,
+  onReadFilterChange,
 }: NotificationsFiltersProps) {
-  const toggleFilter = () => {
-    onFilterChange(currentFilter === 'all' ? 'unread' : 'all');
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleReadFilter = () => {
+    onReadFilterChange(readFilter === 'all' ? 'unread' : 'all');
+  };
+
+  const selectedTypeLabel = ALERT_TYPE_OPTIONS.find(
+    (option) => option.value === alertTypeFilter
+  )?.label ?? 'すべて';
+
+  const handleSelectType = (value: AlertTypeFilter) => {
+    onAlertTypeFilterChange(value);
+    setDropdownVisible(false);
   };
 
   return (
     <View style={styles.filtersContainer}>
-      <TouchableOpacity style={styles.filterDropdown}>
-        <Text style={styles.filterDropdownText}>すべて</Text>
+      {/* Alert Type Dropdown */}
+      <TouchableOpacity
+        style={styles.filterDropdown}
+        onPress={() => setDropdownVisible(true)}
+      >
+        <Text style={styles.filterDropdownText}>{selectedTypeLabel}</Text>
         <Text style={styles.dropdownArrow}>⌄</Text>
       </TouchableOpacity>
+
+      {/* Dropdown Modal */}
+      <Modal
+        visible={dropdownVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setDropdownVisible(false)}
+      >
+        <Pressable
+          style={styles.modalOverlay}
+          onPress={() => setDropdownVisible(false)}
+        >
+          <View style={styles.dropdownMenu}>
+            <FlatList
+              data={ALERT_TYPE_OPTIONS}
+              keyExtractor={(item) => item.value}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={[
+                    styles.dropdownItem,
+                    alertTypeFilter === item.value && styles.dropdownItemActive,
+                  ]}
+                  onPress={() => handleSelectType(item.value)}
+                >
+                  <Text
+                    style={[
+                      styles.dropdownItemText,
+                      alertTypeFilter === item.value && styles.dropdownItemTextActive,
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </Pressable>
+      </Modal>
+
+      {/* Unread Filter Toggle */}
       <TouchableOpacity
         style={[
           styles.filterButton,
-          currentFilter === 'unread' && styles.filterButtonActive,
+          readFilter === 'unread' && styles.filterButtonActive,
         ]}
-        onPress={toggleFilter}
+        onPress={toggleReadFilter}
       >
         <Text style={styles.filterIcon}>🔍</Text>
         <Text
           style={[
             styles.filterButtonText,
-            currentFilter === 'unread' && styles.filterButtonTextActive,
+            readFilter === 'unread' && styles.filterButtonTextActive,
           ]}
         >
           未読のみ
@@ -43,4 +105,3 @@ export function NotificationsFilters({
     </View>
   );
 }
-

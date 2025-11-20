@@ -1,32 +1,41 @@
-import { mockNotifications } from '@/api/__mock__/alert';
 import type { AlertHistory } from '@/_schema/alert';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
-import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import React from 'react';
+import { Text, View, ActivityIndicator } from 'react-native';
 import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
 import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
 import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
+import { useNotifications } from './(hooks)/useNotifications';
 import { styles } from './styles';
 
 export default function NotificationsScreen() {
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  // TODO: Replace with actual user ID from auth context
+  const userId = 'user-1';
 
-  const notifications = mockNotifications;
+  const {
+    filteredNotifications,
+    isLoading,
+    error,
+    alertTypeFilter,
+    readFilter,
+    setAlertTypeFilter,
+    setReadFilter,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+  } = useNotifications({
+    userId,
+  });
 
-  const unreadCount = notifications.filter((n) => n.importance === 1).length;
-  const filteredNotifications =
-    filter === 'unread'
-      ? notifications.filter((n) => n.importance === 1)
-      : notifications;
-
-  const handleMarkAllRead = () => {
-    console.log('Mark all as read');
+  const handleMarkAllRead = async () => {
+    await markAllAsRead();
   };
 
-  const handleNotificationPress = (notification: AlertHistory) => {
+  const handleNotificationPress = async (notification: AlertHistory) => {
+    await markAsRead(notification.id);
     console.log('Notification pressed:', notification.id);
   };
 
@@ -48,14 +57,26 @@ export default function NotificationsScreen() {
           />
 
           <NotificationsFilters
-            currentFilter={filter}
-            onFilterChange={setFilter}
+            alertTypeFilter={alertTypeFilter}
+            readFilter={readFilter}
+            onAlertTypeFilterChange={setAlertTypeFilter}
+            onReadFilterChange={setReadFilter}
           />
 
-          <NotificationsList
-            alerts={filteredNotifications}
-            onNotificationPress={handleNotificationPress}
-          />
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FF6B6B" />
+            </View>
+          ) : error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          ) : (
+            <NotificationsList
+              alerts={filteredNotifications}
+              onNotificationPress={handleNotificationPress}
+            />
+          )}
         </UserHomeLayout>
 
         <BottomNavigation activeTab="notification" />

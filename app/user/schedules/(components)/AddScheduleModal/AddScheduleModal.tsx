@@ -109,10 +109,9 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
       if (isEditMode && schedule) {
         await updateUserSchedule(schedule.id, scheduleData);
       } else {
-        // 新規作成の場合はuserIdが必要（ここでは仮で設定）
         await createUserSchedule({
           ...scheduleData,
-          userId: 'current-user-id', // TODO: 実際のユーザーIDを取得
+          userId: 'user-1', // TODO: 認証実装後に実際のユーザーIDを取得
         });
       }
 

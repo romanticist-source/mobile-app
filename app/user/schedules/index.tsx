@@ -5,7 +5,7 @@ import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayo
 import type { UserSchedule } from '@/_schema';
 import { Stack } from 'expo-router';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import { View, ActivityIndicator, Text, Alert } from 'react-native';
 import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
 import { NextScheduleCard } from './(components)/NextScheduleCard/NextScheduleCard';
 import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
@@ -25,7 +25,11 @@ export default function SchedulesScreen() {
     try {
       setLoading(true);
       const data = await getUserSchedules();
-      setSchedules(data);
+      // 開始時刻でソート（最新が上）
+      const sortedData = data.sort(
+        (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime()
+      );
+      setSchedules(sortedData);
       setError(null);
     } catch (err) {
       setError(err as Error);
@@ -94,12 +98,33 @@ export default function SchedulesScreen() {
   };
 
   const handleDelete = async (scheduleId: string) => {
-    try {
-      await deleteUserSchedule(scheduleId);
-      setSchedules(schedules.filter((s) => s.id !== scheduleId));
-    } catch (err) {
-      console.error('Failed to delete schedule:', err);
-    }
+    const scheduleToDelete = schedules.find((s) => s.id === scheduleId);
+    const title = scheduleToDelete?.title || 'このスケジュール';
+
+    Alert.alert(
+      '削除確認',
+      `「${title}」を削除しますか？`,
+      [
+        {
+          text: 'キャンセル',
+          style: 'cancel',
+        },
+        {
+          text: '削除',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteUserSchedule(scheduleId);
+              // 削除成功後、ローカルのstateも更新
+              setSchedules((prev) => prev.filter((s) => s.id !== scheduleId));
+            } catch (err) {
+              console.error('Failed to delete schedule:', err);
+              Alert.alert('エラー', 'スケジュールの削除に失敗しました');
+            }
+          },
+        },
+      ]
+    );
   };
 
   const nextSchedule = getNextSchedule();

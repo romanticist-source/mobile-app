@@ -54,4 +54,37 @@ export const styles = StyleSheet.create({
   filterButtonTextActive: {
     color: '#FFFFFF',
   },
+  // Dropdown Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    paddingHorizontal: 32,
+  },
+  dropdownMenu: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    paddingVertical: 8,
+    maxHeight: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  dropdownItem: {
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+  },
+  dropdownItemActive: {
+    backgroundColor: '#FFF0F0',
+  },
+  dropdownItemText: {
+    fontSize: 16,
+    color: '#333333',
+  },
+  dropdownItemTextActive: {
+    color: '#FF6B6B',
+    fontWeight: '600',
+  },
 });
