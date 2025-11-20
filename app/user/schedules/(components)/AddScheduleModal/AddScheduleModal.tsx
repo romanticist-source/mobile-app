@@ -111,7 +111,7 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
       } else {
         await createUserSchedule({
           ...scheduleData,
-          userId: 'user-1', // TODO: 認証実装後に実際のユーザーIDを取得
+          userId: '63e5ac18-6644-4bdb-af3a-0bbd4fd2a488', // TODO: 認証実装後に実際のユーザーIDを取得
         });
       }
 
