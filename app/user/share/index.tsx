@@ -1,10 +1,40 @@
-import { mockCaregivers, mockHealthCardData } from '@/api/__mock__/share';
+import { mockHealthCardData } from '@/api/__mock__/share';
+import { getHelpers } from '@/api/helpers';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import type { Helper } from '@/_schema';
 import { Stack } from 'expo-router';
-import React, { useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
+
+// UI表示用の型
+interface CaregiverDisplay {
+  id: string;
+  name: string;
+  relation: string;
+  role: string;
+  phone: string;
+  email?: string;
+  avatar: string;
+  avatarColor: string;
+  status: 'online' | 'offline';
+}
+
+// Helper から CaregiverDisplay への変換
+const AVATAR_COLORS = ['#FFE5E5', '#E0F7F7', '#E3F2FD', '#FFF3E0', '#F3E5F5'];
+
+const helperToCaregiverDisplay = (helper: Helper, index: number): CaregiverDisplay => ({
+  id: helper.id,
+  name: helper.name,
+  relation: helper.relationship,
+  role: helper.nickname,
+  phone: helper.phoneNumber,
+  email: helper.email,
+  avatar: helper.name.charAt(0),
+  avatarColor: AVATAR_COLORS[index % AVATAR_COLORS.length],
+  status: 'offline',
+});
 
 type TabType = 'health' | 'emergency';
 
@@ -22,6 +52,31 @@ export default function ShareScreen() {
   const [medications, setMedications] = useState(mockHealthCardData.medications);
   const [disability, setDisability] = useState(mockHealthCardData.disability);
   const [notes, setNotes] = useState(mockHealthCardData.notes);
+
+  // Caregivers data from API
+  const [caregivers, setCaregivers] = useState<CaregiverDisplay[]>([]);
+  const [caregiversLoading, setCaregiversLoading] = useState(true);
+  const [caregiversError, setCaregiversError] = useState<Error | null>(null);
+
+  const fetchCaregivers = useCallback(async () => {
+    try {
+      setCaregiversLoading(true);
+      const helpers = await getHelpers();
+      const displayCaregivers = helpers.map((helper, index) =>
+        helperToCaregiverDisplay(helper, index)
+      );
+      setCaregivers(displayCaregivers);
+      setCaregiversError(null);
+    } catch (err) {
+      setCaregiversError(err as Error);
+    } finally {
+      setCaregiversLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCaregivers();
+  }, [fetchCaregivers]);
 
   // Calculate BMI
   const calculateBMI = () => {
@@ -47,9 +102,6 @@ export default function ShareScreen() {
   const handleToggleEdit = () => {
     setIsEditing(!isEditing);
   };
-
-  // Caregivers data from mock
-  const caregivers = mockCaregivers;
 
   return (
     <>
@@ -355,31 +407,49 @@ export default function ShareScreen() {
               </TouchableOpacity>
             </View>
 
-            {caregivers.map((caregiver) => (
-              <View key={caregiver.id} style={styles.caregiverCard}>
-                <View style={styles.caregiverInfo}>
-                  <View style={[styles.caregiverAvatar, { backgroundColor: caregiver.avatarColor }]}>
-                    <Text style={styles.caregiverAvatarText}>{caregiver.avatar}</Text>
-                    <View style={[styles.statusIndicator, caregiver.status === 'online' && styles.statusOnline]} />
-                  </View>
-                  <View style={styles.caregiverDetails}>
-                    <View style={styles.caregiverNameRow}>
-                      <Text style={styles.caregiverName}>{caregiver.name}</Text>
-                      <Text style={styles.caregiverRelation}>（{caregiver.relation}）</Text>
-                    </View>
-                    <Text style={styles.caregiverRole}>{caregiver.role}</Text>
-                    <Text style={styles.caregiverPhone}>📞 {caregiver.phone}</Text>
-                    {caregiver.email && (
-                      <Text style={styles.caregiverEmail}>✉️ {caregiver.email}</Text>
-                    )}
-                  </View>
-                </View>
-                <TouchableOpacity style={styles.callButton}>
-                  <Text style={styles.callButtonIcon}>📞</Text>
-                  <Text style={styles.callButtonText}>電話をかける</Text>
-                </TouchableOpacity>
+            {caregiversLoading ? (
+              <View style={{ padding: 20, alignItems: 'center' }}>
+                <ActivityIndicator size="small" />
               </View>
-            ))}
+            ) : caregiversError ? (
+              <View style={{ padding: 20 }}>
+                <Text style={{ color: '#FF0000', textAlign: 'center' }}>
+                  介助者の取得に失敗しました
+                </Text>
+              </View>
+            ) : caregivers.length === 0 ? (
+              <View style={{ padding: 20 }}>
+                <Text style={{ textAlign: 'center', color: '#666' }}>
+                  介助者が登録されていません
+                </Text>
+              </View>
+            ) : (
+              caregivers.map((caregiver) => (
+                <View key={caregiver.id} style={styles.caregiverCard}>
+                  <View style={styles.caregiverInfo}>
+                    <View style={[styles.caregiverAvatar, { backgroundColor: caregiver.avatarColor }]}>
+                      <Text style={styles.caregiverAvatarText}>{caregiver.avatar}</Text>
+                      <View style={[styles.statusIndicator, caregiver.status === 'online' && styles.statusOnline]} />
+                    </View>
+                    <View style={styles.caregiverDetails}>
+                      <View style={styles.caregiverNameRow}>
+                        <Text style={styles.caregiverName}>{caregiver.name}</Text>
+                        <Text style={styles.caregiverRelation}>（{caregiver.relation}）</Text>
+                      </View>
+                      <Text style={styles.caregiverRole}>{caregiver.role}</Text>
+                      <Text style={styles.caregiverPhone}>📞 {caregiver.phone}</Text>
+                      {caregiver.email && (
+                        <Text style={styles.caregiverEmail}>✉️ {caregiver.email}</Text>
+                      )}
+                    </View>
+                  </View>
+                  <TouchableOpacity style={styles.callButton}>
+                    <Text style={styles.callButtonIcon}>📞</Text>
+                    <Text style={styles.callButtonText}>電話をかける</Text>
+                  </TouchableOpacity>
+                </View>
+              ))
+            )}
 
             <Text style={styles.footerNote}>
               介助者と連携してあなたの健康をサポートします

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   View,
@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, SelectOption } from '@/components/forms';
 import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
+import { createUserSchedule, updateUserSchedule } from '@/api/user-schedules';
+import type { UserSchedule } from '@/_schema';
 
 const scheduleTypeOptions: SelectOption[] = [
   { label: '予定', value: '予定' },
@@ -31,9 +33,13 @@ const repeatOptions: SelectOption[] = [
 interface AddScheduleModalProps {
   visible: boolean;
   onClose: () => void;
+  schedule?: UserSchedule | null;
+  onSave?: () => void;
 }
 
-export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
+export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddScheduleModalProps) {
+  const isEditMode = !!schedule;
+
   // デフォルトの開始時刻（現在時刻から1時間後）
   const getDefaultStartTime = () => {
     const now = new Date();
@@ -63,11 +69,59 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
     },
   });
 
-  const handleSave = form.handleSubmit((data) => {
-    console.log('Save schedule:', data);
-    // TODO: API call to save schedule
-    form.reset();
-    onClose();
+  // 編集モード時にフォームにデータをセット
+  useEffect(() => {
+    if (schedule && visible) {
+      const startDate = new Date(schedule.startAt);
+      const endDate = new Date(schedule.startAt);
+      endDate.setHours(endDate.getHours() + 1);
+
+      form.reset({
+        title: schedule.title || '',
+        scheduleType: schedule.scheduleType,
+        startTime: startDate,
+        endTime: endDate,
+        repeatPattern: schedule.isRepeat ? 'daily' : 'none',
+        memo: schedule.description || '',
+      });
+    } else if (!schedule && visible) {
+      form.reset({
+        title: '',
+        scheduleType: '',
+        startTime: getDefaultStartTime(),
+        endTime: getDefaultEndTime(),
+        repeatPattern: 'none',
+        memo: '',
+      });
+    }
+  }, [schedule, visible, form]);
+
+  const handleSave = form.handleSubmit(async (data) => {
+    try {
+      const scheduleData = {
+        title: data.title || null,
+        description: data.memo || null,
+        scheduleType: data.scheduleType,
+        isRepeat: data.repeatPattern !== 'none',
+        startAt: data.startTime.toISOString(),
+      };
+
+      if (isEditMode && schedule) {
+        await updateUserSchedule(schedule.id, scheduleData);
+      } else {
+        // 新規作成の場合はuserIdが必要（ここでは仮で設定）
+        await createUserSchedule({
+          ...scheduleData,
+          userId: 'current-user-id', // TODO: 実際のユーザーIDを取得
+        });
+      }
+
+      form.reset();
+      onSave?.();
+      onClose();
+    } catch (error) {
+      console.error('Failed to save schedule:', error);
+    }
   });
 
   return (
@@ -83,7 +137,9 @@ export function AddScheduleModal({ visible, onClose }: AddScheduleModalProps) {
           <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
             <Text style={styles.modalCloseIcon}>✕</Text>
           </TouchableOpacity>
-          <Text style={styles.modalTitle}>新規スケジュール</Text>
+          <Text style={styles.modalTitle}>
+            {isEditMode ? 'スケジュールを編集' : '新規スケジュール'}
+          </Text>
           <TouchableOpacity onPress={handleSave} style={styles.modalSaveButton}>
             <Text style={styles.modalSaveIcon}>✓</Text>
           </TouchableOpacity>
