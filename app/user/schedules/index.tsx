@@ -98,21 +98,6 @@ export default function SchedulesScreen() {
   };
 
   const handleDelete = async (scheduleId: string) => {
-    const scheduleToDelete = schedules.find((s) => s.id === scheduleId);
-    const title = scheduleToDelete?.title || 'このスケジュール';
-
-    Alert.alert(
-      '削除確認',
-      `「${title}」を削除しますか？`,
-      [
-        {
-          text: 'キャンセル',
-          style: 'cancel',
-        },
-        {
-          text: '削除',
-          style: 'destructive',
-          onPress: async () => {
             try {
               await deleteUserSchedule(scheduleId);
               // 削除成功後、ローカルのstateも更新
@@ -121,29 +106,9 @@ export default function SchedulesScreen() {
               console.error('Failed to delete schedule:', err);
               Alert.alert('エラー', 'スケジュールの削除に失敗しました');
             }
-          },
-        },
-      ]
-    );
-  };
+          }
 
   const nextSchedule = getNextSchedule();
-
-  if (loading) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text>エラーが発生しました: {error.message}</Text>
-      </View>
-    );
-  }
 
   return (
     <>
