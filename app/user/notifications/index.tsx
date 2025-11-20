@@ -13,7 +13,7 @@ import { styles } from './styles';
 
 export default function NotificationsScreen() {
   // TODO: Replace with actual user ID from auth context
-  const userId = 'user-1';
+  const userId = '63e5ac18-6644-4bdb-af3a-0bbd4fd2a488';
 
   const {
     filteredNotifications,
