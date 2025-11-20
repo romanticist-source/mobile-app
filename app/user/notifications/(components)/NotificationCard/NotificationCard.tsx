@@ -17,7 +17,20 @@ const PRIORITY_COLORS: Record<number, string> = {
 
 const DEFAULT_COLOR = '#CCCCCC';
 
+// alertType to Japanese label mapping
+const ALERT_TYPE_LABELS: Record<string, string> = {
+  medication: '服薬',
+  appointment: '予定',
+  health: '健康',
+  toilet: 'トイレ',
+  exercise: '運動',
+  emergency: '緊急',
+  meal: '食事',
+  rest: '休息',
+};
+
 export function NotificationCard({ alert, onPress }: NotificationCardProps) {
+  const alertTypeLabel = ALERT_TYPE_LABELS[alert.alertType] || alert.alertType;
   // Get color based on importance level
   const priorityColor = PRIORITY_COLORS[alert.importance] || DEFAULT_COLOR;
 
@@ -36,7 +49,7 @@ export function NotificationCard({ alert, onPress }: NotificationCardProps) {
       <View style={styles.leftSection}>
         <View style={[styles.dot, { backgroundColor: dotColor }]} />
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>{alert.alertType}</Text>
+          <Text style={styles.icon}>{alertTypeLabel}</Text>
         </View>
       </View>
 
@@ -45,7 +58,7 @@ export function NotificationCard({ alert, onPress }: NotificationCardProps) {
           <Text style={styles.title}>{alert.title}</Text>
         </View>
         <Text style={styles.meta}>
-          {alert.alertType} • {alert.createdAt}
+          {alertTypeLabel} • {alert.createdAt}
         </Text>
       </View>
 
