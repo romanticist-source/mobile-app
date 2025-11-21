@@ -6,18 +6,19 @@ import {
   textPrimary,
   textSecondary,
   accentLight,
+  accentPrimary,
   xs,
   sm,
   md,
-  lg,
   xl,
+  fontXs,
+  fontSm,
   fontMd,
+  fontBase,
   fontLg,
-  fontXxl,
   fontXxxxl,
+  radiusSm,
   radiusFull,
-  iconContainerSize,
-  iconSize,
   headerButton,
 } from '@/styles/tokens';
 
@@ -54,33 +55,189 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  topSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: md,
+  },
+  caregiverCount: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  inviteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: accentPrimary,
+    paddingVertical: 10,
+    paddingHorizontal: md,
+    borderRadius: radiusSm,
+  },
+  inviteIcon: {
+    fontSize: 18,
+    marginRight: xs,
+  },
+  inviteButtonText: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: surface,
+  },
+  caregiverCard: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: md,
+    marginBottom: md,
+  },
+  caregiverHeader: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: md,
+  },
+  avatarContainer: {
+    marginRight: sm,
+  },
+  avatarCircle: {
+    width: 56,
+    height: 56,
     borderRadius: radiusFull,
     backgroundColor: accentLight,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  caregiverInfo: {
+    flex: 1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  caregiverName: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: textPrimary,
+    marginRight: xs,
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  statusBadgeActive: {
+    backgroundColor: '#E8F5E9',
+  },
+  statusBadgePending: {
+    backgroundColor: '#FFF3E0',
+  },
+  statusBadgeText: {
+    fontSize: fontXs,
+    fontWeight: '600',
+  },
+  statusBadgeTextActive: {
+    color: '#4CAF50',
+  },
+  statusBadgeTextPending: {
+    color: '#FF9800',
+  },
+  caregiverRole: {
+    fontSize: fontSm,
+    color: textSecondary,
+  },
+  menuButton: {
+    padding: xs,
+    marginLeft: xs,
+  },
+  menuIcon: {
+    fontSize: 20,
+    color: textSecondary,
+    fontWeight: '600',
+  },
+  contactInfo: {
     marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
-    color: textPrimary,
-    marginBottom: xs,
+  contactIcon: {
+    fontSize: 16,
+    marginRight: xs,
   },
-  description: {
-    fontSize: fontMd,
+  contactText: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+  },
+  permissionButtons: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: xs,
+  },
+  permissionButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  permissionButtonActive: {
+    backgroundColor: '#E3F2FD',
+    borderColor: '#2196F3',
+  },
+  permissionIcon: {
+    fontSize: 14,
+    marginRight: 4,
+  },
+  permissionIconActive: {
+    // Active state uses same icon
+  },
+  permissionButtonText: {
+    fontSize: fontSm,
+    color: textSecondary,
+    fontWeight: '500',
+  },
+  permissionButtonTextActive: {
+    color: '#1976D2',
+    fontWeight: '600',
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: accentPrimary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
   },
 });
