@@ -2,22 +2,29 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea } from '@/components/forms';
-import { UpdateUserSchema, UpdateUser } from '@/_schema/user';
+import { Form, FormInput, FormSelect, FormDateTimePicker, type SelectOption } from '@/components/forms';
 import { styles } from './styles';
+
+const genderOptions: SelectOption[] = [
+  { label: '男性', value: 'male' },
+  { label: '女性', value: 'female' },
+  { label: '回答しない', value: 'other' },
+];
 
 export default function ProfileSettingsScreen() {
   const router = useRouter();
 
-  const form = useForm<UpdateUser>({
-    resolver: zodResolver(UpdateUserSchema),
+  const form = useForm({
     defaultValues: {
       name: '',
-      age: undefined,
+      furigana: '',
+      birthdate: undefined,
+      gender: '',
+      phone: '',
       mail: '',
       address: '',
-      comment: '',
+      emergencyContactName: '',
+      emergencyContactPhone: '',
     },
   });
 
@@ -26,6 +33,11 @@ export default function ProfileSettingsScreen() {
     // TODO: API call to update user profile
     router.back();
   });
+
+  const handleProfilePhotoChange = () => {
+    // TODO: Implement profile photo picker
+    console.log('Change profile photo');
+  };
 
   return (
     <>
@@ -40,52 +52,120 @@ export default function ProfileSettingsScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>プロフィール設定</Text>
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSave}
-          >
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
+          <View style={styles.headerRight} />
         </View>
 
         {/* Content */}
-        <ScrollView style={styles.content}>
-          <Form form={form}>
-            <FormInput
-              name="name"
-              label="名前"
-              placeholder="山田 太郎"
-            />
+        <ScrollView style={styles.scrollContent}>
+          <View style={styles.contentWrapper}>
+            {/* Profile Photo Section */}
+            <View style={styles.photoSection}>
+              <TouchableOpacity
+                style={styles.photoContainer}
+                onPress={handleProfilePhotoChange}
+              >
+                <View style={styles.avatarCircle}>
+                  <Text style={styles.avatarText}>山</Text>
+                  <View style={styles.cameraIconContainer}>
+                    <Text style={styles.cameraIcon}>📷</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <View style={styles.photoInfo}>
+                <Text style={styles.photoName}>山田 太郎</Text>
+                <Text style={styles.photoAction}>プロフィール写真を変更</Text>
+              </View>
+            </View>
 
-            <FormInput
-              name="age"
-              label="年齢"
-              placeholder="25"
-              keyboardType="numeric"
-            />
+            {/* Basic Information Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>基本情報</Text>
 
-            <FormInput
-              name="mail"
-              label="メールアドレス"
-              placeholder="example@example.com"
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
+              <Form form={form}>
+                <FormInput
+                  name="name"
+                  label="氏名"
+                  placeholder="山田 太郎"
+                />
 
-            <FormInput
-              name="address"
-              label="住所"
-              placeholder="東京都渋谷区..."
-            />
+                <FormInput
+                  name="furigana"
+                  label="ふりがな"
+                  placeholder="やまだ たろう"
+                />
 
-            <FormTextArea
-              name="comment"
-              label="コメント"
-              placeholder="自己紹介や備考を入力..."
-              numberOfLines={4}
-            />
-          </Form>
+                <FormDateTimePicker
+                  name="birthdate"
+                  label="生年月日"
+                  mode="date"
+                />
+
+                <FormSelect
+                  name="gender"
+                  label="性別"
+                  options={genderOptions}
+                  placeholder="選択してください"
+                />
+              </Form>
+            </View>
+
+            {/* Contact Information Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>連絡先情報</Text>
+
+              <Form form={form}>
+                <FormInput
+                  name="phone"
+                  label="電話番号"
+                  placeholder="090-1234-5678"
+                  keyboardType="phone-pad"
+                />
+
+                <FormInput
+                  name="mail"
+                  label="メールアドレス"
+                  placeholder="taro.yamada@example.com"
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+
+                <FormInput
+                  name="address"
+                  label="住所"
+                  placeholder="東京都渋谷区渋谷1-1-1"
+                />
+              </Form>
+            </View>
+
+            {/* Emergency Contact Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>緊急連絡先</Text>
+
+              <Form form={form}>
+                <FormInput
+                  name="emergencyContactName"
+                  label="緊急連絡先（氏名）"
+                  placeholder="山田 花子"
+                />
+
+                <FormInput
+                  name="emergencyContactPhone"
+                  label="緊急連絡先（電話番号）"
+                  placeholder="090-8765-4321"
+                  keyboardType="phone-pad"
+                />
+              </Form>
+            </View>
+          </View>
         </ScrollView>
+
+        {/* Save Button */}
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.saveButtonIcon}>💾</Text>
+            <Text style={styles.saveButtonText}>保存</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </>
   );

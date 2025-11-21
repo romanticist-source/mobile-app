@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Platform, Modal as RNModal, TouchableWithoutFeedback } from 'react-native';
+import { Platform, Modal as RNModal, TouchableWithoutFeedback, TextInput } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useController, useFormContext } from 'react-hook-form';
 import { YStack, XStack, Text, Button, Input, Label } from 'tamagui';
@@ -39,8 +39,44 @@ export function FormDateTimePicker({
     }
   };
 
+  const handleWebChange = (event: any) => {
+    const dateString = event.target.value;
+    if (dateString) {
+      onChange(new Date(dateString));
+    }
+  };
+
   const handleDismiss = () => {
     setShow(false);
+  };
+
+  const getWebInputType = () => {
+    if (mode === 'time') return 'time';
+    if (mode === 'datetime') return 'datetime-local';
+    return 'date';
+  };
+
+  const formatWebValue = (date: Date | undefined) => {
+    if (!date) return '';
+
+    if (mode === 'time') {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    if (mode === 'datetime') {
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+    // date mode
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const formatValue = (date: Date | undefined) => {
@@ -58,6 +94,47 @@ export function FormDateTimePicker({
     return date.toLocaleString('ja-JP');
   };
 
+  // Web platform renders differently
+  if (Platform.OS === 'web') {
+    return (
+      <YStack gap="$2" marginBottom="$4">
+        {label && (
+          <Label htmlFor={name} fontSize="$3" fontWeight="500" color="$color">
+            {label}
+            {required && (
+              <Text color="$red10" marginLeft="$1">
+                *
+              </Text>
+            )}
+          </Label>
+        )}
+
+        <Input
+          id={name}
+          // @ts-ignore - Web-specific props
+          type={getWebInputType()}
+          value={formatWebValue(value)}
+          onChange={handleWebChange}
+          placeholder="選択してください"
+          borderColor={error ? '$red9' : '$borderColor'}
+          backgroundColor="$background"
+          color="$color"
+          fontSize="$4"
+          paddingHorizontal="$4"
+          paddingVertical="$3"
+          borderRadius="$4"
+        />
+
+        {error && (
+          <Text color="$red10" fontSize="$2" marginTop="$1">
+            {error.message}
+          </Text>
+        )}
+      </YStack>
+    );
+  }
+
+  // Mobile platforms (iOS & Android)
   return (
     <YStack gap="$2" marginBottom="$4">
       {label && (
@@ -196,25 +273,6 @@ export function FormDateTimePicker({
             </YStack>
           </TouchableWithoutFeedback>
         </RNModal>
-      )}
-
-      {/* Web: Fallback to native input */}
-      {show && Platform.OS === 'web' && (
-        <YStack
-          position="absolute"
-          top={0}
-          left={0}
-          right={0}
-          bottom={0}
-          zIndex={1000}
-        >
-          <DateTimePicker
-            value={value || new Date()}
-            mode={mode}
-            display="default"
-            onChange={handleChange}
-          />
-        </YStack>
       )}
     </YStack>
   );
