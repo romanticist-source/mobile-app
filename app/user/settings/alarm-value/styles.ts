@@ -1,25 +1,22 @@
-import { StyleSheet } from 'react-native';
 import {
   background,
-  surface,
   border,
+  fontBase,
+  fontLg,
+  fontMd,
+  fontSm,
+  fontXxxxl,
+  headerButton,
+  md,
+  radiusSm,
+  sm,
+  surface,
   textPrimary,
   textSecondary,
-  accentLight,
-  xs,
-  sm,
-  md,
-  lg,
   xl,
-  fontMd,
-  fontLg,
-  fontXxl,
-  fontXxxxl,
-  radiusFull,
-  iconContainerSize,
-  iconSize,
-  headerButton,
-} from '@/styles/tokens';
+  xs,
+} from "@/styles/tokens";
+import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
@@ -27,9 +24,9 @@ export const styles = StyleSheet.create({
     backgroundColor: background,
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: sm,
     paddingTop: xl,
     paddingBottom: sm,
@@ -44,43 +41,132 @@ export const styles = StyleSheet.create({
   backIcon: {
     fontSize: fontXxxxl,
     color: textPrimary,
-    fontWeight: '300',
+    fontWeight: "300",
   },
   headerTitle: {
-    fontSize: fontMd,
-    fontWeight: '600',
+    fontSize: fontLg,
+    fontWeight: "600",
     color: textPrimary,
   },
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: radiusFull,
-    backgroundColor: accentLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  section: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
     marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
-  },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
-    color: textPrimary,
+  sectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: xs,
   },
-  description: {
-    fontSize: fontMd,
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  sectionTitle: {
+    fontSize: fontBase,
+    fontWeight: "700",
+    color: textPrimary,
+  },
+  sectionDescription: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+    marginBottom: md,
+    lineHeight: 18,
+  },
+  thresholdSection: {
+    marginBottom: md,
+  },
+  thresholdHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: md,
+  },
+  thresholdIcon: {
+    fontSize: 18,
+    marginRight: xs,
+  },
+  thresholdTitle: {
+    fontSize: fontMd,
+    fontWeight: "600",
+    color: textPrimary,
+  },
+  sliderContainer: {
+    marginBottom: md,
+  },
+  sliderLabelRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: xs,
+  },
+  sliderLabel: {
+    fontSize: fontSm,
+    color: textSecondary,
+  },
+  sliderValue: {
+    fontSize: fontMd,
+    fontWeight: "600",
+    color: "#FF6B6B",
+  },
+  slider: {
+    width: "100%",
+    height: 40,
+  },
+  rangeDescription: {
+    fontSize: fontSm,
+    color: textSecondary,
+    marginTop: xs,
+  },
+  noticeBox: {
+    flexDirection: "row",
+    backgroundColor: "#E3F2FD",
+    borderRadius: radiusSm,
+    padding: sm,
+    alignItems: "center",
+  },
+  noticeIcon: {
+    fontSize: 18,
+    marginRight: xs,
+  },
+  noticeText: {
+    flex: 1,
+    fontSize: fontSm,
+    color: "#1565C0",
+    lineHeight: 18,
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: "#FF6B6B",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: "700",
+    color: surface,
   },
 });
