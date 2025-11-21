@@ -1,0 +1,152 @@
+import { StyleSheet } from 'react-native';
+import {
+  background,
+  surface,
+  border,
+  textPrimary,
+  textSecondary,
+  textTertiary,
+  accentLight,
+  accentPrimary,
+  xs,
+  sm,
+  md,
+  lg,
+  xl,
+  fontSm,
+  fontMd,
+  fontBase,
+  fontLg,
+  fontXxxxl,
+  radiusSm,
+  headerButton,
+} from '@/styles/tokens';
+
+export const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: sm,
+    paddingTop: xl,
+    paddingBottom: sm,
+    backgroundColor: surface,
+    borderBottomWidth: 1,
+    borderBottomColor: border,
+  },
+  backButton: {
+    padding: xs,
+    marginLeft: -xs,
+  },
+  backIcon: {
+    fontSize: fontXxxxl,
+    color: textPrimary,
+    fontWeight: '300',
+  },
+  headerTitle: {
+    fontSize: fontLg,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  headerRight: {
+    width: headerButton,
+  },
+  scrollContent: {
+    flex: 1,
+  },
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  section: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
+    marginBottom: sm,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: md,
+  },
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  sectionTitle: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: textPrimary,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: sm,
+    borderBottomWidth: 1,
+    borderBottomColor: border,
+  },
+  settingInfo: {
+    flex: 1,
+    marginRight: sm,
+  },
+  settingLabel: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: 4,
+  },
+  settingDescription: {
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 18,
+  },
+  infoBox: {
+    backgroundColor: '#FFF9E6',
+    borderRadius: radiusSm,
+    padding: sm,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: xs,
+    marginBottom: md,
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: xs,
+    marginTop: 2,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 20,
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: accentPrimary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
+  },
+});
