@@ -45,9 +45,11 @@ jobs:
       - name: Run TypeScript type check
         run: yarn typecheck
 
-      # Uncomment when ESLint is configured
-      # - name: Run ESLint
-      #   run: yarn lint
+      - name: Run ESLint
+        run: yarn lint
+
+      - name: Check formatting
+        run: yarn format:check
 
   build:
     name: Build
