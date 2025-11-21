@@ -5,19 +5,17 @@ import {
   border,
   textPrimary,
   textSecondary,
-  accentLight,
+  accentPrimary,
   xs,
   sm,
   md,
-  lg,
   xl,
+  fontSm,
   fontMd,
+  fontBase,
   fontLg,
-  fontXxl,
   fontXxxxl,
-  radiusFull,
-  iconContainerSize,
-  iconSize,
+  radiusSm,
   headerButton,
 } from '@/styles/tokens';
 
@@ -54,33 +52,153 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: radiusFull,
-    backgroundColor: accentLight,
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  section: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
+  },
+  notificationRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
+  notificationInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
+  notificationIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  notificationLabel: {
+    fontSize: fontBase,
+    fontWeight: '600',
     color: textPrimary,
+  },
+  intervalContainer: {
+    marginBottom: md,
+  },
+  intervalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: xs,
   },
-  description: {
+  intervalLabel: {
     fontSize: fontMd,
+    color: textPrimary,
+  },
+  intervalValue: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: accentPrimary,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  intervalRange: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: xs,
+  },
+  intervalRangeText: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+  },
+  descriptionBox: {
+    backgroundColor: '#F9F9F9',
+    borderRadius: radiusSm,
+    padding: sm,
+    marginBottom: md,
+  },
+  descriptionText: {
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 18,
+  },
+  recordsSection: {
+    marginTop: md,
+  },
+  recordsTitle: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: sm,
+  },
+  recordItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: sm,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F5F5F5',
+  },
+  recordLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  recordCheckIcon: {
+    fontSize: 18,
+    color: '#4CAF50',
+    marginRight: sm,
+  },
+  recordTime: {
+    fontSize: fontBase,
+    color: textPrimary,
+  },
+  recordBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  recordBadgeScheduled: {
+    backgroundColor: '#F5F5F5',
+  },
+  recordBadgeManual: {
+    backgroundColor: '#FFF3E0',
+  },
+  recordBadgeText: {
+    fontSize: fontSm,
+    fontWeight: '600',
+  },
+  recordBadgeTextScheduled: {
+    color: '#757575',
+  },
+  recordBadgeTextManual: {
+    color: '#FF9800',
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: accentPrimary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
   },
 });
