@@ -33,9 +33,10 @@ yarn storybook:android  # Run Storybook on Android
 yarn storybook-generate # Regenerate story index (run if stories not appearing)
 ```
 
-### Building
+### Building & Type Checking
 ```bash
 yarn build              # Export static build via expo export
+yarn typecheck          # Run TypeScript type checking without emitting files
 ```
 
 ## Architecture
@@ -420,6 +421,34 @@ export const getUserStatusCardDiseasesByStatusCardId = async (statusCardId: stri
 - Use descriptive function names that clearly indicate the operation
 - All API functions should be async and return Promises
 - Include proper JSDoc comments for complex endpoints
+- API base URL is configured via `EXPO_PUBLIC_API_BASE_URL` environment variable (defaults to `http://localhost:3000`)
+
+### Validation Utilities
+
+**Location**: `_util/validations.ts`
+
+Reusable Zod validation schemas are available for common data types:
+
+- `emailSchema` / `optionalEmailSchema` - Email validation
+- `phoneNumberSchema` / `optionalPhoneNumberSchema` - Japanese phone number format validation
+- `idSchema` / `userIdSchema` - ID validations
+- `titleSchema` / `descriptionSchema` - Text content validation
+- `isoDateStringSchema` - ISO date string validation
+- And many other reusable validators with optional/nullable variants
+
+**Usage Pattern**:
+```typescript
+import { z } from 'zod';
+import { emailSchema, phoneNumberSchema } from '@/_util/validations';
+
+export const UserSchema = z.object({
+  email: emailSchema,
+  phone: phoneNumberSchema,
+  // ... other fields
+});
+```
+
+**Important**: Always import and reuse these validation schemas instead of creating duplicates in schema files
 
 ## Important Patterns
 
