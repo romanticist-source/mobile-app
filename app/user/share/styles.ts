@@ -322,6 +322,9 @@ export const styles = StyleSheet.create({
   emergencyHeaderIcon: {
     fontSize: 24,
   },
+  emergencyHeaderContent: {
+    flex: 1,
+  },
   emergencyHeaderTitle: {
     fontSize: 16,
     fontWeight: 'bold',

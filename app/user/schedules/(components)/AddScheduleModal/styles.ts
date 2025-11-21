@@ -6,8 +6,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingTop: 60,
@@ -15,27 +13,51 @@ export const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  modalCloseButton: {
-    padding: 8,
-  },
-  modalCloseIcon: {
-    fontSize: 24,
-    color: '#FF6B6B',
-  },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
   },
-  modalSaveButton: {
-    padding: 8,
+  buttonContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingBottom: 34,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    gap: 12,
   },
-  modalSaveIcon: {
-    fontSize: 24,
-    color: '#FF6B6B',
+  cancelButton: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#666666',
+  },
+  saveButton: {
+    flex: 1,
+    backgroundColor: '#FF6B6B',
+    borderRadius: 8,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  saveButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    flexGrow: 1,
   },
   modalContent: {
-    flex: 1,
     padding: 16,
   },
   formField: {

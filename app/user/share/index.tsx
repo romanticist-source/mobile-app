@@ -5,8 +5,10 @@ import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayo
 import type { Helper } from '@/_schema';
 import { Stack } from 'expo-router';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
+import { EditHealthCardModal } from './(components)/EditHealthCardModal/EditHealthCardModal';
+import { EditEmergencyCardModal } from './(components)/EditEmergencyCardModal/EditEmergencyCardModal';
 
 // UI表示用の型
 interface CaregiverDisplay {
@@ -40,11 +42,11 @@ type TabType = 'health' | 'emergency';
 
 export default function ShareScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('health');
-  const [isEditing, setIsEditing] = useState(false);
+  const [isHealthModalVisible, setIsHealthModalVisible] = useState(false);
+  const [isEmergencyModalVisible, setIsEmergencyModalVisible] = useState(false);
 
   // Health card data states - initialized from mock data
   const [healthConditions, setHealthConditions] = useState(mockHealthCardData.healthConditions);
-  const [newCondition, setNewCondition] = useState('');
   const [bloodType, setBloodType] = useState(mockHealthCardData.bloodType);
   const [height, setHeight] = useState(mockHealthCardData.height);
   const [weight, setWeight] = useState(mockHealthCardData.weight);
@@ -52,6 +54,19 @@ export default function ShareScreen() {
   const [medications, setMedications] = useState(mockHealthCardData.medications);
   const [disability, setDisability] = useState(mockHealthCardData.disability);
   const [notes, setNotes] = useState(mockHealthCardData.notes);
+
+  // Emergency card data states
+  const [emergencyName, setEmergencyName] = useState('山田太郎');
+  const [emergencyCondition, setEmergencyCondition] = useState('軽度の身体障害');
+  const [emergencyBloodType, setEmergencyBloodType] = useState('A型');
+  const [emergencyNotes, setEmergencyNotes] = useState(['心臓病', '低血圧']);
+  const [emergencyMedications, setEmergencyMedications] = useState(['サンプル薬A', 'サンプル薬B']);
+  const [emergencyAllergies, setEmergencyAllergies] = useState('なし');
+  const [caregiverName, setCaregiverName] = useState('山田花子');
+  const [caregiverRelation, setCaregiverRelation] = useState('娘');
+  const [caregiverPhone, setCaregiverPhone] = useState('090-YYYY-YYYY');
+  const [hospitalName, setHospitalName] = useState('サンプル病院');
+  const [hospitalPhone, setHospitalPhone] = useState('03-XXXX-XXXX');
 
   // Caregivers data from API
   const [caregivers, setCaregivers] = useState<CaregiverDisplay[]>([]);
@@ -88,19 +103,50 @@ export default function ShareScreen() {
     return '22.5';
   };
 
-  const handleAddCondition = () => {
-    if (newCondition.trim()) {
-      setHealthConditions([...healthConditions, newCondition.trim()]);
-      setNewCondition('');
-    }
+  const handleHealthCardSave = (data: {
+    healthConditions: string[];
+    bloodType: string;
+    height: string;
+    weight: string;
+    allergies: string;
+    medications: string;
+    disability: string;
+    notes: string;
+  }) => {
+    setHealthConditions(data.healthConditions);
+    setBloodType(data.bloodType);
+    setHeight(data.height);
+    setWeight(data.weight);
+    setAllergies(data.allergies);
+    setMedications(data.medications);
+    setDisability(data.disability);
+    setNotes(data.notes);
   };
 
-  const handleRemoveCondition = (index: number) => {
-    setHealthConditions(healthConditions.filter((_, i) => i !== index));
-  };
-
-  const handleToggleEdit = () => {
-    setIsEditing(!isEditing);
+  const handleEmergencyCardSave = (data: {
+    name: string;
+    condition: string;
+    bloodType: string;
+    emergencyNotes: string[];
+    medications: string[];
+    allergies: string;
+    caregiverName: string;
+    caregiverRelation: string;
+    caregiverPhone: string;
+    hospitalName: string;
+    hospitalPhone: string;
+  }) => {
+    setEmergencyName(data.name);
+    setEmergencyCondition(data.condition);
+    setEmergencyBloodType(data.bloodType);
+    setEmergencyNotes(data.emergencyNotes);
+    setEmergencyMedications(data.medications);
+    setEmergencyAllergies(data.allergies);
+    setCaregiverName(data.caregiverName);
+    setCaregiverRelation(data.caregiverRelation);
+    setCaregiverPhone(data.caregiverPhone);
+    setHospitalName(data.hospitalName);
+    setHospitalPhone(data.hospitalPhone);
   };
 
   return (
@@ -158,18 +204,9 @@ export default function ShareScreen() {
                 <View style={styles.cardHeader}>
                   <Text style={styles.cardHeaderIcon}>👤</Text>
                   <Text style={styles.cardHeaderText}>体調カード</Text>
-                  <TouchableOpacity style={styles.editButton} onPress={handleToggleEdit}>
-                    {isEditing ? (
-                      <>
-                        <Text style={styles.editButtonIcon}>✓</Text>
-                        <Text style={styles.editButtonText}>完了</Text>
-                      </>
-                    ) : (
-                      <>
-                        <Text style={styles.editButtonIcon}>✏️</Text>
-                        <Text style={styles.editButtonText}>編集</Text>
-                      </>
-                    )}
+                  <TouchableOpacity style={styles.editButton} onPress={() => setIsHealthModalVisible(true)}>
+                    <Text style={styles.editButtonIcon}>✏️</Text>
+                    <Text style={styles.editButtonText}>編集</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -178,11 +215,6 @@ export default function ShareScreen() {
                   <View style={styles.userInfo}>
                     <View style={styles.userAvatar}>
                       <Text style={styles.userAvatarText}>山</Text>
-                      {isEditing && (
-                        <View style={styles.cameraIconContainer}>
-                          <Text style={styles.cameraIcon}>📷</Text>
-                        </View>
-                      )}
                     </View>
                     <Text style={styles.userName2}>山田太郎</Text>
                   </View>
@@ -193,68 +225,21 @@ export default function ShareScreen() {
                     {healthConditions.map((condition, index) => (
                       <View key={index} style={styles.tag}>
                         <Text style={styles.tagText}>{condition}</Text>
-                        {isEditing && (
-                          <TouchableOpacity onPress={() => handleRemoveCondition(index)}>
-                            <Text style={styles.removeTagIcon}>×</Text>
-                          </TouchableOpacity>
-                        )}
                       </View>
                     ))}
                   </View>
-
-                  {isEditing && (
-                    <View style={styles.addConditionContainer}>
-                      <TextInput
-                        style={styles.addConditionInput}
-                        placeholder="新しい病状を追加..."
-                        value={newCondition}
-                        onChangeText={setNewCondition}
-                      />
-                      <TouchableOpacity style={styles.addConditionButton} onPress={handleAddCondition}>
-                        <Text style={styles.addConditionButtonText}>+</Text>
-                      </TouchableOpacity>
-                    </View>
-                  )}
 
                   {/* Details */}
                   <Text style={styles.sectionTitle}>詳細情報</Text>
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>血液型</Text>
-                    {isEditing ? (
-                      <TextInput
-                        style={styles.detailInput}
-                        value={bloodType}
-                        onChangeText={setBloodType}
-                      />
-                    ) : (
-                      <Text style={styles.detailValue}>{bloodType}</Text>
-                    )}
+                    <Text style={styles.detailValue}>{bloodType}</Text>
                   </View>
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>身長・体重</Text>
-                    {isEditing ? (
-                      <View style={styles.heightWeightContainer}>
-                        <TextInput
-                          style={styles.heightWeightInput}
-                          value={height}
-                          onChangeText={setHeight}
-                          keyboardType="numeric"
-                          placeholder="170"
-                        />
-                        <Text style={styles.heightWeightSeparator}>/</Text>
-                        <TextInput
-                          style={styles.heightWeightInput}
-                          value={weight}
-                          onChangeText={setWeight}
-                          keyboardType="numeric"
-                          placeholder="65"
-                        />
-                      </View>
-                    ) : (
-                      <Text style={styles.detailValue}>{height}cm / {weight}kg</Text>
-                    )}
+                    <Text style={styles.detailValue}>{height}cm / {weight}kg</Text>
                   </View>
 
                   <View style={styles.detailItem}>
@@ -264,59 +249,22 @@ export default function ShareScreen() {
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>アレルギー</Text>
-                    {isEditing ? (
-                      <TextInput
-                        style={styles.detailInput}
-                        value={allergies}
-                        onChangeText={setAllergies}
-                        placeholder="ペニシリン、花粉"
-                      />
-                    ) : (
-                      <Text style={styles.detailValue}>{allergies}</Text>
-                    )}
+                    <Text style={styles.detailValue}>{allergies}</Text>
                   </View>
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>服用薬</Text>
-                    {isEditing ? (
-                      <TextInput
-                        style={styles.detailInput}
-                        value={medications}
-                        onChangeText={setMedications}
-                        placeholder="降圧剤、ビタミンD"
-                      />
-                    ) : (
-                      <Text style={styles.detailValue}>{medications}</Text>
-                    )}
+                    <Text style={styles.detailValue}>{medications}</Text>
                   </View>
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>障害情報</Text>
-                    {isEditing ? (
-                      <TextInput
-                        style={styles.detailInput}
-                        value={disability}
-                        onChangeText={setDisability}
-                        placeholder="軽度の歩行障害"
-                      />
-                    ) : (
-                      <Text style={styles.detailValue}>{disability}</Text>
-                    )}
+                    <Text style={styles.detailValue}>{disability}</Text>
                   </View>
 
                   <View style={styles.detailItem}>
                     <Text style={styles.detailLabel}>注意事項</Text>
-                    {isEditing ? (
-                      <TextInput
-                        style={[styles.detailInput, styles.detailInputMultiline]}
-                        value={notes}
-                        onChangeText={setNotes}
-                        placeholder="長時間の立位は困難、30分ごとに休憩が必要"
-                        multiline
-                      />
-                    ) : (
-                      <Text style={styles.detailValue}>{notes}</Text>
-                    )}
+                    <Text style={styles.detailValue}>{notes}</Text>
                   </View>
                 </View>
               </View>
@@ -325,10 +273,14 @@ export default function ShareScreen() {
               <View style={styles.card}>
                 <View style={styles.emergencyHeader}>
                   <Text style={styles.emergencyHeaderIcon}>⚠️</Text>
-                  <View>
+                  <View style={styles.emergencyHeaderContent}>
                     <Text style={styles.emergencyHeaderTitle}>緊急ヘルプカード</Text>
                     <Text style={styles.emergencyHeaderSubtitle}>このカードは緊急時必要です</Text>
                   </View>
+                  <TouchableOpacity style={styles.editButton} onPress={() => setIsEmergencyModalVisible(true)}>
+                    <Text style={styles.editButtonIcon}>✏️</Text>
+                    <Text style={styles.editButtonText}>編集</Text>
+                  </TouchableOpacity>
                 </View>
 
                 <View style={styles.cardBody}>
@@ -337,53 +289,53 @@ export default function ShareScreen() {
                   <View style={styles.emergencyInfoGrid}>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>お名前</Text>
-                      <Text style={styles.emergencyInfoValue}>山田太郎</Text>
+                      <Text style={styles.emergencyInfoValue}>{emergencyName}</Text>
                     </View>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>役職</Text>
-                      <Text style={styles.emergencyInfoValue}>軽度の身体障害</Text>
+                      <Text style={styles.emergencyInfoValue}>{emergencyCondition}</Text>
                     </View>
                   </View>
                   <View style={styles.emergencyInfoItem}>
                     <Text style={styles.emergencyInfoLabel}>血液型</Text>
-                    <Text style={styles.emergencyInfoValue}>A型</Text>
+                    <Text style={styles.emergencyInfoValue}>{emergencyBloodType}</Text>
                   </View>
 
                   {/* Emergency Notes */}
                   <Text style={styles.emergencySectionTitle2}>緊急時注意事項</Text>
                   <View style={styles.emergencyTagsContainer}>
-                    <View style={styles.emergencyTag}>
-                      <Text style={styles.emergencyTagText}>心臓病</Text>
-                    </View>
-                    <View style={styles.emergencyTag}>
-                      <Text style={styles.emergencyTagText}>低血圧</Text>
-                    </View>
+                    {emergencyNotes.map((note, index) => (
+                      <View key={index} style={styles.emergencyTag}>
+                        <Text style={styles.emergencyTagText}>{note}</Text>
+                      </View>
+                    ))}
                   </View>
 
                   {/* Medications */}
                   <Text style={styles.emergencySectionTitle2}>服用薬</Text>
                   <View style={styles.medicationList}>
-                    <Text style={styles.medicationItem}>• サンプル薬A</Text>
-                    <Text style={styles.medicationItem}>• サンプル薬B</Text>
+                    {emergencyMedications.map((med, index) => (
+                      <Text key={index} style={styles.medicationItem}>• {med}</Text>
+                    ))}
                   </View>
 
                   {/* Allergies */}
                   <Text style={styles.emergencySectionTitle2}>アレルギー</Text>
-                  <Text style={styles.allergyText}>なし</Text>
+                  <Text style={styles.allergyText}>{emergencyAllergies}</Text>
 
                   {/* Emergency Contacts */}
                   <Text style={styles.emergencyContactTitle}>📞 緊急連絡先</Text>
                   <View style={styles.emergencyContactBox}>
                     <View style={styles.emergencyContactItem}>
                       <Text style={styles.emergencyContactLabel}>介助者</Text>
-                      <Text style={styles.emergencyContactName}>山田花子（娘）</Text>
-                      <Text style={styles.emergencyContactPhone}>090-YYYY-YYYY</Text>
+                      <Text style={styles.emergencyContactName}>{caregiverName}（{caregiverRelation}）</Text>
+                      <Text style={styles.emergencyContactPhone}>{caregiverPhone}</Text>
                     </View>
                     <View style={styles.emergencyContactDivider} />
                     <View style={styles.emergencyContactItem}>
                       <Text style={styles.emergencyContactLabel}>かかりつけ病院</Text>
-                      <Text style={styles.emergencyContactName}>サンプル病院</Text>
-                      <Text style={styles.emergencyContactPhone}>03-XXXX-XXXX</Text>
+                      <Text style={styles.emergencyContactName}>{hospitalName}</Text>
+                      <Text style={styles.emergencyContactPhone}>{hospitalPhone}</Text>
                     </View>
                   </View>
 
@@ -460,6 +412,43 @@ export default function ShareScreen() {
         {/* Bottom Navigation */}
         <BottomNavigation activeTab="share" />
       </View>
+
+      {/* Edit Health Card Modal */}
+      <EditHealthCardModal
+        visible={isHealthModalVisible}
+        onClose={() => setIsHealthModalVisible(false)}
+        data={{
+          healthConditions,
+          bloodType,
+          height,
+          weight,
+          allergies,
+          medications,
+          disability,
+          notes,
+        }}
+        onSave={handleHealthCardSave}
+      />
+
+      {/* Edit Emergency Card Modal */}
+      <EditEmergencyCardModal
+        visible={isEmergencyModalVisible}
+        onClose={() => setIsEmergencyModalVisible(false)}
+        data={{
+          name: emergencyName,
+          condition: emergencyCondition,
+          bloodType: emergencyBloodType,
+          emergencyNotes,
+          medications: emergencyMedications,
+          allergies: emergencyAllergies,
+          caregiverName,
+          caregiverRelation,
+          caregiverPhone,
+          hospitalName,
+          hospitalPhone,
+        }}
+        onSave={handleEmergencyCardSave}
+      />
     </>
   );
 }

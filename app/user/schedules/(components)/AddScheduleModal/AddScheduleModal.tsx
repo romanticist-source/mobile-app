@@ -4,6 +4,9 @@ import {
   View,
   Text,
   TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -130,66 +133,79 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
       transparent={false}
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <KeyboardAvoidingView
+        style={styles.modalContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
         {/* Modal Header */}
         <View style={styles.modalHeader}>
-          <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
-            <Text style={styles.modalCloseIcon}>✕</Text>
-          </TouchableOpacity>
           <Text style={styles.modalTitle}>
             {isEditMode ? 'スケジュールを編集' : '新規スケジュール'}
           </Text>
-          <TouchableOpacity onPress={handleSave} style={styles.modalSaveButton}>
-            <Text style={styles.modalSaveIcon}>✓</Text>
-          </TouchableOpacity>
         </View>
 
         {/* Modal Content */}
-        <Form form={form} style={styles.modalContent}>
-          <FormInput
-            name="title"
-            label="タイトル"
-            required
-            placeholder="スケジュールのタイトルを入力"
-          />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollViewContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <Form form={form} style={styles.modalContent}>
+            <FormInput
+              name="title"
+              label="タイトル"
+              required
+              placeholder="スケジュールのタイトルを入力"
+            />
 
-          <FormSelect
-            name="scheduleType"
-            label="カテゴリ"
-            required
-            options={scheduleTypeOptions}
-            placeholder="カテゴリを選択"
-          />
+            <FormSelect
+              name="scheduleType"
+              label="カテゴリ"
+              required
+              options={scheduleTypeOptions}
+              placeholder="カテゴリを選択"
+            />
 
-          <FormDateTimePicker
-            name="startTime"
-            label="開始"
-            required
-            mode="time"
-          />
+            <FormDateTimePicker
+              name="startTime"
+              label="開始"
+              required
+              mode="time"
+            />
 
-          <FormDateTimePicker
-            name="endTime"
-            label="終了"
-            required
-            mode="time"
-          />
+            <FormDateTimePicker
+              name="endTime"
+              label="終了"
+              required
+              mode="time"
+            />
 
-          <FormSelect
-            name="repeatPattern"
-            label="繰り返し"
-            options={repeatOptions}
-            placeholder="繰り返しパターンを選択"
-          />
+            <FormSelect
+              name="repeatPattern"
+              label="繰り返し"
+              options={repeatOptions}
+              placeholder="繰り返しパターンを選択"
+            />
 
-          <FormTextArea
-            name="memo"
-            label="メモ"
-            placeholder="備考や注意事項を入力..."
-            numberOfLines={4}
-          />
-        </Form>
-      </View>
+            <FormTextArea
+              name="memo"
+              label="メモ"
+              placeholder="備考や注意事項を入力..."
+              numberOfLines={4}
+            />
+          </Form>
+        </ScrollView>
+
+        {/* Bottom Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
+            <Text style={styles.cancelButtonText}>キャンセル</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+            <Text style={styles.saveButtonText}>保存</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
