@@ -5,19 +5,20 @@ import {
   border,
   textPrimary,
   textSecondary,
+  textTertiary,
   accentLight,
+  accentPrimary,
   xs,
   sm,
   md,
   lg,
   xl,
+  fontSm,
   fontMd,
+  fontBase,
   fontLg,
-  fontXxl,
   fontXxxxl,
-  radiusFull,
-  iconContainerSize,
-  iconSize,
+  radiusSm,
   headerButton,
 } from '@/styles/tokens';
 
@@ -54,33 +55,98 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: radiusFull,
-    backgroundColor: accentLight,
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  section: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
+    marginBottom: sm,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: xs,
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
+  sectionTitle: {
+    fontSize: fontBase,
+    fontWeight: '700',
     color: textPrimary,
-    marginBottom: xs,
   },
-  description: {
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: sm,
+    borderBottomWidth: 1,
+    borderBottomColor: border,
+  },
+  settingInfo: {
+    flex: 1,
+    marginRight: sm,
+  },
+  settingLabel: {
     fontSize: fontMd,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: 4,
+  },
+  settingDescription: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+    lineHeight: 18,
+  },
+  infoBox: {
+    backgroundColor: '#FFF9E6',
+    borderRadius: radiusSm,
+    padding: sm,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: xs,
+    marginBottom: md,
+  },
+  infoIcon: {
+    fontSize: 20,
+    marginRight: xs,
+    marginTop: 2,
+  },
+  infoText: {
+    flex: 1,
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 20,
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: accentPrimary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
   },
 });
