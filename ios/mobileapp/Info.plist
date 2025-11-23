@@ -70,5 +70,9 @@
     <string>Light</string>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
+    <key>NSHealthShareUsageDescription</key>
+    <string>このアプリは心拍数などの健康データを表示するためにHealthKitデータを読み取ります</string>
+    <key>NSHealthUpdateUsageDescription</key>
+    <string>このアプリはHealthKitにデータを書き込みます</string>
   </dict>
 </plist>

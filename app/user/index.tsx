@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, ActivityIndicator, DimensionValue } from 'react-native';
 import { Stack } from 'expo-router';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
+import { useHealthKitData, formatVitalDataForSection } from '@/hooks/useHealthKitData';
 import { styles } from './styles';
 
 export default function UserHomeScreen() {
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const { data, isLoading, error, refresh, isAvailable } = useHealthKitData({
+    autoFetch: true,
+    refreshInterval: 60000, // 1分ごとに更新
+  });
+
+  const healthKitVitals = formatVitalDataForSection(data);
 
   return (
     <>
@@ -47,59 +54,110 @@ export default function UserHomeScreen() {
 
           {/* Vital Data Section */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>バイタルデータ</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>バイタルデータ</Text>
+              {isAvailable && (
+                <TouchableOpacity onPress={refresh} style={styles.refreshButton}>
+                  <Text style={styles.refreshButtonText}>更新</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            {isLoading && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#4DABF7" />
+                <Text style={styles.loadingText}>データを読み込み中...</Text>
+              </View>
+            )}
+
+            {error && !isLoading && (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{error}</Text>
+              </View>
+            )}
+
             <View style={styles.vitalGrid}>
-              {/* Heart Rate */}
-              <View style={styles.vitalCard}>
-                <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>❤️</Text>
-                  <Text style={styles.vitalLabel}>心拍数</Text>
+              {/* HealthKitからのデータ */}
+              {healthKitVitals.map((vital, index) => (
+                <View key={index} style={styles.vitalCard}>
+                  <View style={styles.vitalHeader}>
+                    <Text style={styles.vitalIcon}>{vital.icon}</Text>
+                    <Text style={styles.vitalLabel}>{vital.label}</Text>
+                  </View>
+                  <Text style={styles.vitalValue}>
+                    {vital.value} <Text style={styles.vitalUnit}>{vital.unit}</Text>
+                  </Text>
+                  <View style={[styles.vitalBar, { backgroundColor: vital.barColor }]}>
+                    <View
+                      style={[
+                        styles.vitalBarFill,
+                        {
+                          width: vital.fillPercentage as DimensionValue,
+                          backgroundColor: vital.barFillColor
+                        }
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.vitalStatus}>{vital.status}</Text>
                 </View>
-                <Text style={styles.vitalValue}>72 <Text style={styles.vitalUnit}>bpm</Text></Text>
-                <View style={[styles.vitalBar, { backgroundColor: '#FFE5E5' }]}>
-                  <View style={[styles.vitalBarFill, { width: '70%', backgroundColor: '#FF6B6B' }]} />
-                </View>
-                <Text style={styles.vitalStatus}>正常</Text>
-              </View>
+              ))}
 
-              {/* Health Index */}
-              <View style={styles.vitalCard}>
-                <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>📈</Text>
-                  <Text style={styles.vitalLabel}>健康指標</Text>
-                </View>
-                <Text style={styles.vitalValue}>85 <Text style={styles.vitalUnit}>%</Text></Text>
-                <View style={[styles.vitalBar, { backgroundColor: '#E0F7F7' }]}>
-                  <View style={[styles.vitalBarFill, { width: '85%', backgroundColor: '#20C9A6' }]} />
-                </View>
-                <Text style={styles.vitalStatus}>良好</Text>
-              </View>
+              {/* HealthKitデータがない場合のフォールバック */}
+              {healthKitVitals.length === 0 && !isLoading && (
+                <>
+                  {/* Heart Rate - フォールバック */}
+                  <View style={styles.vitalCard}>
+                    <View style={styles.vitalHeader}>
+                      <Text style={styles.vitalIcon}>❤️</Text>
+                      <Text style={styles.vitalLabel}>心拍数</Text>
+                    </View>
+                    <Text style={styles.vitalValue}>-- <Text style={styles.vitalUnit}>bpm</Text></Text>
+                    <View style={[styles.vitalBar, { backgroundColor: '#FFE5E5' }]}>
+                      <View style={[styles.vitalBarFill, { width: '0%', backgroundColor: '#FF6B6B' }]} />
+                    </View>
+                    <Text style={styles.vitalStatus}>データなし</Text>
+                  </View>
 
-              {/* Activity Level */}
-              <View style={styles.vitalCard}>
-                <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>⚡</Text>
-                  <Text style={styles.vitalLabel}>活動レベル</Text>
-                </View>
-                <Text style={styles.vitalValue}>320 <Text style={styles.vitalUnit}>kcal</Text></Text>
-                <View style={[styles.vitalBar, { backgroundColor: '#F0E6FF' }]}>
-                  <View style={[styles.vitalBarFill, { width: '60%', backgroundColor: '#9B6CFF' }]} />
-                </View>
-                <Text style={styles.vitalStatus}>中程度</Text>
-              </View>
+                  {/* Steps - フォールバック */}
+                  <View style={styles.vitalCard}>
+                    <View style={styles.vitalHeader}>
+                      <Text style={styles.vitalIcon}>🚶</Text>
+                      <Text style={styles.vitalLabel}>歩数</Text>
+                    </View>
+                    <Text style={styles.vitalValue}>-- <Text style={styles.vitalUnit}>歩</Text></Text>
+                    <View style={[styles.vitalBar, { backgroundColor: '#E0F0FF' }]}>
+                      <View style={[styles.vitalBarFill, { width: '0%', backgroundColor: '#4DABF7' }]} />
+                    </View>
+                    <Text style={styles.vitalStatus}>データなし</Text>
+                  </View>
 
-              {/* Water Intake */}
-              <View style={styles.vitalCard}>
-                <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>💧</Text>
-                  <Text style={styles.vitalLabel}>水分補給</Text>
-                </View>
-                <Text style={styles.vitalValue}>1.2 <Text style={styles.vitalUnit}>L</Text></Text>
-                <View style={[styles.vitalBar, { backgroundColor: '#E3F2FD' }]}>
-                  <View style={[styles.vitalBarFill, { width: '60%', backgroundColor: '#2196F3' }]} />
-                </View>
-                <Text style={styles.vitalStatus}>目標の60%</Text>
-              </View>
+                  {/* Activity Level - フォールバック */}
+                  <View style={styles.vitalCard}>
+                    <View style={styles.vitalHeader}>
+                      <Text style={styles.vitalIcon}>🔥</Text>
+                      <Text style={styles.vitalLabel}>アクティブカロリー</Text>
+                    </View>
+                    <Text style={styles.vitalValue}>-- <Text style={styles.vitalUnit}>kcal</Text></Text>
+                    <View style={[styles.vitalBar, { backgroundColor: '#FFF3E0' }]}>
+                      <View style={[styles.vitalBarFill, { width: '0%', backgroundColor: '#FF9800' }]} />
+                    </View>
+                    <Text style={styles.vitalStatus}>データなし</Text>
+                  </View>
+
+                  {/* Oxygen - フォールバック */}
+                  <View style={styles.vitalCard}>
+                    <View style={styles.vitalHeader}>
+                      <Text style={styles.vitalIcon}>💨</Text>
+                      <Text style={styles.vitalLabel}>血中酸素濃度</Text>
+                    </View>
+                    <Text style={styles.vitalValue}>-- <Text style={styles.vitalUnit}>%</Text></Text>
+                    <View style={[styles.vitalBar, { backgroundColor: '#E8F5E9' }]}>
+                      <View style={[styles.vitalBarFill, { width: '0%', backgroundColor: '#4CAF50' }]} />
+                    </View>
+                    <Text style={styles.vitalStatus}>データなし</Text>
+                  </View>
+                </>
+              )}
             </View>
           </View>
 

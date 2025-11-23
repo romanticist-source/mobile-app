@@ -2008,6 +2008,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kingstinct/react-native-healthkit@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "@kingstinct/react-native-healthkit@npm:12.1.1"
+  peerDependencies:
+    react: ">=19"
+    react-native: ">=0.79"
+    react-native-nitro-modules: ">=0.30"
+  checksum: 10c0/357293ca550f61f27dffc9fcfa0ab0d1275d1444de26b389f5e4c498fc20e8381047f28f88eff60fdb3980974e4aabc4b16c1840b5768d5fa1fab03199df26c0
+  languageName: node
+  linkType: hard
+
 "@motionone/animation@npm:^10.12.0":
   version: 10.18.0
   resolution: "@motionone/animation@npm:10.18.0"
@@ -10773,6 +10784,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-nitro-modules@npm:^0.31.9":
+  version: 0.31.9
+  resolution: "react-native-nitro-modules@npm:0.31.9"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10c0/3af65400c1e99c0c05bb2d634b27e395dd4f8fc5cb59c6bd3b2ccdd507979dd9def436b9e992030b9a7d83686236132f9d79cbbb9a8f568c15ed65d8c287f870
+  languageName: node
+  linkType: hard
+
 "react-native-reanimated@npm:~3.10.1":
   version: 3.10.1
   resolution: "react-native-reanimated@npm:3.10.1"
@@ -11854,6 +11875,7 @@ __metadata:
     "@gorhom/bottom-sheet": "npm:^4.6.4"
     "@hookform/resolvers": "npm:^5.2.2"
     "@imaimai17468/digital-agency-icons-react": "npm:^0.0.3"
+    "@kingstinct/react-native-healthkit": "npm:^12.1.1"
     "@react-native-async-storage/async-storage": "npm:1.23.1"
     "@react-native-community/datetimepicker": "npm:8.0.1"
     "@react-native-community/slider": "npm:4.5.2"
@@ -11887,6 +11909,7 @@ __metadata:
     react-hook-form: "npm:^7.66.1"
     react-native: "npm:0.74.5"
     react-native-gesture-handler: "npm:~2.16.1"
+    react-native-nitro-modules: "npm:^0.31.9"
     react-native-reanimated: "npm:~3.10.1"
     react-native-safe-area-context: "npm:4.10.5"
     react-native-screens: "npm:3.31.1"
