@@ -16,7 +16,6 @@
 		496FFA452ED21DDE00F81847 /* WatchConnectivityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496FFA422ED21DDE00F81847 /* WatchConnectivityManager.swift */; };
 		496FFA462ED21DDE00F81847 /* WatchConnectivityModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 496FFA432ED21DDE00F81847 /* WatchConnectivityModule.m */; };
 		496FFA472ED21DDE00F81847 /* WatchConnectivityModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496FFA442ED21DDE00F81847 /* WatchConnectivityModule.swift */; };
-		496FFA492ED21E3500F81847 /* WatchConnectivityManager 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 496FFA482ED21E3500F81847 /* WatchConnectivityManager 2.swift */; };
 		74F7D32A730945079EBDAA06 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = C66060F527DD4D75B467EE1A /* noop-file.swift */; };
 		96905EF65AED1B983A6B3ABC /* libPods-mobileapp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mobileapp.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
@@ -72,10 +71,9 @@
 		496FFA102ED2152F00F81847 /* MisoWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MisoWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		496FFA1C2ED2153000F81847 /* MisoWatch Watch AppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MisoWatch Watch AppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		496FFA262ED2153000F81847 /* MisoWatch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "MisoWatch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		496FFA422ED21DDE00F81847 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityManager.swift; sourceTree = "<group>"; };
-		496FFA432ED21DDE00F81847 /* WatchConnectivityModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WatchConnectivityModule.m; sourceTree = "<group>"; };
-		496FFA442ED21DDE00F81847 /* WatchConnectivityModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchConnectivityModule.swift; sourceTree = "<group>"; };
-		496FFA482ED21E3500F81847 /* WatchConnectivityManager 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WatchConnectivityManager 2.swift"; sourceTree = "<group>"; };
+		496FFA422ED21DDE00F81847 /* WatchConnectivityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchConnectivityManager.swift; path = mobileapp/WatchConnectivityManager.swift; sourceTree = "<group>"; };
+		496FFA432ED21DDE00F81847 /* WatchConnectivityModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = WatchConnectivityModule.m; path = mobileapp/WatchConnectivityModule.m; sourceTree = "<group>"; };
+		496FFA442ED21DDE00F81847 /* WatchConnectivityModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WatchConnectivityModule.swift; path = mobileapp/WatchConnectivityModule.swift; sourceTree = "<group>"; };
 		49A53C9A2ED02C7600A9691F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		58EEBF8E8E6FB1BC6CAF49B5 /* libPods-mobileapp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-mobileapp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C2E3173556A471DD304B334 /* Pods-mobileapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-mobileapp.debug.xcconfig"; path = "Target Support Files/Pods-mobileapp/Pods-mobileapp.debug.xcconfig"; sourceTree = "<group>"; };
@@ -140,6 +138,9 @@
 				C66060F527DD4D75B467EE1A /* noop-file.swift */,
 				233F29C39A5F436DA83F4FEE /* mobileapp-Bridging-Header.h */,
 				BE5BB1F32B4F092AF6E8C5D3 /* PrivacyInfo.xcprivacy */,
+				496FFA422ED21DDE00F81847 /* WatchConnectivityManager.swift */,
+				496FFA432ED21DDE00F81847 /* WatchConnectivityModule.m */,
+				496FFA442ED21DDE00F81847 /* WatchConnectivityModule.swift */,
 			);
 			name = mobileapp;
 			sourceTree = "<group>";
@@ -163,10 +164,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				496FFA482ED21E3500F81847 /* WatchConnectivityManager 2.swift */,
-				496FFA422ED21DDE00F81847 /* WatchConnectivityManager.swift */,
-				496FFA432ED21DDE00F81847 /* WatchConnectivityModule.m */,
-				496FFA442ED21DDE00F81847 /* WatchConnectivityModule.swift */,
 				49A53C9A2ED02C7600A9691F /* README.md */,
 				13B07FAE1A68108700A75B9A /* mobileapp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -526,6 +523,9 @@
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
 				74F7D32A730945079EBDAA06 /* noop-file.swift in Sources */,
+				496FFA452ED21DDE00F81847 /* WatchConnectivityManager.swift in Sources */,
+				496FFA462ED21DDE00F81847 /* WatchConnectivityModule.m in Sources */,
+				496FFA472ED21DDE00F81847 /* WatchConnectivityModule.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,10 +533,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				496FFA452ED21DDE00F81847 /* WatchConnectivityManager.swift in Sources */,
-				496FFA462ED21DDE00F81847 /* WatchConnectivityModule.m in Sources */,
-				496FFA472ED21DDE00F81847 /* WatchConnectivityModule.swift in Sources */,
-				496FFA492ED21E3500F81847 /* WatchConnectivityManager 2.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -664,6 +660,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MisoWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "心拍数、血中酸素濃度、歩数を表示するために使用します";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.anonymous.storybooktutorialtemplate;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -715,6 +712,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = MisoWatch;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "心拍数、血中酸素濃度、歩数を表示するために使用します";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = com.anonymous.storybooktutorialtemplate;
 				LD_RUNPATH_SEARCH_PATHS = (
