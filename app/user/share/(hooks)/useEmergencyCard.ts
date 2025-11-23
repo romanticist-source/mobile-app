@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { getEmergencyContactsByUserId } from '@/api/emergency-contacts';
 import { getUserStatusCardByUserId } from '@/api/user-status-cards';
 import { getUserHelpCardByUserId } from '@/api/user-help-cards';
-import { MOCK_USER_ID } from '@/constants/mockUser';
+import { useUser } from '@/contexts/UserContext';
 
 export interface EmergencyCardData {
   name: string;
@@ -21,6 +21,7 @@ export interface EmergencyCardData {
 }
 
 export function useEmergencyCard() {
+  const { selectedUserId } = useUser();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,6 +43,8 @@ export function useEmergencyCard() {
 
   // Fetch data from API
   useEffect(() => {
+    if (!selectedUserId) return;
+
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -49,9 +52,9 @@ export function useEmergencyCard() {
 
         // Fetch all data in parallel
         const [statusCard, emergencyContacts, helpCard] = await Promise.all([
-          getUserStatusCardByUserId(MOCK_USER_ID).catch(() => null),
-          getEmergencyContactsByUserId(MOCK_USER_ID).catch(() => []),
-          getUserHelpCardByUserId(MOCK_USER_ID).catch(() => null),
+          getUserStatusCardByUserId(selectedUserId).catch(() => null),
+          getEmergencyContactsByUserId(selectedUserId).catch(() => []),
+          getUserHelpCardByUserId(selectedUserId).catch(() => null),
         ]);
 
         // Set status card data
@@ -96,7 +99,7 @@ export function useEmergencyCard() {
     };
 
     fetchData();
-  }, []);
+  }, [selectedUserId]);
 
   const handleSave = useCallback((data: EmergencyCardData) => {
     setName(data.name);

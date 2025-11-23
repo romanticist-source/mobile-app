@@ -3,7 +3,7 @@ import { getUserById } from '@/api/users';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { MOCK_USER_ID } from '@/constants/mockUser';
+import { useUser } from '@/contexts/UserContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import { EditEmergencyCardModal } from './(components)/EditEmergencyCardModal/Ed
 import { useShareScreen } from './(hooks)/useShareScreen';
 
 export default function ShareScreen() {
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
   const {
     activeTab,
     setActiveTab,
@@ -37,9 +38,11 @@ export default function ShareScreen() {
   const [userLoading, setUserLoading] = useState(true);
 
   useEffect(() => {
+    if (!selectedUserId || isUserLoading) return;
+
     const fetchUser = async () => {
       try {
-        const user = await getUserById(MOCK_USER_ID);
+        const user = await getUserById(selectedUserId);
         setUserData(user);
       } catch (error) {
         console.error('Failed to fetch user:', error);
@@ -48,7 +51,7 @@ export default function ShareScreen() {
       }
     };
     fetchUser();
-  }, []);
+  }, [selectedUserId, isUserLoading]);
 
   if (userLoading || !userData) {
     return (

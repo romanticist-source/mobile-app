@@ -1,10 +1,12 @@
 import { getUsers } from '@/api/users';
 import type { User } from '@/_schema';
+import { useUser } from '@/contexts/UserContext';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { styles } from './styles';
 
 export function AppHeader() {
+  const { selectedUserId, setSelectedUserId, isLocked, setIsLocked } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -14,18 +16,30 @@ export function AppHeader() {
       try {
         const userList = await getUsers();
         setUsers(userList);
-        if (userList.length > 0) {
+
+        // 保存されたユーザーIDがあればそのユーザーを選択、なければ最初のユーザー
+        if (selectedUserId) {
+          const savedUser = userList.find(u => u.id === selectedUserId);
+          if (savedUser) {
+            setSelectedUser(savedUser);
+          } else if (userList.length > 0) {
+            setSelectedUser(userList[0]);
+            setSelectedUserId(userList[0].id);
+          }
+        } else if (userList.length > 0) {
           setSelectedUser(userList[0]);
+          setSelectedUserId(userList[0].id);
         }
       } catch (error) {
         console.error('Failed to fetch users:', error);
       }
     };
     fetchUsers();
-  }, []);
+  }, [selectedUserId, setSelectedUserId]);
 
-  const handleSelectUser = (user: User) => {
+  const handleSelectUser = async (user: User) => {
     setSelectedUser(user);
+    await setSelectedUserId(user.id);
     setIsDropdownOpen(false);
   };
 
@@ -42,13 +56,18 @@ export function AppHeader() {
       </View>
       <TouchableOpacity
         style={styles.headerRight}
-        onPress={() => setIsDropdownOpen(true)}
+        onPress={() => !isLocked && setIsDropdownOpen(true)}
+        disabled={isLocked}
       >
         <View style={styles.userIconContainer}>
           <Text style={styles.userIcon}>👤</Text>
         </View>
         <Text style={styles.userName}>{selectedUser?.name ?? 'ユーザー名'}</Text>
-        <Text style={styles.dropdownArrow}>▼</Text>
+        {isLocked ? (
+          <Text style={styles.lockIcon}>🔒</Text>
+        ) : (
+          <Text style={styles.dropdownArrow}>▼</Text>
+        )}
       </TouchableOpacity>
 
       <Modal
@@ -86,6 +105,17 @@ export function AppHeader() {
                 </TouchableOpacity>
               )}
             />
+            {selectedUser && (
+              <TouchableOpacity
+                style={styles.lockButton}
+                onPress={() => {
+                  setIsLocked(true);
+                  setIsDropdownOpen(false);
+                }}
+              >
+                <Text style={styles.lockButtonText}>🔒 このユーザーを固定</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </TouchableOpacity>
       </Modal>

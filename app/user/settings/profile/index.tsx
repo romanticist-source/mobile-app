@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Form, FormInput, FormSaveButton } from '@/components/forms';
 import { getUserById, updateUser } from '@/api/users';
 import type { UpdateUser } from '@/_schema';
-import { MOCK_USER_ID } from '@/constants/mockUser';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
 
 interface ProfileFormData {
@@ -17,6 +17,7 @@ interface ProfileFormData {
 
 export default function ProfileSettingsScreen() {
   const router = useRouter();
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -34,10 +35,12 @@ export default function ProfileSettingsScreen() {
 
   // Fetch user data on mount
   useEffect(() => {
+    if (!selectedUserId || isUserLoading) return;
+
     const fetchUser = async () => {
       try {
         setIsLoading(true);
-        const user = await getUserById(MOCK_USER_ID);
+        const user = await getUserById(selectedUserId);
         form.reset({
           name: user.name,
           age: user.age,
@@ -52,9 +55,11 @@ export default function ProfileSettingsScreen() {
     };
 
     fetchUser();
-  }, []);
+  }, [selectedUserId, isUserLoading]);
 
   const handleSave = form.handleSubmit(async (data) => {
+    if (!selectedUserId) return;
+
     try {
       setIsSaving(true);
       const updateData: UpdateUser = {
@@ -63,7 +68,7 @@ export default function ProfileSettingsScreen() {
         mail: data.mail,
         address: data.address || undefined,
       };
-      await updateUser(MOCK_USER_ID, updateData);
+      await updateUser(selectedUserId, updateData);
       setIsEditing(false);
     } catch (error) {
       console.error('Failed to update user:', error);

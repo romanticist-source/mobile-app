@@ -7,7 +7,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Form, FormInput, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
 import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
 import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
-import { MOCK_USER_ID } from '@/constants/mockUser';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
 
 const relationshipOptions: SelectOption[] = [
@@ -24,6 +24,7 @@ const relationshipOptions: SelectOption[] = [
 
 export default function EmergencyContactScreen() {
   const router = useRouter();
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -34,7 +35,7 @@ export default function EmergencyContactScreen() {
   const form = useForm<CreateEmergencyContact>({
     resolver: zodResolver(CreateEmergencyContactSchema),
     defaultValues: {
-      userId: MOCK_USER_ID,
+      userId: selectedUserId || '',
       helperId: '',
       name: '',
       relationship: '',
@@ -47,10 +48,12 @@ export default function EmergencyContactScreen() {
 
   // Fetch emergency contacts
   const fetchContacts = useCallback(async () => {
+    if (!selectedUserId) return;
+
     try {
       setLoading(true);
       setError(null);
-      const data = await getEmergencyContactsByUserId(MOCK_USER_ID);
+      const data = await getEmergencyContactsByUserId(selectedUserId);
       setContacts(data);
     } catch (err) {
       console.error('Failed to fetch emergency contacts:', err);
@@ -58,7 +61,7 @@ export default function EmergencyContactScreen() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedUserId]);
 
   useEffect(() => {
     fetchContacts();
@@ -66,9 +69,11 @@ export default function EmergencyContactScreen() {
 
   // Open modal for adding new contact
   const handleAdd = () => {
+    if (!selectedUserId) return;
+
     setEditingContact(null);
     form.reset({
-      userId: MOCK_USER_ID,
+      userId: selectedUserId,
       helperId: `helper-${Date.now()}`, // Generate temporary ID
       name: '',
       relationship: '',

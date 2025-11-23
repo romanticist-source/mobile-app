@@ -105,4 +105,21 @@ export const styles = StyleSheet.create({
     color: '#FF6B6B',
     fontWeight: '600',
   },
+  lockIcon: {
+    fontSize: 12,
+    marginLeft: 4,
+  },
+  lockButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#E0E0E0',
+    backgroundColor: '#FFF0F0',
+  },
+  lockButtonText: {
+    fontSize: 14,
+    color: '#FF6B6B',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
 });
