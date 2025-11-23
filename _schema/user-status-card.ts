@@ -14,6 +14,10 @@ export const UserStatusCardSchema = z.object({
   bloodType: nullableStringSchema,
   allergy: nullableStringSchema,
   medicine: nullableStringSchema,
+  height: nullableStringSchema,
+  weight: nullableStringSchema,
+  disability: nullableStringSchema,
+  notes: nullableStringSchema,
 });
 
 export const CreateUserStatusCardSchema = z.object({
@@ -21,12 +25,20 @@ export const CreateUserStatusCardSchema = z.object({
   bloodType: optionalNullableStringSchema,
   allergy: optionalNullableStringSchema,
   medicine: optionalNullableStringSchema,
+  height: optionalNullableStringSchema,
+  weight: optionalNullableStringSchema,
+  disability: optionalNullableStringSchema,
+  notes: optionalNullableStringSchema,
 });
 
 export const UpdateUserStatusCardSchema = z.object({
   bloodType: optionalNullableStringSchema,
   allergy: optionalNullableStringSchema,
   medicine: optionalNullableStringSchema,
+  height: optionalNullableStringSchema,
+  weight: optionalNullableStringSchema,
+  disability: optionalNullableStringSchema,
+  notes: optionalNullableStringSchema,
 });
 
 // User Status Card Disease Schemas

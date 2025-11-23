@@ -6,6 +6,8 @@ import { styles } from './styles';
 interface NotificationCardProps {
   alert: AlertHistory;
   onPress?: () => void;
+  isRead?: boolean;
+  onMarkAsRead?: () => void;
 }
 
 // importance: 1 = 低優先度 (low), 2 = 中優先度 (medium), 3 = 高優先度 (high)
@@ -29,40 +31,55 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
   rest: '休息',
 };
 
-export function NotificationCard({ alert, onPress }: NotificationCardProps) {
+export function NotificationCard({ alert, onPress, isRead = false, onMarkAsRead }: NotificationCardProps) {
   const alertTypeLabel = ALERT_TYPE_LABELS[alert.alertType] || alert.alertType;
   // Get color based on importance level
   const priorityColor = PRIORITY_COLORS[alert.importance] || DEFAULT_COLOR;
 
   const dotColor = priorityColor;
-  const borderColor = priorityColor;
+  const borderColor = isRead ? '#E0E0E0' : priorityColor;
+
+  const handleMarkAsRead = () => {
+    if (!isRead && onMarkAsRead) {
+      onMarkAsRead();
+    }
+  };
 
   return (
     <TouchableOpacity
       style={[
         styles.card,
         { borderColor, borderWidth: 1.5 },
+        isRead && styles.cardRead,
       ]}
       onPress={onPress}
       activeOpacity={0.7}
     >
       <View style={styles.leftSection}>
-        <View style={[styles.dot, { backgroundColor: dotColor }]} />
+        <View style={[styles.dot, { backgroundColor: isRead ? '#CCCCCC' : dotColor }]} />
         <View style={styles.iconContainer}>
-          <Text style={styles.icon}>{alertTypeLabel}</Text>
+          <Text style={[styles.icon, isRead && styles.iconRead]}>{alertTypeLabel}</Text>
         </View>
       </View>
 
       <View style={styles.content}>
         <View style={styles.titleRow}>
-          <Text style={styles.title}>{alert.title}</Text>
+          <Text style={[styles.title, isRead && styles.titleRead]}>{alert.title}</Text>
         </View>
         <Text style={styles.meta}>
           {alertTypeLabel} • {alert.createdAt}
         </Text>
       </View>
 
-      <Text style={styles.arrow}>›</Text>
+      {!isRead && onMarkAsRead && (
+        <TouchableOpacity
+          style={styles.markReadButton}
+          onPress={handleMarkAsRead}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={styles.markReadButtonText}>既読</Text>
+        </TouchableOpacity>
+      )}
     </TouchableOpacity>
   );
 }

@@ -59,8 +59,24 @@ export const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666666',
   },
-  arrow: {
-    fontSize: 24,
-    color: '#CCCCCC',
+  cardRead: {
+    backgroundColor: '#F5F5F5',
+  },
+  titleRead: {
+    color: '#999999',
+  },
+  iconRead: {
+    opacity: 0.5,
+  },
+  markReadButton: {
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  markReadButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

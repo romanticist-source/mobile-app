@@ -4,7 +4,7 @@
  */
 
 import { apiGet, apiPost, apiPut, apiDelete } from '@/_util/apiClient';
-import type { AlertHistory, CreateAlertHistory, UpdateAlertHistory } from '@/_schema';
+import type { AlertHistory, CreateAlertHistory, UpdateAlertHistory, UserAlertHistory, HelperAlertHistory } from '@/_schema';
 
 export const getAlerts = async (): Promise<AlertHistory[]> => {
   return apiGet('/alerts');
@@ -31,16 +31,19 @@ export const getAlertsByUserId = async (userId: string): Promise<AlertHistory[]>
 };
 
 // User alert history (read/unread tracking)
-export interface UserAlertHistory {
-  userId: string;
-  alertId: string;
-  isChecked: boolean;
-}
-
 export const getUserAlertHistory = async (userId: string): Promise<UserAlertHistory[]> => {
   return apiGet(`/alerts/user-history/${userId}`);
 };
 
 export const markAlertAsCheckedByUser = async (alertHistoryId: string, userId: string): Promise<{ message: string }> => {
   return apiPost(`/alerts/${alertHistoryId}/check-by-user/${userId}`, {});
+};
+
+// Helper alert history (read/unread tracking for helpers)
+export const getHelperAlertHistory = async (helperId: string): Promise<HelperAlertHistory[]> => {
+  return apiGet(`/alerts/helper-history/${helperId}`);
+};
+
+export const markAlertAsCheckedByHelper = async (alertHistoryId: string, helperId: string): Promise<{ message: string }> => {
+  return apiPost(`/alerts/${alertHistoryId}/check-by-helper/${helperId}`, {});
 };

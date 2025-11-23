@@ -1,7 +1,11 @@
+import type { User } from '@/_schema/user';
+import { getUserById } from '@/api/users';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { MOCK_USER_ID } from '@/constants/mockUser';
 import { Stack } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
 import { EditHealthCardModal } from './(components)/EditHealthCardModal/EditHealthCardModal';
@@ -28,29 +32,37 @@ export default function ShareScreen() {
     caregiversError,
   } = useShareScreen();
 
+  const [userData, setUserData] = useState<User | null>(null);
+  const [userLoading, setUserLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getUserById(MOCK_USER_ID);
+        setUserData(user);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setUserLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  if (userLoading || !userData) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#FF6B6B" />
+      </View>
+    );
+  }
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <View style={styles.appIcon}>
-                <Text style={styles.appIconText}>❤️</Text>
-              </View>
-              <View>
-                <Text style={styles.appTitle}>みまもりケア</Text>
-                <Text style={styles.appSubtitle}>あなたの健康をサポート</Text>
-              </View>
-            </View>
-            <View style={styles.headerRight}>
-              <View style={styles.userIconContainer}>
-                <Text style={styles.userIcon}>👤</Text>
-              </View>
-              <Text style={styles.userName}>ユーザー名</Text>
-            </View>
-          </View>
+          <AppHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>
@@ -93,9 +105,11 @@ export default function ShareScreen() {
                   {/* User Info */}
                   <View style={styles.userInfo}>
                     <View style={styles.userAvatar}>
-                      <Text style={styles.userAvatarText}>山</Text>
+                      <Text style={styles.userAvatarText}>{userData.name.charAt(0)}</Text>
                     </View>
-                    <Text style={styles.userName2}>山田太郎</Text>
+                    <Text style={styles.userName2}>
+
+                    </Text>
                   </View>
 
                   {/* Health Conditions */}
@@ -168,7 +182,7 @@ export default function ShareScreen() {
                   <View style={styles.emergencyInfoGrid}>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>お名前</Text>
-                      <Text style={styles.emergencyInfoValue}>{emergencyCardData.name}</Text>
+                      <Text style={styles.emergencyInfoValue}>{userData.name}</Text>
                     </View>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>役職</Text>
@@ -306,6 +320,7 @@ export default function ShareScreen() {
         onClose={closeEmergencyModal}
         data={emergencyCardData}
         onSave={handleEmergencyCardSave}
+        userName={userData.name}
       />
     </>
   );

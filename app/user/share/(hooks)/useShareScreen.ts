@@ -1,3 +1,4 @@
+import { MOCK_USER_ID } from '@/constants/mockUser';
 import { useState } from 'react';
 import { useHealthCard } from './useHealthCard';
 import { useEmergencyCard } from './useEmergencyCard';
@@ -12,8 +13,13 @@ export type TabType = 'health' | 'emergency';
 export function useShareScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('health');
 
-  const healthCard = useHealthCard();
-  const emergencyCard = useEmergencyCard();
+  // Health card hooks with API connection
+  const healthCard = useHealthCard(MOCK_USER_ID);
+
+  // Emergency card hooks - receives shared data from health card
+  const emergencyCard = useEmergencyCard(MOCK_USER_ID, healthCard.data);
+
+  // Caregivers list
   const caregivers = useCaregivers();
 
   return {
@@ -26,6 +32,8 @@ export function useShareScreen() {
     openHealthModal: healthCard.openModal,
     closeHealthModal: healthCard.closeModal,
     healthCardData: healthCard.data,
+    healthCardLoading: healthCard.loading,
+    healthCardError: healthCard.error,
     calculateBMI: healthCard.calculateBMI,
     handleHealthCardSave: healthCard.handleSave,
 
@@ -34,6 +42,8 @@ export function useShareScreen() {
     openEmergencyModal: emergencyCard.openModal,
     closeEmergencyModal: emergencyCard.closeModal,
     emergencyCardData: emergencyCard.data,
+    emergencyCardLoading: emergencyCard.loading,
+    emergencyCardError: emergencyCard.error,
     handleEmergencyCardSave: emergencyCard.handleSave,
 
     // Caregivers

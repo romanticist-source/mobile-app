@@ -33,9 +33,10 @@ interface EditEmergencyCardModalProps {
   onClose: () => void;
   data: EmergencyCardData;
   onSave: (data: EmergencyCardData) => void;
+  userName?: string;
 }
 
-export function EditEmergencyCardModal({ visible, onClose, data, onSave }: EditEmergencyCardModalProps) {
+export function EditEmergencyCardModal({ visible, onClose, data, onSave, userName }: EditEmergencyCardModalProps) {
   const form = useForm<EditEmergencyCardFormData>({
     resolver: zodResolver(editEmergencyCardFormSchema),
     defaultValues: {
@@ -114,11 +115,10 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave }: EditE
             {/* Basic Info Section */}
             <Text style={styles.sectionTitle}>基本情報</Text>
 
-            <FormInput
-              name="name"
-              label="お名前"
-              required
-            />
+            <View style={styles.readOnlyField}>
+              <Text style={styles.readOnlyLabel}>お名前</Text>
+              <Text style={styles.readOnlyValue}>{userName || data.name}</Text>
+            </View>
 
             <FormInput
               name="condition"

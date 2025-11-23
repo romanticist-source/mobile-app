@@ -9,12 +9,16 @@ interface NotificationsListProps {
   alerts: AlertHistory[];
   onNotificationPress: (alert: AlertHistory) => void;
   itemsPerPage?: number;
+  isRead?: (alertId: string) => boolean;
+  onMarkAsRead?: (alertId: string) => void;
 }
 
 export function NotificationsList({
   alerts,
   onNotificationPress,
   itemsPerPage = 5,
+  isRead,
+  onMarkAsRead,
 }: NotificationsListProps) {
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -41,6 +45,8 @@ export function NotificationsList({
             key={alert.id}
             alert={alert}
             onPress={() => onNotificationPress(alert)}
+            isRead={isRead ? isRead(alert.id) : false}
+            onMarkAsRead={onMarkAsRead ? () => onMarkAsRead(alert.id) : undefined}
           />
         ))}
       </View>

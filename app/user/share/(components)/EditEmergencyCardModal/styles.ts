@@ -132,4 +132,21 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
+  readOnlyField: {
+    marginBottom: 20,
+  },
+  readOnlyLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 8,
+  },
+  readOnlyValue: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: '#666666',
+  },
 });
