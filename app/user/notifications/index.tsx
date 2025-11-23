@@ -26,6 +26,7 @@ export default function NotificationsScreen() {
     unreadCount,
     markAsRead,
     markAllAsRead,
+    isRead,
   } = useNotifications({
     userId,
   });
@@ -75,6 +76,8 @@ export default function NotificationsScreen() {
             <NotificationsList
               alerts={filteredNotifications}
               onNotificationPress={handleNotificationPress}
+              isRead={isRead}
+              onMarkAsRead={markAsRead}
             />
           )}
         </UserHomeLayout>

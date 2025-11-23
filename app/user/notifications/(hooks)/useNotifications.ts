@@ -1,10 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { AlertHistory } from '@/_schema/alert';
+import type { AlertHistory, UserAlertHistory } from '@/_schema/alert';
 import {
   getAlertsByUserId,
   getUserAlertHistory,
   markAlertAsCheckedByUser,
-  type UserAlertHistory,
 } from '@/api/alerts';
 
 export type AlertTypeFilter = 'all' | 'medication' | 'appointment' | 'health' | 'toilet' | 'exercise' | 'emergency' | 'meal' | 'rest';
@@ -71,15 +70,17 @@ export function useNotifications({
       const alerts = await getAlertsByUserId(userId);
       setNotifications(alerts);
 
-      // Fetch user alert history (optional - may not be implemented yet)
+      // Fetch user alert history
       try {
         const history = await getUserAlertHistory(userId);
+        console.log('Fetched user alert history:', history);
         const checkedIds = new Set(
           history.filter((h: UserAlertHistory) => h.isChecked).map((h: UserAlertHistory) => h.alertId)
         );
+        console.log('Checked alert IDs:', Array.from(checkedIds));
         setCheckedAlerts(checkedIds);
-      } catch {
-        // user-history endpoint not available, treat all as unread
+      } catch (err) {
+        console.error('Failed to fetch user alert history:', err);
         setCheckedAlerts(new Set());
       }
     } catch (err) {
@@ -129,9 +130,10 @@ export function useNotifications({
     if (checkedAlerts.has(alertId)) return;
 
     try {
-      await markAlertAsCheckedByUser(alertId, userId);
-    } catch {
-      // Endpoint may not be available yet, continue anyway
+      const result = await markAlertAsCheckedByUser(alertId, userId);
+      console.log('Marked as read:', alertId, result);
+    } catch (err) {
+      console.error('Failed to mark as read:', alertId, err);
     }
 
     // Update local state regardless of API result
