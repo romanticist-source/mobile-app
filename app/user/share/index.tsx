@@ -4,6 +4,7 @@ import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { MOCK_USER_ID } from '@/constants/mockUser';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
@@ -75,14 +76,14 @@ export default function ShareScreen() {
               style={[styles.tab, activeTab === 'health' && styles.tabActive]}
               onPress={() => setActiveTab('health')}
             >
-              <Text style={[styles.tabIcon, activeTab === 'health' && styles.tabIconActive]}>👤</Text>
+              <MaterialIcons name="person" size={20} color={activeTab === 'health' ? '#FF6B6B' : '#666666'} />
               <Text style={[styles.tabText, activeTab === 'health' && styles.tabTextActive]}>体調カード</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.tab, activeTab === 'emergency' && styles.tabActive]}
               onPress={() => setActiveTab('emergency')}
             >
-              <Text style={[styles.tabIcon, activeTab === 'emergency' && styles.tabIconActive]}>❤️</Text>
+              <MaterialIcons name="favorite" size={20} color={activeTab === 'emergency' ? '#FF6B6B' : '#666666'} />
               <Text style={[styles.tabText, activeTab === 'emergency' && styles.tabTextActive]}>緊急ヘルプカード</Text>
             </TouchableOpacity>
           </View>
@@ -93,10 +94,10 @@ export default function ShareScreen() {
               // Health Card
               <View style={styles.card}>
                 <View style={styles.cardHeader}>
-                  <Text style={styles.cardHeaderIcon}>👤</Text>
+                  <MaterialIcons name="person" size={24} color="#FF6B6B" style={styles.cardHeaderIcon} />
                   <Text style={styles.cardHeaderText}>体調カード</Text>
                   <TouchableOpacity style={styles.editButton} onPress={openHealthModal}>
-                    <Text style={styles.editButtonIcon}>✏️</Text>
+                    <MaterialIcons name="edit" size={16} color="#FF6B6B" />
                     <Text style={styles.editButtonText}>編集</Text>
                   </TouchableOpacity>
                 </View>
@@ -165,20 +166,23 @@ export default function ShareScreen() {
               // Emergency Help Card
               <View style={styles.card}>
                 <View style={styles.emergencyHeader}>
-                  <Text style={styles.emergencyHeaderIcon}>⚠️</Text>
+                  <MaterialIcons name="warning" size={24} color="#FF6B6B" style={styles.emergencyHeaderIcon} />
                   <View style={styles.emergencyHeaderContent}>
                     <Text style={styles.emergencyHeaderTitle}>緊急ヘルプカード</Text>
                     <Text style={styles.emergencyHeaderSubtitle}>このカードは緊急時必要です</Text>
                   </View>
                   <TouchableOpacity style={styles.editButton} onPress={openEmergencyModal}>
-                    <Text style={styles.editButtonIcon}>✏️</Text>
+                    <MaterialIcons name="edit" size={16} color="#FF6B6B" />
                     <Text style={styles.editButtonText}>編集</Text>
                   </TouchableOpacity>
                 </View>
 
                 <View style={styles.cardBody}>
                   {/* Basic Info */}
-                  <Text style={styles.emergencySectionTitle}>❤️ 基本情報</Text>
+                  <View style={styles.emergencySectionTitleRow}>
+                    <MaterialIcons name="favorite" size={18} color="#FF6B6B" />
+                    <Text style={styles.emergencySectionTitle}> 基本情報</Text>
+                  </View>
                   <View style={styles.emergencyInfoGrid}>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>お名前</Text>
@@ -217,7 +221,10 @@ export default function ShareScreen() {
                   <Text style={styles.allergyText}>{emergencyCardData.allergies}</Text>
 
                   {/* Emergency Contacts */}
-                  <Text style={styles.emergencyContactTitle}>📞 緊急連絡先</Text>
+                  <View style={styles.emergencyContactTitleRow}>
+                    <MaterialIcons name="phone" size={18} color="#FF6B6B" />
+                    <Text style={styles.emergencyContactTitle}> 緊急連絡先</Text>
+                  </View>
                   <View style={styles.emergencyContactBox}>
                     <View style={styles.emergencyContactItem}>
                       <Text style={styles.emergencyContactLabel}>介助者</Text>
@@ -244,7 +251,7 @@ export default function ShareScreen() {
           <View style={styles.caregiversSection}>
             <View style={styles.caregiversHeader}>
               <View style={styles.caregiversHeaderLeft}>
-                <Text style={styles.caregiversIcon}>👥</Text>
+                <MaterialIcons name="group" size={24} color="#FF6B6B" />
                 <Text style={styles.caregiversTitle}>介助者</Text>
               </View>
               <TouchableOpacity style={styles.addButton}>
@@ -282,14 +289,20 @@ export default function ShareScreen() {
                         <Text style={styles.caregiverRelation}>（{caregiver.relation}）</Text>
                       </View>
                       <Text style={styles.caregiverRole}>{caregiver.role}</Text>
-                      <Text style={styles.caregiverPhone}>📞 {caregiver.phone}</Text>
+                      <View style={styles.caregiverContactRow}>
+                        <MaterialIcons name="phone" size={14} color="#666666" />
+                        <Text style={styles.caregiverPhone}> {caregiver.phone}</Text>
+                      </View>
                       {caregiver.email && (
-                        <Text style={styles.caregiverEmail}>✉️ {caregiver.email}</Text>
+                        <View style={styles.caregiverContactRow}>
+                          <MaterialIcons name="email" size={14} color="#666666" />
+                          <Text style={styles.caregiverEmail}> {caregiver.email}</Text>
+                        </View>
                       )}
                     </View>
                   </View>
                   <TouchableOpacity style={styles.callButton}>
-                    <Text style={styles.callButtonIcon}>📞</Text>
+                    <MaterialIcons name="phone" size={16} color="#FFFFFF" />
                     <Text style={styles.callButtonText}>電話をかける</Text>
                   </TouchableOpacity>
                 </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { styles } from './styles';
 
 interface Caregiver {
@@ -161,18 +162,18 @@ export default function CaregiverManagementScreen() {
                     style={styles.menuButton}
                     onPress={() => handleCaregiverMenu(caregiver.id)}
                   >
-                    <Text style={styles.menuIcon}>⋮</Text>
+                    <MaterialIcons name="more-vert" size={20} color="#666666" />
                   </TouchableOpacity>
                 </View>
 
                 {/* Contact Information */}
                 <View style={styles.contactInfo}>
                   <View style={styles.contactRow}>
-                    <Text style={styles.contactIcon}>✉️</Text>
+                    <MaterialIcons name="email" size={16} color="#666666" />
                     <Text style={styles.contactText}>{caregiver.email}</Text>
                   </View>
                   <View style={styles.contactRow}>
-                    <Text style={styles.contactIcon}>📞</Text>
+                    <MaterialIcons name="phone" size={16} color="#666666" />
                     <Text style={styles.contactText}>{caregiver.phone}</Text>
                   </View>
                 </View>

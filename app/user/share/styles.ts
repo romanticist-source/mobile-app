@@ -335,11 +335,15 @@ export const styles = StyleSheet.create({
     color: '#FFFFFF',
     opacity: 0.9,
   },
+  emergencySectionTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   emergencySectionTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: '#FF6B6B',
-    marginBottom: 12,
   },
   emergencySectionTitle2: {
     fontSize: 14,
@@ -399,12 +403,16 @@ export const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 8,
   },
+  emergencyContactTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 12,
+  },
   emergencyContactTitle: {
     fontSize: 15,
     fontWeight: '600',
     color: '#FF6B6B',
-    marginTop: 16,
-    marginBottom: 12,
   },
   emergencyContactBox: {
     borderWidth: 2,
@@ -540,10 +548,14 @@ export const styles = StyleSheet.create({
     color: '#666666',
     marginBottom: 4,
   },
+  caregiverContactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
   caregiverPhone: {
     fontSize: 13,
     color: '#666666',
-    marginBottom: 2,
   },
   caregiverEmail: {
     fontSize: 13,
