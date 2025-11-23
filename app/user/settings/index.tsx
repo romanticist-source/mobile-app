@@ -65,13 +65,6 @@ export default function SettingsScreen() {
           description: '介助者の追加・削除・権限設定',
           onPress: () => router.push('/user/settings/caregiver'),
         },
-        {
-          id: 'privacy',
-          icon: '👁️',
-          title: 'プライバシー設定',
-          description: '情報共有範囲と公開設定',
-          onPress: () => router.push('/user/settings/privacy'),
-        },
       ],
     },
     {
@@ -83,13 +76,6 @@ export default function SettingsScreen() {
           title: 'トイレタイミング',
           description: 'リマインダーの間隔と通知設定',
           onPress: () => router.push('/user/settings/toilet-timing'),
-        },
-        {
-          id: 'rest-management',
-          icon: '🕐',
-          title: '休憩管理',
-          description: '休憩時間と自動提案の設定',
-          onPress: () => router.push('/user/settings/rest-management'),
         },
         {
           id: 'alarm-value',
@@ -104,25 +90,6 @@ export default function SettingsScreen() {
           title: '緊急連絡先',
           description: '緊急時の連絡先を管理',
           onPress: () => router.push('/user/settings/emergency-contact'),
-        },
-      ],
-    },
-    {
-      title: 'アクセシビリティ',
-      items: [
-        {
-          id: 'sound-vibration',
-          icon: '🔊',
-          title: '音と振動設定',
-          description: '通知音、振動パターンのカスタマイズ',
-          onPress: () => router.push('/user/settings/sound-vibration'),
-        },
-        {
-          id: 'accessibility',
-          icon: '♿',
-          title: 'アクセシビリティ設定',
-          description: '文字サイズ、コントラスト、音声ガイド',
-          onPress: () => router.push('/user/settings/accessibility'),
         },
       ],
     },
