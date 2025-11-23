@@ -34,6 +34,8 @@ export function useShareScreen() {
     openEmergencyModal: emergencyCard.openModal,
     closeEmergencyModal: emergencyCard.closeModal,
     emergencyCardData: emergencyCard.data,
+    emergencyCardLoading: emergencyCard.loading,
+    emergencyCardError: emergencyCard.error,
     handleEmergencyCardSave: emergencyCard.handleSave,
 
     // Caregivers

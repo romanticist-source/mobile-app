@@ -10,6 +10,8 @@ export const editEmergencyCardFormSchema = z.object({
   caregiverName: z.string().optional(),
   caregiverRelation: z.string().optional(),
   caregiverPhone: z.string().optional(),
+  caregiverEmail: z.string().optional(),
+  caregiverAddress: z.string().optional(),
   hospitalName: z.string().optional(),
   hospitalPhone: z.string().optional(),
 });

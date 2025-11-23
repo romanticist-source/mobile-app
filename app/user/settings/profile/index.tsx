@@ -25,6 +25,7 @@ export default function ProfileSettingsScreen() {
       address: '',
       emergencyContactName: '',
       emergencyContactPhone: '',
+      emergencyContactAddress: '',
     },
   });
 
@@ -153,6 +154,12 @@ export default function ProfileSettingsScreen() {
                   label="緊急連絡先（電話番号）"
                   placeholder="090-8765-4321"
                   keyboardType="phone-pad"
+                />
+
+                <FormInput
+                  name="emergencyContactAddress"
+                  label="緊急連絡先（住所）"
+                  placeholder="東京都渋谷区1-2-3"
                 />
               </Form>
             </View>

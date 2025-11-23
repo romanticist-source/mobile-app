@@ -230,6 +230,12 @@ export default function ShareScreen() {
                       <Text style={styles.emergencyContactLabel}>介助者</Text>
                       <Text style={styles.emergencyContactName}>{emergencyCardData.caregiverName}（{emergencyCardData.caregiverRelation}）</Text>
                       <Text style={styles.emergencyContactPhone}>{emergencyCardData.caregiverPhone}</Text>
+                      {emergencyCardData.caregiverEmail && (
+                        <Text style={styles.emergencyContactPhone}>{emergencyCardData.caregiverEmail}</Text>
+                      )}
+                      {emergencyCardData.caregiverAddress && (
+                        <Text style={styles.emergencyContactPhone}>{emergencyCardData.caregiverAddress}</Text>
+                      )}
                     </View>
                     <View style={styles.emergencyContactDivider} />
                     <View style={styles.emergencyContactItem}>

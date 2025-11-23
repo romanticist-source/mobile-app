@@ -24,6 +24,8 @@ interface EmergencyCardData {
   caregiverName: string;
   caregiverRelation: string;
   caregiverPhone: string;
+  caregiverEmail: string;
+  caregiverAddress: string;
   hospitalName: string;
   hospitalPhone: string;
 }
@@ -49,6 +51,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
       caregiverName: '',
       caregiverRelation: '',
       caregiverPhone: '',
+      caregiverEmail: '',
+      caregiverAddress: '',
       hospitalName: '',
       hospitalPhone: '',
     },
@@ -66,6 +70,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
         caregiverName: data.caregiverName,
         caregiverRelation: data.caregiverRelation,
         caregiverPhone: data.caregiverPhone,
+        caregiverEmail: data.caregiverEmail,
+        caregiverAddress: data.caregiverAddress,
         hospitalName: data.hospitalName,
         hospitalPhone: data.hospitalPhone,
       });
@@ -83,6 +89,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
       caregiverName: formData.caregiverName || '',
       caregiverRelation: formData.caregiverRelation || '',
       caregiverPhone: formData.caregiverPhone || '',
+      caregiverEmail: formData.caregiverEmail || '',
+      caregiverAddress: formData.caregiverAddress || '',
       hospitalName: formData.hospitalName || '',
       hospitalPhone: formData.hospitalPhone || '',
     });
@@ -170,6 +178,20 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
               label="介助者電話番号"
               placeholder="090-YYYY-YYYY"
               keyboardType="phone-pad"
+            />
+
+            <FormInput
+              name="caregiverEmail"
+              label="介助者メールアドレス"
+              placeholder="example@email.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <FormInput
+              name="caregiverAddress"
+              label="介助者住所"
+              placeholder="東京都渋谷区1-2-3"
             />
 
             <FormInput
