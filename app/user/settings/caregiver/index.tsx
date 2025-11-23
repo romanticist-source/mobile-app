@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { CaregiverPermissionModal } from './(components)/CaregiverPermissionModal/CaregiverPermissionModal';
 import { styles } from './styles';
-
-interface CaregiverPermissions {
-  location: boolean;
-  health: boolean;
-  alerts: boolean;
-  emergencyContact: boolean;
-}
 
 interface Caregiver {
   id: string;
@@ -19,10 +11,14 @@ interface Caregiver {
   role: string;
   email: string;
   phone: string;
-  permissions: CaregiverPermissions;
+  permissions: {
+    location: boolean;
+    health: boolean;
+    emergency: boolean;
+  };
 }
 
-const initialCaregivers: Caregiver[] = [
+const mockCaregivers: Caregiver[] = [
   {
     id: '1',
     name: '山田 花子',
@@ -34,8 +30,7 @@ const initialCaregivers: Caregiver[] = [
     permissions: {
       location: true,
       health: true,
-      alerts: true,
-      emergencyContact: true,
+      emergency: true,
     },
   },
   {
@@ -49,69 +44,45 @@ const initialCaregivers: Caregiver[] = [
     permissions: {
       location: true,
       health: true,
-      alerts: true,
-      emergencyContact: false,
+      emergency: false,
+    },
+  },
+  {
+    id: '3',
+    name: '田中 美咲',
+    avatar: '田',
+    status: 'pending',
+    role: 'ケアマネージャー',
+    email: 'tanaka@care.com',
+    phone: '070-9876-5432',
+    permissions: {
+      location: false,
+      health: false,
+      emergency: false,
     },
   },
 ];
 
 export default function CaregiverManagementScreen() {
   const router = useRouter();
-  const [caregivers, setCaregivers] = useState<Caregiver[]>(initialCaregivers);
-  const [selectedCaregiver, setSelectedCaregiver] = useState<Caregiver | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const handleInviteCaregiver = () => {
     console.log('Invite caregiver');
     // TODO: Implement invite caregiver functionality
   };
 
-  const handleTogglePermission = (caregiverId: string, permission: keyof CaregiverPermissions) => {
-    setCaregivers((prev) =>
-      prev.map((caregiver) =>
-        caregiver.id === caregiverId
-          ? {
-              ...caregiver,
-              permissions: {
-                ...caregiver.permissions,
-                [permission]: !caregiver.permissions[permission],
-              },
-            }
-          : caregiver
-      )
-    );
+  const handleTogglePermission = (caregiverId: string, permission: keyof Caregiver['permissions']) => {
+    console.log('Toggle permission:', caregiverId, permission);
+    // TODO: Implement permission toggle
   };
 
   const handleCaregiverMenu = (caregiverId: string) => {
-    const caregiver = caregivers.find((c) => c.id === caregiverId);
-    if (caregiver) {
-      setSelectedCaregiver(caregiver);
-      setModalVisible(true);
-    }
-  };
-
-  const handleSavePermissions = (permissions: CaregiverPermissions) => {
-    if (selectedCaregiver) {
-      setCaregivers((prev) =>
-        prev.map((caregiver) =>
-          caregiver.id === selectedCaregiver.id
-            ? { ...caregiver, permissions }
-            : caregiver
-        )
-      );
-    }
-  };
-
-  const handleDeleteCaregiver = () => {
-    if (selectedCaregiver) {
-      setCaregivers((prev) => prev.filter((c) => c.id !== selectedCaregiver.id));
-      setModalVisible(false);
-      setSelectedCaregiver(null);
-    }
+    console.log('Open caregiver menu:', caregiverId);
+    // TODO: Implement menu (edit, remove, etc.)
   };
 
   const handleSave = () => {
-    console.log('Save caregiver settings:', caregivers);
+    console.log('Save caregiver settings');
     // TODO: API call to update caregiver permissions
     router.back();
   };
@@ -138,7 +109,7 @@ export default function CaregiverManagementScreen() {
             {/* Header Section with Count and Invite Button */}
             <View style={styles.topSection}>
               <Text style={styles.caregiverCount}>
-                登録介助者: {caregivers.length}名
+                登録介助者: {mockCaregivers.length}名
               </Text>
               <TouchableOpacity
                 style={styles.inviteButton}
@@ -150,7 +121,7 @@ export default function CaregiverManagementScreen() {
             </View>
 
             {/* Caregiver List */}
-            {caregivers.map((caregiver) => (
+            {mockCaregivers.map((caregiver) => (
               <View key={caregiver.id} style={styles.caregiverCard}>
                 {/* Avatar and Basic Info */}
                 <View style={styles.caregiverHeader}>
@@ -261,14 +232,14 @@ export default function CaregiverManagementScreen() {
                   <TouchableOpacity
                     style={[
                       styles.permissionButton,
-                      caregiver.permissions.alerts && styles.permissionButtonActive,
+                      caregiver.permissions.emergency && styles.permissionButtonActive,
                     ]}
-                    onPress={() => handleTogglePermission(caregiver.id, 'alerts')}
+                    onPress={() => handleTogglePermission(caregiver.id, 'emergency')}
                   >
                     <Text
                       style={[
                         styles.permissionIcon,
-                        caregiver.permissions.alerts && styles.permissionIconActive,
+                        caregiver.permissions.emergency && styles.permissionIconActive,
                       ]}
                     >
                       🚨
@@ -276,10 +247,10 @@ export default function CaregiverManagementScreen() {
                     <Text
                       style={[
                         styles.permissionButtonText,
-                        caregiver.permissions.alerts && styles.permissionButtonTextActive,
+                        caregiver.permissions.emergency && styles.permissionButtonTextActive,
                       ]}
                     >
-                      アラート
+                      緊急連絡先
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -295,21 +266,6 @@ export default function CaregiverManagementScreen() {
             <Text style={styles.saveButtonText}>保存</Text>
           </TouchableOpacity>
         </View>
-
-        {/* Caregiver Permission Modal */}
-        {selectedCaregiver && (
-          <CaregiverPermissionModal
-            visible={modalVisible}
-            onClose={() => {
-              setModalVisible(false);
-              setSelectedCaregiver(null);
-            }}
-            caregiverName={selectedCaregiver.name}
-            initialPermissions={selectedCaregiver.permissions}
-            onSave={handleSavePermissions}
-            onDelete={handleDeleteCaregiver}
-          />
-        )}
       </View>
     </>
   );
