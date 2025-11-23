@@ -137,7 +137,17 @@ export default function EmergencyContactScreen() {
         await updateEmergencyContact(editingContact.userId, editingContact.helperId, updateData);
       } else {
         // Create new contact
-        await createEmergencyContact(data);
+        const createData: CreateEmergencyContact = {
+          userId: data.userId,
+          helperId: data.helperId,
+          name: data.name,
+          relationship: data.relationship,
+          phoneNumber: data.phoneNumber,
+          email: data.email || undefined,
+          address: data.address || undefined,
+          isMain: data.isMain,
+        };
+        await createEmergencyContact(createData);
       }
       setModalVisible(false);
       await fetchContacts();
@@ -199,7 +209,7 @@ export default function EmergencyContactScreen() {
           ) : (
             <View style={styles.contactList}>
               {contacts.map((contact) => (
-                <View key={contact.id} style={styles.contactCard}>
+                <View key={`${contact.userId}-${contact.helperId}`} style={styles.contactCard}>
                   <TouchableOpacity
                     style={styles.contactContent}
                     onPress={() => handleEdit(contact)}
