@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Form, FormInput, FormSelect, FormDateTimePicker, type SelectOption } from '@/components/forms';
+import { Form, FormInput, FormSelect, FormDateTimePicker, FormSaveButton, type SelectOption } from '@/components/forms';
 import { styles } from './styles';
 
 const genderOptions: SelectOption[] = [
@@ -141,12 +141,7 @@ export default function ProfileSettingsScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormSaveButton onSave={handleSave} />
       </View>
     </>
   );

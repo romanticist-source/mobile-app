@@ -3,14 +3,13 @@ import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, SelectOption } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
 import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
 import { createUserSchedule, updateUserSchedule } from '@/api/user-schedules';
@@ -198,14 +197,7 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
         </ScrollView>
 
         {/* Bottom Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>キャンセル</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormButtonGroup onCancel={onClose} onSave={handleSave} />
       </KeyboardAvoidingView>
     </Modal>
   );

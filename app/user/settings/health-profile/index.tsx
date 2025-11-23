@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, type SelectOption } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, FormSaveButton, type SelectOption } from '@/components/forms';
 import { styles } from './styles';
 
 const bloodTypeOptions: SelectOption[] = [
@@ -219,12 +219,7 @@ export default function HealthProfileScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormSaveButton onSave={handleSave} />
       </View>
     </>
   );

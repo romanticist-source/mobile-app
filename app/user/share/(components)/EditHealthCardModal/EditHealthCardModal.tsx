@@ -3,14 +3,13 @@ import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea, FormTagInput } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormTagInput, FormButtonGroup } from '@/components/forms';
 import { editHealthCardFormSchema, EditHealthCardFormData } from './schema';
 import { styles } from './styles';
 
@@ -153,14 +152,7 @@ export function EditHealthCardModal({ visible, onClose, data, onSave }: EditHeal
         </ScrollView>
 
         {/* Bottom Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>キャンセル</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormButtonGroup onCancel={onClose} onSave={handleSave} />
       </KeyboardAvoidingView>
     </Modal>
   );

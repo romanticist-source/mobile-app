@@ -39,7 +39,7 @@ export default function LoginScreen() {
 
     try {
       // Backend に Google Credential を送信
-      const res = await fetch("http://localhost:3000/users/google", {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/users/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

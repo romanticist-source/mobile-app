@@ -4,7 +4,7 @@ import { Stack, useRouter } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { Form, FormInput, FormSelect, SelectOption } from '@/components/forms';
+import { Form, FormInput, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
 import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
 import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
 import { MOCK_USER_ID } from '@/constants/mockUser';
@@ -334,25 +334,11 @@ export default function EmergencyContactScreen() {
                 </Form>
               </ScrollView>
 
-              <View style={styles.modalFooter}>
-                <TouchableOpacity
-                  style={styles.cancelButton}
-                  onPress={closeModal}
-                >
-                  <Text style={styles.cancelButtonText}>キャンセル</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.saveButton, saving && styles.saveButtonDisabled]}
-                  onPress={handleSave}
-                  disabled={saving}
-                >
-                  {saving ? (
-                    <ActivityIndicator size="small" color="#FFFFFF" />
-                  ) : (
-                    <Text style={styles.saveButtonText}>保存</Text>
-                  )}
-                </TouchableOpacity>
-              </View>
+              <FormButtonGroup
+                onCancel={closeModal}
+                onSave={handleSave}
+                loading={saving}
+              />
             </View>
           </View>
         </Modal>

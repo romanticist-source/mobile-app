@@ -3,14 +3,13 @@ import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTagInput } from '@/components/forms';
+import { Form, FormInput, FormTagInput, FormButtonGroup } from '@/components/forms';
 import { editEmergencyCardFormSchema, EditEmergencyCardFormData } from './schema';
 import { styles } from './styles';
 
@@ -210,14 +209,7 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
         </ScrollView>
 
         {/* Bottom Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>キャンセル</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormButtonGroup onCancel={onClose} onSave={handleSave} />
       </KeyboardAvoidingView>
     </Modal>
   );

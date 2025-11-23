@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Switch } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
+import { FormSaveButton } from '@/components/forms';
 import { styles } from './styles';
 
 interface ToiletRecord {
@@ -135,12 +136,7 @@ export default function ToiletTimingScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormSaveButton onSave={handleSave} />
       </View>
     </>
   );

@@ -32,7 +32,6 @@ export function FormSelect({
   } = useController({
     name,
     control,
-    defaultValue,
   });
 
   return (

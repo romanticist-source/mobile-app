@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { FormSaveButton } from '@/components/forms';
 import { styles } from './styles';
 
 interface Caregiver {
@@ -252,12 +253,7 @@ export default function CaregiverManagementScreen() {
         </ScrollView>
 
         {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <MaterialIcons name="save" size={20} color="#FFFFFF" />
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormSaveButton onSave={handleSave} />
       </View>
     </>
   );
