@@ -5,19 +5,16 @@ import {
   border,
   textPrimary,
   textSecondary,
-  accentLight,
   xs,
   sm,
   md,
-  lg,
   xl,
-  fontMd,
+  fontSm,
+  fontBase,
   fontLg,
-  fontXxl,
   fontXxxxl,
+  radiusSm,
   radiusFull,
-  iconContainerSize,
-  iconSize,
   headerButton,
 } from '@/styles/tokens';
 
@@ -54,52 +51,188 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  saveButton: {
-    padding: xs,
-  },
-  saveButtonText: {
-    fontSize: fontMd,
-    fontWeight: '600',
-    color: '#007AFF',
-  },
-  content: {
+  scrollContent: {
     flex: 1,
-    paddingHorizontal: lg,
-    paddingTop: md,
   },
-  switchField: {
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: md,
     marginBottom: md,
   },
-  switchLabel: {
-    fontSize: fontMd,
-    fontWeight: '500',
+  sectionHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  sectionTitle: {
+    fontSize: fontBase,
+    fontWeight: '600',
     color: textPrimary,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: surface,
+    paddingVertical: 6,
+    paddingHorizontal: sm,
+    borderRadius: radiusSm,
+    borderWidth: 1,
+    borderColor: border,
+  },
+  addButtonIcon: {
+    fontSize: 18,
+    marginRight: 4,
+    color: textPrimary,
+  },
+  addButtonText: {
+    fontSize: fontSm,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  contactCard: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
+    marginBottom: md,
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  contactCardPrimary: {
+    backgroundColor: '#FFE5E5',
+    borderColor: '#FF6B6B',
+  },
+  contactHeader: {
+    flexDirection: 'row',
+    marginBottom: md,
+  },
+  avatarContainer: {
+    marginRight: sm,
+  },
+  avatarCircle: {
+    width: 48,
+    height: 48,
     borderRadius: radiusFull,
-    backgroundColor: accentLight,
+    backgroundColor: '#F5F5F5',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
+  avatarCirclePrimary: {
+    backgroundColor: '#FFCCCC',
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
+  avatarText: {
+    fontSize: 20,
+    fontWeight: '600',
     color: textPrimary,
-    marginBottom: xs,
   },
-  description: {
-    fontSize: fontMd,
+  avatarTextPrimary: {
+    color: '#FF6B6B',
+  },
+  contactInfo: {
+    flex: 1,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  contactName: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  contactNamePrimary: {
+    color: '#FF6B6B',
+  },
+  primaryStar: {
+    fontSize: 16,
+    marginLeft: 4,
+  },
+  contactRelationship: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+    marginBottom: 2,
+  },
+  contactRelationshipPrimary: {
+    color: '#CC5555',
+  },
+  contactPhone: {
+    fontSize: fontSm,
+    color: textSecondary,
+  },
+  contactPhonePrimary: {
+    color: '#CC5555',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  callButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF6B6B',
+    paddingVertical: 10,
+    paddingHorizontal: md,
+    borderRadius: radiusSm,
+    flex: 1,
+    marginRight: xs,
+  },
+  callButtonIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  callButtonText: {
+    fontSize: fontSm,
+    fontWeight: '600',
+    color: surface,
+  },
+  iconButtons: {
+    flexDirection: 'row',
+    gap: xs,
+  },
+  iconButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: border,
+  },
+  iconButtonText: {
+    fontSize: 18,
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: '#FF6B6B',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
   },
 });

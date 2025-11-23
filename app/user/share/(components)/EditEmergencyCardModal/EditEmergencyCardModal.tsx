@@ -118,37 +118,31 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave }: EditE
               name="name"
               label="お名前"
               required
-              placeholder="山田太郎"
             />
 
             <FormInput
               name="condition"
               label="状態・役職"
-              placeholder="軽度の身体障害"
             />
 
             <FormInput
               name="bloodType"
               label="血液型"
-              placeholder="A型"
             />
 
             <FormTagInput
               name="emergencyNotes"
               label="緊急時注意事項"
-              placeholder="新しい注意事項を追加..."
             />
 
             <FormTagInput
               name="medications"
               label="服用薬"
-              placeholder="新しい薬を追加..."
             />
 
             <FormInput
               name="allergies"
               label="アレルギー"
-              placeholder="なし"
             />
 
             {/* Emergency Contacts Section */}
@@ -157,32 +151,27 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave }: EditE
             <FormInput
               name="caregiverName"
               label="介助者名"
-              placeholder="山田花子"
             />
 
             <FormInput
               name="caregiverRelation"
               label="続柄"
-              placeholder="娘"
             />
 
             <FormInput
               name="caregiverPhone"
               label="介助者電話番号"
               placeholder="090-YYYY-YYYY"
-              keyboardType="phone-pad"
             />
 
             <FormInput
               name="hospitalName"
               label="かかりつけ病院"
-              placeholder="サンプル病院"
             />
 
             <FormInput
               name="hospitalPhone"
               label="病院電話番号"
-              placeholder="03-XXXX-XXXX"
               keyboardType="phone-pad"
             />
           </Form>

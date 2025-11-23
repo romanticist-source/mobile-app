@@ -5,19 +5,16 @@ import {
   border,
   textPrimary,
   textSecondary,
-  accentLight,
   xs,
   sm,
   md,
-  lg,
   xl,
+  fontSm,
   fontMd,
+  fontBase,
   fontLg,
-  fontXxl,
   fontXxxxl,
-  radiusFull,
-  iconContainerSize,
-  iconSize,
+  radiusSm,
   headerButton,
 } from '@/styles/tokens';
 
@@ -54,33 +51,154 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: radiusFull,
-    backgroundColor: accentLight,
-    alignItems: 'center',
-    justifyContent: 'center',
+  contentWrapper: {
+    paddingHorizontal: sm,
+    paddingVertical: md,
+  },
+  section: {
+    backgroundColor: surface,
+    borderRadius: radiusSm,
+    padding: sm,
     marginBottom: md,
   },
-  icon: {
-    fontSize: iconSize,
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: md,
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: xs,
+    color: '#FF6B6B',
+    fontWeight: '600',
+  },
+  sectionTitle: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: textPrimary,
+  },
+  fontSizeControl: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: xs,
+  },
+  fontSizeLabel: {
+    fontSize: fontMd,
+    color: textPrimary,
+  },
+  fontSizeValue: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: textSecondary,
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
+  sampleTextBox: {
+    backgroundColor: '#F9F9F9',
+    borderRadius: radiusSm,
+    padding: sm,
+    marginTop: sm,
+    marginBottom: md,
+  },
+  sampleText: {
+    fontSize: fontSm,
+    color: textPrimary,
+    lineHeight: 20,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: '#F5F5F5',
+  },
+  toggleInfo: {
+    flex: 1,
+    marginRight: sm,
+  },
+  toggleLabel: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: 4,
+  },
+  toggleDescription: {
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 18,
+  },
+  selectField: {
+    marginBottom: md,
+  },
+  selectLabel: {
+    fontSize: fontMd,
+    fontWeight: '600',
     color: textPrimary,
     marginBottom: xs,
   },
-  description: {
+  selectButton: {
+    backgroundColor: '#FAFAFA',
+    borderWidth: 1,
+    borderColor: border,
+    borderRadius: radiusSm,
+    paddingVertical: sm,
+    paddingHorizontal: sm,
+    marginBottom: xs,
+  },
+  selectValue: {
     fontSize: fontMd,
+    color: textPrimary,
+  },
+  selectDescription: {
+    fontSize: fontSm,
     color: textSecondary,
-    textAlign: 'center',
+    lineHeight: 18,
+  },
+  infoItem: {
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: '#F5F5F5',
+  },
+  infoLabel: {
+    fontSize: fontMd,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: 4,
+  },
+  infoDescription: {
+    fontSize: fontSm,
+    color: textSecondary,
+    lineHeight: 18,
+  },
+  footer: {
+    backgroundColor: surface,
+    paddingHorizontal: sm,
+    paddingVertical: sm,
+    borderTopWidth: 1,
+    borderTopColor: border,
+  },
+  saveButton: {
+    backgroundColor: '#FF6B6B',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: sm,
+    borderRadius: radiusSm,
+  },
+  saveButtonIcon: {
+    fontSize: 20,
+    marginRight: xs,
+  },
+  saveButtonText: {
+    fontSize: fontBase,
+    fontWeight: '700',
+    color: surface,
   },
 });

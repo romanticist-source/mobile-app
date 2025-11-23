@@ -69,7 +69,8 @@ app/
     │   ├── (components)/
     │   └── (hooks)/
     └── share/
-        └── (components)/
+        ├── (components)/
+        └── (hooks)/
 ```
 
 **Routing conventions**:
