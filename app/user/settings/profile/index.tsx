@@ -137,32 +137,6 @@ export default function ProfileSettingsScreen() {
                 />
               </Form>
             </View>
-
-            {/* Emergency Contact Section */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>緊急連絡先</Text>
-
-              <Form form={form}>
-                <FormInput
-                  name="emergencyContactName"
-                  label="緊急連絡先（氏名）"
-                  placeholder="山田 花子"
-                />
-
-                <FormInput
-                  name="emergencyContactPhone"
-                  label="緊急連絡先（電話番号）"
-                  placeholder="090-8765-4321"
-                  keyboardType="phone-pad"
-                />
-
-                <FormInput
-                  name="emergencyContactAddress"
-                  label="緊急連絡先（住所）"
-                  placeholder="東京都渋谷区1-2-3"
-                />
-              </Form>
-            </View>
           </View>
         </ScrollView>
 
