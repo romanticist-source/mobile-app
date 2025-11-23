@@ -5,4 +5,4 @@
  */
 
 // Default mock user ID for development
-export const MOCK_USER_ID = 'user-001';
+export const MOCK_USER_ID = 'user-1';

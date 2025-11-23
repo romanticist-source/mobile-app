@@ -27,6 +27,10 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: background,
   },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -52,8 +56,14 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     color: textPrimary,
   },
-  headerRight: {
-    width: headerButton,
+  editButton: {
+    paddingHorizontal: sm,
+    paddingVertical: xs,
+  },
+  editButtonText: {
+    fontSize: fontBase,
+    color: accentPrimary,
+    fontWeight: '600',
   },
   scrollContent: {
     flex: 1,
@@ -163,5 +173,21 @@ export const styles = StyleSheet.create({
     fontSize: fontBase,
     fontWeight: '700',
     color: surface,
+  },
+  displayField: {
+    paddingVertical: md,
+    borderBottomWidth: 1,
+    borderBottomColor: border,
+  },
+  displayLabel: {
+    fontSize: fontSm,
+    fontWeight: '500',
+    color: textSecondary,
+    marginBottom: xs,
+  },
+  displayValue: {
+    fontSize: fontBase,
+    color: textPrimary,
+    fontWeight: '500',
   },
 });
