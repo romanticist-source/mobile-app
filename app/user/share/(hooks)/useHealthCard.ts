@@ -1,4 +1,3 @@
-import { mockHealthCardData } from '@/api/__mock__/share';
 import { useState, useCallback } from 'react';
 
 export interface HealthCardData {
@@ -15,15 +14,14 @@ export interface HealthCardData {
 export function useHealthCard() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Health card data states - initialized from mock data
-  const [healthConditions, setHealthConditions] = useState(mockHealthCardData.healthConditions);
-  const [bloodType, setBloodType] = useState(mockHealthCardData.bloodType);
-  const [height, setHeight] = useState(mockHealthCardData.height);
-  const [weight, setWeight] = useState(mockHealthCardData.weight);
-  const [allergies, setAllergies] = useState(mockHealthCardData.allergies);
-  const [medications, setMedications] = useState(mockHealthCardData.medications);
-  const [disability, setDisability] = useState(mockHealthCardData.disability);
-  const [notes, setNotes] = useState(mockHealthCardData.notes);
+  const [healthConditions, setHealthConditions] = useState<string[]>([]);
+  const [bloodType, setBloodType] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [allergies, setAllergies] = useState('');
+  const [medications, setMedications] = useState('');
+  const [disability, setDisability] = useState('');
+  const [notes, setNotes] = useState('');
 
   // Calculate BMI
   const calculateBMI = useCallback(() => {

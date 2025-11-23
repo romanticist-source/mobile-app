@@ -62,6 +62,56 @@ export const styles = StyleSheet.create({
     paddingHorizontal: sm,
     paddingVertical: md,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: md,
+    fontSize: fontBase,
+    color: textSecondary,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: md,
+  },
+  errorText: {
+    marginTop: md,
+    fontSize: fontBase,
+    color: '#F44336',
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: md,
+    paddingVertical: sm,
+    paddingHorizontal: md,
+    backgroundColor: accentPrimary,
+    borderRadius: radiusSm,
+  },
+  retryButtonText: {
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: surface,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: xl,
+  },
+  emptyStateText: {
+    marginTop: md,
+    fontSize: fontBase,
+    fontWeight: '600',
+    color: textPrimary,
+  },
+  emptyStateSubtext: {
+    marginTop: xs,
+    fontSize: fontSm,
+    color: textSecondary,
+    textAlign: 'center',
+  },
   topSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -155,6 +205,11 @@ export const styles = StyleSheet.create({
   caregiverRole: {
     fontSize: fontSm,
     color: textSecondary,
+  },
+  caregiverRelation: {
+    fontSize: fontSm,
+    color: textSecondary,
+    marginTop: 2,
   },
   menuButton: {
     padding: xs,
