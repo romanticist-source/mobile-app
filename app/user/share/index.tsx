@@ -182,7 +182,7 @@ export default function ShareScreen() {
                   <View style={styles.emergencyInfoGrid}>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>お名前</Text>
-                      <Text style={styles.emergencyInfoValue}>{emergencyCardData.name}</Text>
+                      <Text style={styles.emergencyInfoValue}>{userData.name}</Text>
                     </View>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>役職</Text>
