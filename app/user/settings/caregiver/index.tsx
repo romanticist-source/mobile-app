@@ -187,14 +187,11 @@ export default function CaregiverManagementScreen() {
                     ]}
                     onPress={() => handleTogglePermission(caregiver.id, 'location')}
                   >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.location && styles.permissionIconActive,
-                      ]}
-                    >
-                      📍
-                    </Text>
+                    <MaterialIcons
+                      name="location-on"
+                      size={16}
+                      color={caregiver.permissions.location ? '#FFFFFF' : '#666666'}
+                    />
                     <Text
                       style={[
                         styles.permissionButtonText,
@@ -212,14 +209,11 @@ export default function CaregiverManagementScreen() {
                     ]}
                     onPress={() => handleTogglePermission(caregiver.id, 'health')}
                   >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.health && styles.permissionIconActive,
-                      ]}
-                    >
-                      💚
-                    </Text>
+                    <MaterialIcons
+                      name="favorite"
+                      size={16}
+                      color={caregiver.permissions.health ? '#FFFFFF' : '#666666'}
+                    />
                     <Text
                       style={[
                         styles.permissionButtonText,
@@ -237,14 +231,11 @@ export default function CaregiverManagementScreen() {
                     ]}
                     onPress={() => handleTogglePermission(caregiver.id, 'emergency')}
                   >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.emergency && styles.permissionIconActive,
-                      ]}
-                    >
-                      🚨
-                    </Text>
+                    <MaterialIcons
+                      name="emergency"
+                      size={16}
+                      color={caregiver.permissions.emergency ? '#FFFFFF' : '#666666'}
+                    />
                     <Text
                       style={[
                         styles.permissionButtonText,
@@ -263,7 +254,7 @@ export default function CaregiverManagementScreen() {
         {/* Save Button */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
+            <MaterialIcons name="save" size={20} color="#FFFFFF" />
             <Text style={styles.saveButtonText}>保存</Text>
           </TouchableOpacity>
         </View>
