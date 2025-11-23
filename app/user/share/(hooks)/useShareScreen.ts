@@ -1,3 +1,4 @@
+import { MOCK_USER_ID } from '@/constants/mockUser';
 import { useState } from 'react';
 import { useHealthCard } from './useHealthCard';
 import { useEmergencyCard } from './useEmergencyCard';
@@ -9,17 +10,14 @@ export type { CaregiverDisplay } from './useCaregivers';
 
 export type TabType = 'health' | 'emergency';
 
-// TODO: Replace with actual user ID from auth context
-const TEMP_USER_ID = 'user-1';
-
 export function useShareScreen() {
   const [activeTab, setActiveTab] = useState<TabType>('health');
 
   // Health card hooks with API connection
-  const healthCard = useHealthCard(TEMP_USER_ID);
+  const healthCard = useHealthCard(MOCK_USER_ID);
 
   // Emergency card hooks - receives shared data from health card
-  const emergencyCard = useEmergencyCard(TEMP_USER_ID, healthCard.data);
+  const emergencyCard = useEmergencyCard(MOCK_USER_ID, healthCard.data);
 
   // Caregivers list
   const caregivers = useCaregivers();

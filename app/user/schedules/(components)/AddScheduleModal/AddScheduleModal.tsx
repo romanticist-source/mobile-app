@@ -14,6 +14,7 @@ import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, SelectOp
 import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
 import { createUserSchedule, updateUserSchedule } from '@/api/user-schedules';
+import { MOCK_USER_ID } from '@/constants/mockUser';
 import type { UserSchedule } from '@/_schema';
 
 const scheduleTypeOptions: SelectOption[] = [
@@ -114,7 +115,7 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
       } else {
         await createUserSchedule({
           ...scheduleData,
-          userId: '63e5ac18-6644-4bdb-af3a-0bbd4fd2a488', // TODO: 認証実装後に実際のユーザーIDを取得
+          userId: MOCK_USER_ID,
         });
       }
 

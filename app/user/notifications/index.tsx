@@ -2,6 +2,7 @@ import type { AlertHistory } from '@/_schema/alert';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { MOCK_USER_ID } from '@/constants/mockUser';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
@@ -12,8 +13,7 @@ import { useNotifications } from './(hooks)/useNotifications';
 import { styles } from './styles';
 
 export default function NotificationsScreen() {
-  // TODO: Replace with actual user ID from auth context
-  const userId = '63e5ac18-6644-4bdb-af3a-0bbd4fd2a488';
+  const userId = MOCK_USER_ID;
 
   const {
     filteredNotifications,
