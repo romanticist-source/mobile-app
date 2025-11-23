@@ -163,7 +163,7 @@ export default function SettingsScreen() {
       <View style={styles.container}>
         <UserHomeLayout>
           {/* Header */}
-          <AppHeader userName="ユーザー名" />
+          <AppHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>

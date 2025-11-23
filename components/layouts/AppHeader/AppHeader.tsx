@@ -1,12 +1,24 @@
-import React from 'react';
+import { getUserById } from '@/api/users';
+import { MOCK_USER_ID } from '@/constants/mockUser';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import { styles } from './styles';
 
-interface AppHeaderProps {
-  userName?: string;
-}
+export function AppHeader() {
+  const [userName, setUserName] = useState('ユーザー名');
 
-export function AppHeader({ userName = 'ユーザー名' }: AppHeaderProps) {
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const user = await getUserById(MOCK_USER_ID);
+        setUserName(user.name);
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      }
+    };
+    fetchUser();
+  }, []);
+
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>

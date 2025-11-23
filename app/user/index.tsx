@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Stack } from 'expo-router';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { styles } from './styles';
@@ -13,24 +14,7 @@ export default function UserHomeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <View style={styles.appIcon}>
-                <Text style={styles.appIconText}>❤️</Text>
-              </View>
-              <View>
-                <Text style={styles.appTitle}>みまもりケア</Text>
-                <Text style={styles.appSubtitle}>あなたの健康をサポート</Text>
-              </View>
-            </View>
-            <View style={styles.headerRight}>
-              <View style={styles.userIconContainer}>
-                <Text style={styles.userIcon}>👤</Text>
-              </View>
-              <Text style={styles.userName}>ユーザー名</Text>
-            </View>
-          </View>
+          <AppHeader />
 
           {/* User Profile Card */}
           <View style={styles.profileCard}>

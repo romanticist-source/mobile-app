@@ -62,7 +62,7 @@ export default function ShareScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader userName={userData.name} />
+          <AppHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>
