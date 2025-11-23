@@ -26,6 +26,8 @@ export function useShareScreen() {
     openHealthModal: healthCard.openModal,
     closeHealthModal: healthCard.closeModal,
     healthCardData: healthCard.data,
+    healthCardLoading: healthCard.loading,
+    healthCardError: healthCard.error,
     calculateBMI: healthCard.calculateBMI,
     handleHealthCardSave: healthCard.handleSave,
 

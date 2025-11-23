@@ -25,6 +25,8 @@ export default function ShareScreen() {
     openEmergencyModal,
     closeEmergencyModal,
     healthCardData,
+    healthCardLoading,
+    healthCardError,
     calculateBMI,
     handleHealthCardSave,
     emergencyCardData,
