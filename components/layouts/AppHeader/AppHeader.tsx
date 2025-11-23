@@ -6,12 +6,15 @@ import { View, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
 import { styles } from './styles';
 
 export function AppHeader() {
-  const { selectedUserId, setSelectedUserId, isLocked, setIsLocked } = useUser();
+  const { selectedUserId, setSelectedUserId, isLoading } = useUser();
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
+    // AsyncStorageの読み込みが完了するまで待つ
+    if (isLoading) return;
+
     const fetchUsers = async () => {
       try {
         const userList = await getUsers();
@@ -23,10 +26,12 @@ export function AppHeader() {
           if (savedUser) {
             setSelectedUser(savedUser);
           } else if (userList.length > 0) {
+            // 保存されたユーザーが見つからない場合のみ最初のユーザーを設定
             setSelectedUser(userList[0]);
             setSelectedUserId(userList[0].id);
           }
         } else if (userList.length > 0) {
+          // 保存されたユーザーIDがない場合のみ最初のユーザーを設定
           setSelectedUser(userList[0]);
           setSelectedUserId(userList[0].id);
         }
@@ -35,7 +40,7 @@ export function AppHeader() {
       }
     };
     fetchUsers();
-  }, [selectedUserId, setSelectedUserId]);
+  }, [isLoading]);
 
   const handleSelectUser = async (user: User) => {
     setSelectedUser(user);
@@ -56,18 +61,13 @@ export function AppHeader() {
       </View>
       <TouchableOpacity
         style={styles.headerRight}
-        onPress={() => !isLocked && setIsDropdownOpen(true)}
-        disabled={isLocked}
+        onPress={() => setIsDropdownOpen(true)}
       >
         <View style={styles.userIconContainer}>
           <Text style={styles.userIcon}>👤</Text>
         </View>
         <Text style={styles.userName}>{selectedUser?.name ?? 'ユーザー名'}</Text>
-        {isLocked ? (
-          <Text style={styles.lockIcon}>🔒</Text>
-        ) : (
-          <Text style={styles.dropdownArrow}>▼</Text>
-        )}
+        <Text style={styles.dropdownArrow}>▼</Text>
       </TouchableOpacity>
 
       <Modal
@@ -105,17 +105,6 @@ export function AppHeader() {
                 </TouchableOpacity>
               )}
             />
-            {selectedUser && (
-              <TouchableOpacity
-                style={styles.lockButton}
-                onPress={() => {
-                  setIsLocked(true);
-                  setIsDropdownOpen(false);
-                }}
-              >
-                <Text style={styles.lockButtonText}>🔒 このユーザーを固定</Text>
-              </TouchableOpacity>
-            )}
           </View>
         </TouchableOpacity>
       </Modal>
