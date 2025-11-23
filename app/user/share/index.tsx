@@ -320,6 +320,7 @@ export default function ShareScreen() {
         onClose={closeEmergencyModal}
         data={emergencyCardData}
         onSave={handleEmergencyCardSave}
+        userName={userData.name}
       />
     </>
   );
