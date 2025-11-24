@@ -54,33 +54,43 @@ export const styles = StyleSheet.create({
   headerRight: {
     width: headerButton,
   },
-  content: {
+  scrollContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: lg,
   },
-  iconContainer: {
-    width: iconContainerSize,
-    height: iconContainerSize,
-    borderRadius: radiusFull,
-    backgroundColor: accentLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: md,
+  contentWrapper: {
+    padding: sm,
   },
-  icon: {
-    fontSize: iconSize,
+  pageHeader: {
+    backgroundColor: surface,
+    borderRadius: 12,
+    padding: sm,
+    marginBottom: sm,
   },
-  title: {
-    fontSize: fontXxl,
-    fontWeight: 'bold',
-    color: textPrimary,
+  headerIcon: {
     marginBottom: xs,
   },
-  description: {
+  pageTitle: {
+    fontSize: fontLg,
+    fontWeight: '600',
+    color: textPrimary,
+    marginBottom: 4,
+  },
+  pageDescription: {
     fontSize: fontMd,
     color: textSecondary,
-    textAlign: 'center',
+    lineHeight: 18,
+  },
+  noticeBox: {
+    backgroundColor: '#E0F2FE',
+    borderRadius: 8,
+    padding: md,
+    marginBottom: sm,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0EA5E9',
+  },
+  noticeText: {
+    fontSize: fontMd,
+    color: '#0C4A6E',
+    lineHeight: 18,
   },
 });
