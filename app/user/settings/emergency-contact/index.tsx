@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, Alert, ActivityIndicator } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, Alert } from 'react-native';
+import { Stack } from 'expo-router';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Form, FormInput, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
+import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
+import { LoadingState } from '@/components/layouts/LoadingState/LoadingState';
+import { ErrorState } from '@/components/layouts/ErrorState/ErrorState';
+import { EmergencyContactCard } from './(components)/EmergencyContactCard/EmergencyContactCard';
 import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
 import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
 import { useUser } from '@/contexts/UserContext';
@@ -23,7 +27,6 @@ const relationshipOptions: SelectOption[] = [
 ];
 
 export default function EmergencyContactScreen() {
-  const router = useRouter();
   const { selectedUserId, isLoading: isUserLoading } = useUser();
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
   const [loading, setLoading] = useState(true);
@@ -174,35 +177,20 @@ export default function EmergencyContactScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <MaterialIcons name="arrow-back" size={24} color="#333333" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>緊急連絡先</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={handleAdd}
-          >
-            <MaterialIcons name="add" size={24} color="#FF6B6B" />
-          </TouchableOpacity>
-        </View>
+        <SettingsHeader
+          title="緊急連絡先"
+          rightAction={{
+            label: '+',
+            onPress: handleAdd,
+          }}
+        />
 
         {/* Content */}
         <ScrollView style={styles.content}>
           {loading ? (
-            <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#FF6B6B" />
-            </View>
+            <LoadingState color="#FF6B6B" />
           ) : error ? (
-            <View style={styles.errorContainer}>
-              <Text style={styles.errorText}>{error}</Text>
-              <TouchableOpacity style={styles.retryButton} onPress={fetchContacts}>
-                <Text style={styles.retryButtonText}>再試行</Text>
-              </TouchableOpacity>
-            </View>
+            <ErrorState message={error} onRetry={fetchContacts} retryButtonText="再試行" />
           ) : contacts.length === 0 ? (
             <View style={styles.emptyContainer}>
               <MaterialIcons name="contact-phone" size={48} color="#CCCCCC" />
@@ -214,51 +202,12 @@ export default function EmergencyContactScreen() {
           ) : (
             <View style={styles.contactList}>
               {contacts.map((contact) => (
-                <View key={`${contact.userId}-${contact.helperId}`} style={styles.contactCard}>
-                  <TouchableOpacity
-                    style={styles.contactContent}
-                    onPress={() => handleEdit(contact)}
-                  >
-                    <View style={styles.contactHeader}>
-                      <View style={styles.contactInfo}>
-                        <View style={styles.nameRow}>
-                          <Text style={styles.contactName}>{contact.name}</Text>
-                          {contact.isMain && (
-                            <View style={styles.mainBadge}>
-                              <Text style={styles.mainBadgeText}>メイン</Text>
-                            </View>
-                          )}
-                        </View>
-                        <Text style={styles.contactRelationship}>{contact.relationship}</Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.deleteButton}
-                        onPress={() => handleDelete(contact)}
-                      >
-                        <MaterialIcons name="delete" size={20} color="#FF6B6B" />
-                      </TouchableOpacity>
-                    </View>
-
-                    <View style={styles.contactDetails}>
-                      <View style={styles.detailRow}>
-                        <MaterialIcons name="phone" size={16} color="#666666" />
-                        <Text style={styles.detailText}>{contact.phoneNumber}</Text>
-                      </View>
-                      {contact.email && (
-                        <View style={styles.detailRow}>
-                          <MaterialIcons name="email" size={16} color="#666666" />
-                          <Text style={styles.detailText}>{contact.email}</Text>
-                        </View>
-                      )}
-                      {contact.address && (
-                        <View style={styles.detailRow}>
-                          <MaterialIcons name="location-on" size={16} color="#666666" />
-                          <Text style={styles.detailText}>{contact.address}</Text>
-                        </View>
-                      )}
-                    </View>
-                  </TouchableOpacity>
-                </View>
+                <EmergencyContactCard
+                  key={`${contact.userId}-${contact.helperId}`}
+                  contact={contact}
+                  onPress={() => handleEdit(contact)}
+                  onDelete={() => handleDelete(contact)}
+                />
               ))}
             </View>
           )}

@@ -1,12 +1,11 @@
-import { Stack, useRouter } from "expo-router";
+import { Stack } from "expo-router";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, View } from "react-native";
+import { SettingsHeader } from "@/components/layouts/SettingsHeader/SettingsHeader";
 import { NotificationPermissionSection } from "./(components)/NotificationPermissionSection/NotificationPermissionSection";
 import { styles } from "./styles";
 
 export default function NotificationsScreen() {
-  const router = useRouter();
-
   const handleOpenSettings = () => {
     // TODO: Implement notification settings navigation
     console.log("Open notification settings");
@@ -17,16 +16,7 @@ export default function NotificationsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Text style={styles.backIcon}>‹</Text>
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>通知設定</Text>
-          <View style={styles.headerRight} />
-        </View>
+        <SettingsHeader title="通知設定" />
 
         {/* Content */}
         <ScrollView style={styles.scrollContent}>
