@@ -87,7 +87,11 @@ export function useHealthCard() {
           const notesObj = JSON.parse(statusCard.notes);
           setNotes(notesObj.otherNotes || '');
         } catch {
-          setNotes(statusCard.notes);
+          if (statusCard.notes.startsWith('{') && statusCard.notes.endsWith('}')) {
+            setNotes('');
+          } else {
+            setNotes(statusCard.notes);
+          }
         }
       } else {
         setNotes('');

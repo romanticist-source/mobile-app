@@ -60,17 +60,49 @@ export function useEmergencyCard() {
         // Set status card data
         if (statusCard) {
           setBloodType(statusCard.bloodType || '');
-          setAllergies(statusCard.allergy || '');
           setCondition(statusCard.disability || '');
 
-          // Parse medications (comma-separated string to array)
-          if (statusCard.medicine) {
-            setMedications(statusCard.medicine.split('、').map((m: string) => m.trim()));
+          // Parse allergies from JSON string
+          if (statusCard.allergy) {
+            try {
+              const allergyArray = JSON.parse(statusCard.allergy);
+              setAllergies(Array.isArray(allergyArray) ? allergyArray.join('、') : statusCard.allergy);
+            } catch {
+              setAllergies(statusCard.allergy);
+            }
+          } else {
+            setAllergies('');
           }
 
-          // Parse notes for emergency notes
+          // Parse medications from JSON string
+          if (statusCard.medicine) {
+            try {
+              const medicineArray = JSON.parse(statusCard.medicine);
+              if (Array.isArray(medicineArray)) {
+                setMedications(medicineArray.map((m: { name: string }) => m.name));
+              } else {
+                setMedications([]);
+              }
+            } catch {
+              // Fallback: treat as comma-separated string
+              setMedications(statusCard.medicine.split('、').map((m: string) => m.trim()));
+            }
+          } else {
+            setMedications([]);
+          }
+
+          // Parse notes from JSON string
           if (statusCard.notes) {
-            setEmergencyNotes(statusCard.notes.split('。').filter((n: string) => n.trim()));
+            try {
+              const notesObj = JSON.parse(statusCard.notes);
+              const notesText = notesObj.otherNotes || '';
+              setEmergencyNotes(notesText.split('\n').filter((n: string) => n.trim()));
+            } catch {
+              // Fallback: treat as plain text
+              setEmergencyNotes(statusCard.notes.split('。').filter((n: string) => n.trim()));
+            }
+          } else {
+            setEmergencyNotes([]);
           }
         }
 
