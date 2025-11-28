@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import type { HelperDisplay } from '../../(hooks)/useHelperManagement';
+import type { HelperDisplay } from '@/app/user/settings/caregiver/(hooks)/useHelperManagement';
 import { styles } from './styles';
 
 interface CaregiverCardProps {

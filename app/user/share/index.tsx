@@ -9,8 +9,8 @@ import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
 import { styles } from './styles';
-import { EditHealthCardModal } from './(components)/EditHealthCardModal/EditHealthCardModal';
-import { EditEmergencyCardModal } from './(components)/EditEmergencyCardModal/EditEmergencyCardModal';
+import { EditHealthCardModal } from '@/components/features/share/EditHealthCardModal/EditHealthCardModal';
+import { EditEmergencyCardModal } from '@/components/features/share/EditEmergencyCardModal/EditEmergencyCardModal';
 import { useShareScreen } from './(hooks)/useShareScreen';
 
 export default function ShareScreen() {

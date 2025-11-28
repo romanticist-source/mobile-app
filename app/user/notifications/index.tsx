@@ -6,9 +6,9 @@ import { useUser } from '@/contexts/UserContext';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
-import { NotificationsActionsBar } from './(components)/NotificationsActionsBar/NotificationsActionsBar';
-import { NotificationsFilters } from './(components)/NotificationsFilters/NotificationsFilters';
-import { NotificationsList } from './(components)/NotificationsList/NotificationsList';
+import { NotificationsActionsBar } from '@/components/features/notifications/NotificationsActionsBar/NotificationsActionsBar';
+import { NotificationsFilters } from '@/components/features/notifications/NotificationsFilters/NotificationsFilters';
+import { NotificationsList } from '@/components/features/notifications/NotificationsList/NotificationsList';
 import { useNotifications } from './(hooks)/useNotifications';
 import { styles } from './styles';
 

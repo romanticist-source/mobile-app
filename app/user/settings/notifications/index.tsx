@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { SettingsHeader } from "@/components/layouts/SettingsHeader/SettingsHeader";
-import { NotificationPermissionSection } from "./(components)/NotificationPermissionSection/NotificationPermissionSection";
+import { NotificationPermissionSection } from "@/components/features/settings/notifications/NotificationPermissionSection/NotificationPermissionSection";
 import { styles } from "./styles";
 
 export default function NotificationsScreen() {

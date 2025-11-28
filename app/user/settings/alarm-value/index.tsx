@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { FormSaveButton } from '@/components/forms';
-import { HeartRateSection } from './(components)/HeartRateSection/HeartRateSection';
+import { HeartRateSection } from '@/components/features/settings/alarm-value/HeartRateSection/HeartRateSection';
 import { styles } from './styles';
 
 export default function AlarmValueScreen() {

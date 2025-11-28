@@ -5,10 +5,10 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
 import { LoadingState } from '@/components/layouts/LoadingState/LoadingState';
 import { ErrorState } from '@/components/layouts/ErrorState/ErrorState';
-import { CaregiverCard } from './(components)/CaregiverCard/CaregiverCard';
+import { CaregiverCard } from '@/components/features/settings/caregiver/CaregiverCard/CaregiverCard';
+import { HelperForm } from '@/components/features/settings/caregiver/HelperForm/HelperForm';
 import { styles } from './styles';
 import { useHelperManagement, HelperDisplay } from './(hooks)/useHelperManagement';
-import { HelperForm } from './(components)/HelperForm/HelperForm';
 import type { CreateHelper } from '@/_schema';
 
 export default function CaregiverManagementScreen() {

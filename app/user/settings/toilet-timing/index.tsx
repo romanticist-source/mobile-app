@@ -3,8 +3,8 @@ import { View, ScrollView } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { FormSaveButton } from '@/components/forms';
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
-import { ToiletNotificationSettings } from './(components)/ToiletNotificationSettings/ToiletNotificationSettings';
-import { ToiletRecordsList } from './(components)/ToiletRecordsList/ToiletRecordsList';
+import { ToiletNotificationSettings } from '@/components/features/settings/toilet-timing/ToiletNotificationSettings/ToiletNotificationSettings';
+import { ToiletRecordsList } from '@/components/features/settings/toilet-timing/ToiletRecordsList/ToiletRecordsList';
 import { styles } from './styles';
 
 interface ToiletRecord {

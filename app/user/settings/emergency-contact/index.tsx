@@ -8,7 +8,7 @@ import { Form, FormInput, FormSelect, FormButtonGroup, SelectOption } from '@/co
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
 import { LoadingState } from '@/components/layouts/LoadingState/LoadingState';
 import { ErrorState } from '@/components/layouts/ErrorState/ErrorState';
-import { EmergencyContactCard } from './(components)/EmergencyContactCard/EmergencyContactCard';
+import { EmergencyContactCard } from '@/components/features/settings/emergency-contact/EmergencyContactCard/EmergencyContactCard';
 import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
 import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
 import { useUser } from '@/contexts/UserContext';

@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { SettingsHeader } from "@/components/layouts/SettingsHeader/SettingsHeader";
-import { PermissionSection } from "./(components)/PermissionSection/PermissionSection";
+import { PermissionSection } from "@/components/features/settings/connected-devices/PermissionSection/PermissionSection";
 import { styles } from "./styles";
 
 export default function ConnectedDevicesScreen() {
