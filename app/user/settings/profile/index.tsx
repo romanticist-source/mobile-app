@@ -1,43 +1,106 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Form, FormInput, FormSelect, FormDateTimePicker, type SelectOption } from '@/components/forms';
+import { Form, FormInput, FormSaveButton } from '@/components/forms';
+import { getUserById, updateUser } from '@/api/users';
+import type { UpdateUser } from '@/_schema';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
 
-const genderOptions: SelectOption[] = [
-  { label: '男性', value: 'male' },
-  { label: '女性', value: 'female' },
-  { label: '回答しない', value: 'other' },
-];
+interface ProfileFormData {
+  name: string;
+  age: number;
+  mail: string;
+  address: string;
+}
 
 export default function ProfileSettingsScreen() {
   const router = useRouter();
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const form = useForm({
+  const form = useForm<ProfileFormData>({
     defaultValues: {
       name: '',
-      furigana: '',
-      birthdate: undefined,
-      gender: '',
-      phone: '',
+      age: null,
       mail: '',
       address: '',
-      emergencyContactName: '',
-      emergencyContactPhone: '',
     },
   });
 
-  const handleSave = form.handleSubmit((data) => {
-    console.log('Save profile:', data);
-    // TODO: API call to update user profile
-    router.back();
+  const formValues = form.watch();
+
+  // Fetch user data on mount
+  useEffect(() => {
+    if (!selectedUserId || isUserLoading) return;
+
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true);
+        const user = await getUserById(selectedUserId);
+        form.reset({
+          name: user.name,
+          age: user.age,
+          mail: user.mail,
+          address: user.address || '',
+        });
+      } catch (error) {
+        console.error('Failed to fetch user:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [selectedUserId, isUserLoading]);
+
+  const handleSave = form.handleSubmit(async (data) => {
+    if (!selectedUserId) return;
+
+    try {
+      setIsSaving(true);
+      const updateData: UpdateUser = {
+        name: data.name,
+        age: data.age,
+        mail: data.mail,
+        address: data.address || undefined,
+      };
+      await updateUser(selectedUserId, updateData);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    } finally {
+      setIsSaving(false);
+    }
   });
 
+  const handleToggleEdit = () => {
+    if (isEditing) {
+      // Cancel editing - reset form to saved values
+      form.reset();
+    }
+    setIsEditing(!isEditing);
+  };
+
   const handleProfilePhotoChange = () => {
+    if (!isEditing) return;
     // TODO: Implement profile photo picker
     console.log('Change profile photo');
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={[styles.container, styles.loadingContainer]}>
+          <ActivityIndicator size="large" />
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
@@ -52,7 +115,14 @@ export default function ProfileSettingsScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>プロフィール設定</Text>
-          <View style={styles.headerRight} />
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={handleToggleEdit}
+          >
+            <Text style={styles.editButtonText}>
+              {isEditing ? 'キャンセル' : '編集'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Content */}
@@ -63,17 +133,22 @@ export default function ProfileSettingsScreen() {
               <TouchableOpacity
                 style={styles.photoContainer}
                 onPress={handleProfilePhotoChange}
+                disabled={!isEditing}
               >
                 <View style={styles.avatarCircle}>
-                  <Text style={styles.avatarText}>山</Text>
-                  <View style={styles.cameraIconContainer}>
-                    <Text style={styles.cameraIcon}>📷</Text>
-                  </View>
+                  <Text style={styles.avatarText}>{formValues.name.slice(0, 1)}</Text>
+                  {isEditing && (
+                    <View style={styles.cameraIconContainer}>
+                      <Text style={styles.cameraIcon}>📷</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableOpacity>
               <View style={styles.photoInfo}>
-                <Text style={styles.photoName}>山田 太郎</Text>
-                <Text style={styles.photoAction}>プロフィール写真を変更</Text>
+                <Text style={styles.photoName}>{formValues.name || '山田 太郎'}</Text>
+                {isEditing && (
+                  <Text style={styles.photoAction}>プロフィール写真を変更</Text>
+                )}
               </View>
             </View>
 
@@ -81,91 +156,75 @@ export default function ProfileSettingsScreen() {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>基本情報</Text>
 
-              <Form form={form}>
-                <FormInput
-                  name="name"
-                  label="氏名"
-                  placeholder="山田 太郎"
-                />
+              {isEditing ? (
+                <Form form={form}>
+                  <FormInput
+                    name="name"
+                    label="氏名"
+                    placeholder="山田 太郎"
+                  />
 
-                <FormInput
-                  name="furigana"
-                  label="ふりがな"
-                  placeholder="やまだ たろう"
-                />
+                  <FormInput
+                    name="age"
+                    label="年齢"
+                    placeholder="30"
+                    keyboardType="numeric"
+                  />
+                </Form>
+              ) : (
+                <View>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>氏名</Text>
+                    <Text style={styles.displayValue}>{formValues.name}</Text>
+                  </View>
 
-                <FormDateTimePicker
-                  name="birthdate"
-                  label="生年月日"
-                  mode="date"
-                />
-
-                <FormSelect
-                  name="gender"
-                  label="性別"
-                  options={genderOptions}
-                  placeholder="選択してください"
-                />
-              </Form>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>年齢</Text>
+                    <Text style={styles.displayValue}>{formValues.age}歳</Text>
+                  </View>
+                </View>
+              )}
             </View>
 
             {/* Contact Information Section */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>連絡先情報</Text>
 
-              <Form form={form}>
-                <FormInput
-                  name="phone"
-                  label="電話番号"
-                  placeholder="090-1234-5678"
-                  keyboardType="phone-pad"
-                />
+              {isEditing ? (
+                <Form form={form}>
+                  <FormInput
+                    name="mail"
+                    label="メールアドレス"
+                    placeholder="taro.yamada@example.com"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
 
-                <FormInput
-                  name="mail"
-                  label="メールアドレス"
-                  placeholder="taro.yamada@example.com"
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
+                  <FormInput
+                    name="address"
+                    label="住所"
+                    placeholder="東京都渋谷区渋谷1-1-1"
+                  />
+                </Form>
+              ) : (
+                <View>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>メールアドレス</Text>
+                    <Text style={styles.displayValue}>{formValues.mail}</Text>
+                  </View>
 
-                <FormInput
-                  name="address"
-                  label="住所"
-                  placeholder="東京都渋谷区渋谷1-1-1"
-                />
-              </Form>
-            </View>
-
-            {/* Emergency Contact Section */}
-            <View style={styles.section}>
-              <Text style={styles.sectionTitle}>緊急連絡先</Text>
-
-              <Form form={form}>
-                <FormInput
-                  name="emergencyContactName"
-                  label="緊急連絡先（氏名）"
-                  placeholder="山田 花子"
-                />
-
-                <FormInput
-                  name="emergencyContactPhone"
-                  label="緊急連絡先（電話番号）"
-                  placeholder="090-8765-4321"
-                  keyboardType="phone-pad"
-                />
-              </Form>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>住所</Text>
+                    <Text style={styles.displayValue}>{formValues.address || '未設定'}</Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
         </ScrollView>
 
-        {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Save Button - Only show in edit mode */}
+        {isEditing && <FormSaveButton onSave={handleSave} />}
       </View>
     </>
   );

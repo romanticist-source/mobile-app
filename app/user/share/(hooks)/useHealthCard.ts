@@ -1,12 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
+import { useUser } from '@/contexts/UserContext';
 import {
   getUserStatusCardByUserId,
-  getUserStatusCardDiseasesByStatusCardId,
   updateUserStatusCard,
-  createUserStatusCardDisease,
-  deleteUserStatusCardDisease,
+  createUserStatusCard,
+  getUserStatusCardDiseasesByStatusCardId,
 } from '@/api/user-status-cards';
-import type { UserStatusCard, UserStatusCardDisease } from '@/_schema';
+import type { UpdateUserStatusCard, CreateUserStatusCard } from '@/_schema';
 
 export interface HealthCardData {
   healthConditions: string[];
@@ -19,73 +19,107 @@ export interface HealthCardData {
   notes: string;
 }
 
-// Default values when API returns null
-const DEFAULT_VALUES = {
-  healthConditions: [],
-  bloodType: '',
-  height: '165',
-  weight: '58',
-  allergies: '',
-  medications: '',
-  disability: '',
-  notes: '',
-};
-
-export function useHealthCard(userId?: string) {
+export function useHealthCard() {
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-
-  // API data
-  const [statusCard, setStatusCard] = useState<UserStatusCard | null>(null);
-  const [diseases, setDiseases] = useState<UserStatusCardDisease[]>([]);
+  const [statusCardId, setStatusCardId] = useState<string | null>(null);
 
   // Health card data states
-  const [healthConditions, setHealthConditions] = useState<string[]>(DEFAULT_VALUES.healthConditions);
-  const [bloodType, setBloodType] = useState(DEFAULT_VALUES.bloodType);
-  const [height, setHeight] = useState(DEFAULT_VALUES.height);
-  const [weight, setWeight] = useState(DEFAULT_VALUES.weight);
-  const [allergies, setAllergies] = useState(DEFAULT_VALUES.allergies);
-  const [medications, setMedications] = useState(DEFAULT_VALUES.medications);
-  const [disability, setDisability] = useState(DEFAULT_VALUES.disability);
-  const [notes, setNotes] = useState(DEFAULT_VALUES.notes);
+  const [healthConditions, setHealthConditions] = useState<string[]>([]);
+  const [bloodType, setBloodType] = useState('');
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [allergies, setAllergies] = useState('');
+  const [medications, setMedications] = useState('');
+  const [disability, setDisability] = useState('');
+  const [notes, setNotes] = useState('');
 
   // Fetch health card data from API
   const fetchHealthCard = useCallback(async () => {
-    if (!userId) return;
+    if (!selectedUserId || isUserLoading) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      // Fetch status card
-      const card = await getUserStatusCardByUserId(userId);
-      setStatusCard(card);
+      const statusCard = await getUserStatusCardByUserId(selectedUserId);
+      setStatusCardId(statusCard.id);
 
-      // Update state from API data
-      setBloodType(card.bloodType || DEFAULT_VALUES.bloodType);
-      setAllergies(card.allergy || DEFAULT_VALUES.allergies);
-      setMedications(card.medicine || DEFAULT_VALUES.medications);
-      setHeight(card.height || DEFAULT_VALUES.height);
-      setWeight(card.weight || DEFAULT_VALUES.weight);
-      setDisability(card.disability || DEFAULT_VALUES.disability);
-      setNotes(card.notes || DEFAULT_VALUES.notes);
+      // Set basic info
+      setBloodType(statusCard.bloodType || '');
+      setHeight(statusCard.height || '');
+      setWeight(statusCard.weight || '');
+      setDisability(statusCard.disability || '');
 
-      // Fetch diseases for this status card
-      if (card.id) {
-        const diseaseList = await getUserStatusCardDiseasesByStatusCardId(card.id);
-        setDiseases(diseaseList);
-        setHealthConditions(diseaseList.map((d) => d.name));
+      // Parse allergies from JSON string
+      if (statusCard.allergy) {
+        try {
+          const allergyArray = JSON.parse(statusCard.allergy);
+          setAllergies(Array.isArray(allergyArray) ? allergyArray.join('、') : statusCard.allergy);
+        } catch {
+          setAllergies(statusCard.allergy);
+        }
+      } else {
+        setAllergies('');
+      }
+
+      // Parse medications from JSON string
+      if (statusCard.medicine) {
+        try {
+          const medicineArray = JSON.parse(statusCard.medicine);
+          if (Array.isArray(medicineArray)) {
+            setMedications(medicineArray.map((m: { name: string }) => m.name).join('、'));
+          } else {
+            setMedications(statusCard.medicine);
+          }
+        } catch {
+          setMedications(statusCard.medicine);
+        }
+      } else {
+        setMedications('');
+      }
+
+      // Parse notes
+      if (statusCard.notes) {
+        try {
+          const notesObj = JSON.parse(statusCard.notes);
+          setNotes(notesObj.otherNotes || '');
+        } catch {
+          if (statusCard.notes.startsWith('{') && statusCard.notes.endsWith('}')) {
+            setNotes('');
+          } else {
+            setNotes(statusCard.notes);
+          }
+        }
+      } else {
+        setNotes('');
+      }
+
+      // Fetch diseases for health conditions
+      try {
+        const diseases = await getUserStatusCardDiseasesByStatusCardId(statusCard.id);
+        setHealthConditions(diseases.map(d => d.name));
+      } catch {
+        setHealthConditions([]);
       }
     } catch (err) {
       setError(err as Error);
-      // Keep default values on error
+      // Reset to empty values if no status card exists
+      setHealthConditions([]);
+      setBloodType('');
+      setHeight('');
+      setWeight('');
+      setAllergies('');
+      setMedications('');
+      setDisability('');
+      setNotes('');
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [selectedUserId, isUserLoading]);
 
-  // Load data on mount
   useEffect(() => {
     fetchHealthCard();
   }, [fetchHealthCard]);
@@ -97,12 +131,35 @@ export function useHealthCard(userId?: string) {
     if (h > 0 && w > 0) {
       return (w / (h * h)).toFixed(1);
     }
-    return '22.5';
+    return '-';
   }, [height, weight]);
 
-  const handleSave = useCallback(
-    async (data: HealthCardData) => {
-      // Update local state immediately
+  const handleSave = useCallback(async (data: HealthCardData) => {
+    if (!selectedUserId) return;
+
+    try {
+      // Prepare API data
+      const apiData: UpdateUserStatusCard | CreateUserStatusCard = {
+        bloodType: data.bloodType || null,
+        height: data.height || null,
+        weight: data.weight || null,
+        allergy: data.allergies ? JSON.stringify(data.allergies.split('、').filter(Boolean)) : null,
+        medicine: data.medications ? JSON.stringify(data.medications.split('、').filter(Boolean).map(name => ({ name }))) : null,
+        disability: data.disability || null,
+        notes: data.notes ? JSON.stringify({ otherNotes: data.notes }) : null,
+      };
+
+      if (statusCardId) {
+        await updateUserStatusCard(statusCardId, apiData);
+      } else {
+        const newCard = await createUserStatusCard({
+          userId: selectedUserId,
+          ...apiData,
+        });
+        setStatusCardId(newCard.id);
+      }
+
+      // Update local state
       setHealthConditions(data.healthConditions);
       setBloodType(data.bloodType);
       setHeight(data.height);
@@ -111,45 +168,11 @@ export function useHealthCard(userId?: string) {
       setMedications(data.medications);
       setDisability(data.disability);
       setNotes(data.notes);
-
-      // Persist to API if we have a status card
-      if (statusCard?.id) {
-        try {
-          // Update status card
-          await updateUserStatusCard(statusCard.id, {
-            bloodType: data.bloodType || null,
-            allergy: data.allergies || null,
-            medicine: data.medications || null,
-            height: data.height || null,
-            weight: data.weight || null,
-            disability: data.disability || null,
-            notes: data.notes || null,
-          });
-
-          // Update diseases
-          // Delete existing diseases
-          for (const disease of diseases) {
-            await deleteUserStatusCardDisease(disease.id);
-          }
-
-          // Create new diseases
-          const newDiseases: UserStatusCardDisease[] = [];
-          for (const condition of data.healthConditions) {
-            const created = await createUserStatusCardDisease({
-              userStatusCardId: statusCard.id,
-              name: condition,
-            });
-            newDiseases.push(created);
-          }
-          setDiseases(newDiseases);
-        } catch (err) {
-          console.error('Failed to save health card:', err);
-          // Data is already updated locally, so user sees changes
-        }
-      }
-    },
-    [statusCard, diseases]
-  );
+    } catch (err) {
+      console.error('Failed to save health card:', err);
+      throw err;
+    }
+  }, [selectedUserId, statusCardId]);
 
   const openModal = useCallback(() => setIsModalVisible(true), []);
   const closeModal = useCallback(() => setIsModalVisible(false), []);
@@ -158,8 +181,6 @@ export function useHealthCard(userId?: string) {
     isModalVisible,
     openModal,
     closeModal,
-    loading,
-    error,
     data: {
       healthConditions,
       bloodType,
@@ -170,6 +191,8 @@ export function useHealthCard(userId?: string) {
       disability,
       notes,
     },
+    loading,
+    error,
     calculateBMI,
     handleSave,
     refetch: fetchHealthCard,

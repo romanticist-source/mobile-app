@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { styles } from './styles';
+import type { ComponentProps } from 'react';
+
+type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 
 interface SettingItem {
   id: string;
-  icon: string;
+  icon: MaterialIconName;
   title: string;
   description: string;
   onPress: () => void;
@@ -29,7 +33,7 @@ export default function SettingsScreen() {
       items: [
         {
           id: 'notifications',
-          icon: '🔔',
+          icon: 'notifications',
           title: '通知設定',
           description: '通知の種類とタイミングをカスタマイズ',
           onPress: () => router.push('/user/settings/notifications'),
@@ -41,14 +45,14 @@ export default function SettingsScreen() {
       items: [
         {
           id: 'profile',
-          icon: '👤',
+          icon: 'person',
           title: 'プロフィール設定',
           description: '名前、生年月日、連絡先など',
           onPress: () => router.push('/user/settings/profile'),
         },
         {
           id: 'health-profile',
-          icon: '❤️',
+          icon: 'favorite',
           title: '健康プロフィール',
           description: '既往歴、アレルギー、服薬情報',
           onPress: () => router.push('/user/settings/health-profile'),
@@ -60,17 +64,10 @@ export default function SettingsScreen() {
       items: [
         {
           id: 'caregiver',
-          icon: '👥',
+          icon: 'group',
           title: '介助者管理',
           description: '介助者の追加・削除・権限設定',
           onPress: () => router.push('/user/settings/caregiver'),
-        },
-        {
-          id: 'privacy',
-          icon: '👁️',
-          title: 'プライバシー設定',
-          description: '情報共有範囲と公開設定',
-          onPress: () => router.push('/user/settings/privacy'),
         },
       ],
     },
@@ -79,50 +76,24 @@ export default function SettingsScreen() {
       items: [
         {
           id: 'toilet-timing',
-          icon: '🕐',
+          icon: 'schedule',
           title: 'トイレタイミング',
           description: 'リマインダーの間隔と通知設定',
           onPress: () => router.push('/user/settings/toilet-timing'),
         },
         {
-          id: 'rest-management',
-          icon: '🕐',
-          title: '休憩管理',
-          description: '休憩時間と自動提案の設定',
-          onPress: () => router.push('/user/settings/rest-management'),
-        },
-        {
           id: 'alarm-value',
-          icon: '🔔',
+          icon: 'notifications-active',
           title: 'アラート閾値',
           description: '心拍数、疲労度などの通知基準',
           onPress: () => router.push('/user/settings/alarm-value'),
         },
         {
           id: 'emergency-contact',
-          icon: '🆘',
+          icon: 'emergency',
           title: '緊急連絡先',
           description: '緊急時の連絡先を管理',
           onPress: () => router.push('/user/settings/emergency-contact'),
-        },
-      ],
-    },
-    {
-      title: 'アクセシビリティ',
-      items: [
-        {
-          id: 'sound-vibration',
-          icon: '🔊',
-          title: '音と振動設定',
-          description: '通知音、振動パターンのカスタマイズ',
-          onPress: () => router.push('/user/settings/sound-vibration'),
-        },
-        {
-          id: 'accessibility',
-          icon: '♿',
-          title: 'アクセシビリティ設定',
-          description: '文字サイズ、コントラスト、音声ガイド',
-          onPress: () => router.push('/user/settings/accessibility'),
         },
       ],
     },
@@ -131,7 +102,7 @@ export default function SettingsScreen() {
       items: [
         {
           id: 'connected-devices',
-          icon: '⌚',
+          icon: 'watch',
           title: '接続デバイス管理',
           description: 'Apple Watch、Pixel Watchの管理',
           onPress: () => router.push('/user/settings/connected-devices'),
@@ -173,7 +144,7 @@ export default function SettingsScreen() {
           {/* Search Bar */}
           <View style={styles.searchContainer}>
             <View style={styles.searchBar}>
-              <Text style={styles.searchIcon}>🔍</Text>
+              <MaterialIcons name="search" size={20} color="#999999" />
               <TextInput
                 style={styles.searchInput}
                 placeholder="設定を検索..."
@@ -201,14 +172,14 @@ export default function SettingsScreen() {
                     >
                       <View style={styles.settingItemLeft}>
                         <View style={styles.iconContainer}>
-                          <Text style={styles.settingIcon}>{item.icon}</Text>
+                          <MaterialIcons name={item.icon} size={24} color="#FF6B6B" />
                         </View>
                         <View style={styles.settingTextContainer}>
                           <Text style={styles.settingTitle}>{item.title}</Text>
                           <Text style={styles.settingDescription}>{item.description}</Text>
                         </View>
                       </View>
-                      <Text style={styles.chevron}>›</Text>
+                      <MaterialIcons name="chevron-right" size={24} color="#CCCCCC" />
                     </TouchableOpacity>
                   ))}
                 </View>

@@ -1,23 +1,24 @@
-import Slider from "@react-native-community/slider";
-import { Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { styles } from "./styles";
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { FormSaveButton } from '@/components/forms';
+import { HeartRateSection } from './(components)/HeartRateSection/HeartRateSection';
+import { styles } from './styles';
 
-export default function AlertThresholdScreen() {
+export default function AlarmValueScreen() {
   const router = useRouter();
 
-  const [heartRateMin, setHeartRateMin] = useState(60);
-  const [heartRateMax, setHeartRateMax] = useState(100);
-  const [activityLevel, setActivityLevel] = useState(70);
+  // Heart rate thresholds
+  const [minHeartRate, setMinHeartRate] = useState(60);
+  const [maxHeartRate, setMaxHeartRate] = useState(100);
 
   const handleSave = () => {
-    console.log("Save alert threshold settings:", {
-      heartRateMin,
-      heartRateMax,
-      activityLevel,
+    console.log('Save alarm value settings:', {
+      minHeartRate,
+      maxHeartRate,
     });
-    // TODO: API call to update alert threshold settings
+    // TODO: API call to update alarm value settings
     router.back();
   };
 
@@ -27,10 +28,7 @@ export default function AlertThresholdScreen() {
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
+          <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>アラート閾値</Text>
@@ -40,124 +38,36 @@ export default function AlertThresholdScreen() {
         {/* Content */}
         <ScrollView style={styles.scrollContent}>
           <View style={styles.contentWrapper}>
-            {/* Alert Threshold Section */}
-            <View style={styles.section}>
-              {/* Section Header */}
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionIcon}>🔔</Text>
-                <Text style={styles.sectionTitle}>アラート閾値設定</Text>
+            {/* Page Header */}
+            <View style={styles.pageHeader}>
+              <View style={styles.headerIcon}>
+                <MaterialIcons name="notifications-active" size={24} color="#FF6B6B" />
               </View>
-
-              <Text style={styles.sectionDescription}>
+              <Text style={styles.pageTitle}>アラート閾値設定</Text>
+              <Text style={styles.pageDescription}>
                 バイタルデータが設定した閾値を超えた場合に通知します
               </Text>
-
-              {/* Heart Rate Section */}
-              <View style={styles.thresholdSection}>
-                <View style={styles.thresholdHeader}>
-                  <Text style={styles.thresholdIcon}>❤️</Text>
-                  <Text style={styles.thresholdTitle}>心拍数</Text>
-                </View>
-
-                {/* Minimum Heart Rate */}
-                <View style={styles.sliderContainer}>
-                  <View style={styles.sliderLabelRow}>
-                    <Text style={styles.sliderLabel}>最小値</Text>
-                    <Text style={styles.sliderValue}>{heartRateMin} bpm</Text>
-                  </View>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={40}
-                    maximumValue={80}
-                    step={1}
-                    value={heartRateMin}
-                    onValueChange={setHeartRateMin}
-                    minimumTrackTintColor="#FF6B6B"
-                    maximumTrackTintColor="#E5E7EB"
-                    thumbTintColor="#FF6B6B"
-                  />
-                </View>
-
-                {/* Maximum Heart Rate */}
-                <View style={styles.sliderContainer}>
-                  <View style={styles.sliderLabelRow}>
-                    <Text style={styles.sliderLabel}>最大値</Text>
-                    <Text style={styles.sliderValue}>{heartRateMax} bpm</Text>
-                  </View>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={80}
-                    maximumValue={140}
-                    step={1}
-                    value={heartRateMax}
-                    onValueChange={setHeartRateMax}
-                    minimumTrackTintColor="#FF6B6B"
-                    maximumTrackTintColor="#E5E7EB"
-                    thumbTintColor="#FF6B6B"
-                  />
-                </View>
-
-                <Text style={styles.rangeDescription}>
-                  {heartRateMin}~{heartRateMax} bpmの範囲外で通知
-                </Text>
-              </View>
-
-              {/* Activity Level Section */}
-              <View style={styles.thresholdSection}>
-                <View style={styles.thresholdHeader}>
-                  <Text style={styles.thresholdIcon}>⚡</Text>
-                  <Text style={styles.thresholdTitle}>活動レベル</Text>
-                </View>
-
-                <View style={styles.sliderContainer}>
-                  <View style={styles.sliderLabelRow}>
-                    <Text style={styles.sliderLabel}>警告レベル</Text>
-                    <Text style={styles.sliderValue}>{activityLevel}%</Text>
-                  </View>
-                  <Slider
-                    style={styles.slider}
-                    minimumValue={0}
-                    maximumValue={100}
-                    step={5}
-                    value={activityLevel}
-                    onValueChange={setActivityLevel}
-                    minimumTrackTintColor="#FF6B6B"
-                    maximumTrackTintColor="#E5E7EB"
-                    thumbTintColor="#FF6B6B"
-                  />
-                </View>
-
-                <Text style={styles.rangeDescription}>
-                  {activityLevel}%を超えた場合に通知
-                </Text>
-              </View>
-
-              {/* Health Indicators Section */}
-              <View style={styles.thresholdSection}>
-                <View style={styles.thresholdHeader}>
-                  <Text style={styles.thresholdIcon}>📊</Text>
-                  <Text style={styles.thresholdTitle}>健康指標</Text>
-                </View>
-              </View>
             </View>
 
-            {/* Notice Box */}
+            {/* Notice */}
             <View style={styles.noticeBox}>
-              <Text style={styles.noticeIcon}>ℹ️</Text>
               <Text style={styles.noticeText}>
                 アラート通知は本人と介助者の両方に送信されます
               </Text>
             </View>
+
+            {/* Heart Rate Section */}
+            <HeartRateSection
+              minValue={minHeartRate}
+              maxValue={maxHeartRate}
+              onMinValueChange={setMinHeartRate}
+              onMaxValueChange={setMaxHeartRate}
+            />
           </View>
         </ScrollView>
 
         {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormSaveButton onSave={handleSave} />
       </View>
     </>
   );

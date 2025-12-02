@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, FlatList, Pressable } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { styles } from './styles';
 import {
   type AlertTypeFilter,
@@ -43,7 +44,7 @@ export function NotificationsFilters({
         onPress={() => setDropdownVisible(true)}
       >
         <Text style={styles.filterDropdownText}>{selectedTypeLabel}</Text>
-        <Text style={styles.dropdownArrow}>⌄</Text>
+        <MaterialIcons name="keyboard-arrow-down" size={20} color="#666666" />
       </TouchableOpacity>
 
       {/* Dropdown Modal */}
@@ -92,7 +93,11 @@ export function NotificationsFilters({
         ]}
         onPress={toggleReadFilter}
       >
-        <Text style={styles.filterIcon}>🔍</Text>
+        <MaterialIcons
+          name="filter-list"
+          size={16}
+          color={readFilter === 'unread' ? '#FF6B6B' : '#666666'}
+        />
         <Text
           style={[
             styles.filterButtonText,

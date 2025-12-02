@@ -1,8 +1,7 @@
-import React from 'react';
-import { Platform } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import React, { useMemo } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import { YStack, Label, Text, XStack } from 'tamagui';
+import { YStack, Label, Text, Select, Adapt, Sheet } from 'tamagui';
+import { FiChevronDown, FiChevronUp, FiCheck } from 'react-icons/fi';
 
 export interface SelectOption {
   label: string;
@@ -15,6 +14,7 @@ interface FormSelectProps {
   required?: boolean;
   options: SelectOption[];
   placeholder?: string;
+  defaultValue?: string;
 }
 
 export function FormSelect({
@@ -23,6 +23,7 @@ export function FormSelect({
   required,
   options,
   placeholder = '選択してください',
+  defaultValue,
 }: FormSelectProps) {
   const { control } = useFormContext();
   const {
@@ -46,37 +47,92 @@ export function FormSelect({
         </Label>
       )}
 
-      <XStack
-        borderWidth={1}
-        borderColor={error ? '$red9' : '$borderColor'}
-        borderRadius="$4"
-        backgroundColor="$background"
-        overflow="hidden"
+      <Select
+        id={name}
+        value={value ?? defaultValue}
+        onValueChange={onChange}
+        disablePreventBodyScroll
       >
-        <Picker
-          selectedValue={value}
-          onValueChange={onChange}
-          style={{
-            flex: 1,
-            height: Platform.OS === 'ios' ? 200 : 48,
-            color: '#333333',
-          }}
+        <Select.Trigger
+          width="100%"
+          iconAfter={<FiChevronDown size={20} />}
+          borderColor={error ? '$red9' : '$borderColor'}
         >
-          <Picker.Item
-            label={placeholder}
-            value=""
-            enabled={false}
-            color="#CCCCCC"
-          />
-          {options.map((option) => (
-            <Picker.Item
-              key={option.value}
-              label={option.label}
-              value={option.value}
+          <Select.Value placeholder={placeholder} />
+        </Select.Trigger>
+
+        <Adapt when="sm" platform="touch">
+          <Sheet
+            native
+            modal
+            dismissOnSnapToBottom
+            animationConfig={{
+              type: 'spring',
+              damping: 20,
+              mass: 1.2,
+              stiffness: 250,
+            }}
+          >
+            <Sheet.Frame>
+              <Sheet.ScrollView>
+                <Adapt.Contents />
+              </Sheet.ScrollView>
+            </Sheet.Frame>
+            <Sheet.Overlay
+              animation="lazy"
+              enterStyle={{ opacity: 0 }}
+              exitStyle={{ opacity: 0 }}
             />
-          ))}
-        </Picker>
-      </XStack>
+          </Sheet>
+        </Adapt>
+
+        <Select.Content zIndex={200000}>
+          <Select.ScrollUpButton
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
+            width="100%"
+            height="$3"
+          >
+            <YStack zIndex={10}>
+              <FiChevronUp size={20} />
+            </YStack>
+          </Select.ScrollUpButton>
+
+          <Select.Viewport minWidth={200}>
+            <Select.Group>
+              {useMemo(
+                () =>
+                  options.map((option, index) => (
+                    <Select.Item
+                      index={index}
+                      key={option.value}
+                      value={option.value}
+                    >
+                      <Select.ItemText>{option.label}</Select.ItemText>
+                      <Select.ItemIndicator marginLeft="auto">
+                        <FiCheck size={16} />
+                      </Select.ItemIndicator>
+                    </Select.Item>
+                  )),
+                [options]
+              )}
+            </Select.Group>
+          </Select.Viewport>
+
+          <Select.ScrollDownButton
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
+            width="100%"
+            height="$3"
+          >
+            <YStack zIndex={10}>
+              <FiChevronDown size={20} />
+            </YStack>
+          </Select.ScrollDownButton>
+        </Select.Content>
+      </Select>
 
       {error && (
         <Text color="$red10" fontSize="$2" marginTop="$1">

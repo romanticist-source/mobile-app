@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Text, TouchableOpacity,  } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { styles } from './styles';
+
 interface SchedulesPageHeaderProps {
   date: string;
   onAddPress: () => void;
@@ -14,7 +16,7 @@ export function SchedulesPageHeader({
     <View style={styles.pageHeader}>
       <View style={styles.titleSection}>
         <View style={styles.titleRow}>
-          <Text style={styles.pageIcon}>📅</Text>
+          <MaterialIcons name="event" size={24} color="#FF6B6B" />
           <Text style={styles.pageTitle}>スケジュール管理</Text>
         </View>
         <Text style={styles.pageDate}>{date}</Text>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Stack } from 'expo-router';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
@@ -52,7 +53,7 @@ export default function UserHomeScreen() {
               {/* Heart Rate */}
               <View style={styles.vitalCard}>
                 <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>❤️</Text>
+                  <MaterialIcons name="favorite" size={18} color="#FF6B6B" />
                   <Text style={styles.vitalLabel}>心拍数</Text>
                 </View>
                 <Text style={styles.vitalValue}>72 <Text style={styles.vitalUnit}>bpm</Text></Text>
@@ -65,7 +66,7 @@ export default function UserHomeScreen() {
               {/* Health Index */}
               <View style={styles.vitalCard}>
                 <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>📈</Text>
+                  <MaterialIcons name="trending-up" size={18} color="#20C9A6" />
                   <Text style={styles.vitalLabel}>健康指標</Text>
                 </View>
                 <Text style={styles.vitalValue}>85 <Text style={styles.vitalUnit}>%</Text></Text>
@@ -78,7 +79,7 @@ export default function UserHomeScreen() {
               {/* Activity Level */}
               <View style={styles.vitalCard}>
                 <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>⚡</Text>
+                  <MaterialIcons name="flash-on" size={18} color="#9B6CFF" />
                   <Text style={styles.vitalLabel}>活動レベル</Text>
                 </View>
                 <Text style={styles.vitalValue}>320 <Text style={styles.vitalUnit}>kcal</Text></Text>
@@ -91,7 +92,7 @@ export default function UserHomeScreen() {
               {/* Water Intake */}
               <View style={styles.vitalCard}>
                 <View style={styles.vitalHeader}>
-                  <Text style={styles.vitalIcon}>💧</Text>
+                  <MaterialIcons name="water-drop" size={18} color="#2196F3" />
                   <Text style={styles.vitalLabel}>水分補給</Text>
                 </View>
                 <Text style={styles.vitalValue}>1.2 <Text style={styles.vitalUnit}>L</Text></Text>
@@ -218,7 +219,7 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
               onPress={() => setIncludeLocation(!includeLocation)}
             >
               <View style={styles.locationIconContainer}>
-                <Text style={styles.locationIcon}>📍</Text>
+                <MaterialIcons name="location-on" size={24} color="#FF6B6B" />
               </View>
               <View style={styles.locationTextContainer}>
                 <Text style={styles.locationTitle}>位置情報を含めて送信</Text>

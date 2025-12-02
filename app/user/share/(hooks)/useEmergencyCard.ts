@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getEmergencyContactsByUserId, updateEmergencyContact } from '@/api/emergency-contacts';
-import { getUserHelpCardByUserId, updateUserHelpCard } from '@/api/user-help-cards';
-import type { EmergencyContact, UserHelpCard } from '@/_schema';
-import type { HealthCardData } from './useHealthCard';
+import { getEmergencyContactsByUserId } from '@/api/emergency-contacts';
+import { getUserStatusCardByUserId } from '@/api/user-status-cards';
+import { getUserHelpCardByUserId } from '@/api/user-help-cards';
+import { useUser } from '@/contexts/UserContext';
 
 export interface EmergencyCardData {
   name: string;
@@ -14,150 +14,142 @@ export interface EmergencyCardData {
   caregiverName: string;
   caregiverRelation: string;
   caregiverPhone: string;
+  caregiverEmail: string;
+  caregiverAddress: string;
   hospitalName: string;
   hospitalPhone: string;
 }
 
-// Default values when API returns null
-const DEFAULT_VALUES = {
-  name: '',
-  condition: '',
-  bloodType: '',
-  emergencyNotes: [],
-  medications: [],
-  allergies: '',
-  caregiverName: '',
-  caregiverRelation: '',
-  caregiverPhone: '',
-  hospitalName: '',
-  hospitalPhone: '',
-};
-
-export function useEmergencyCard(userId?: string, healthCardData?: HealthCardData) {
+export function useEmergencyCard() {
+  const { selectedUserId } = useUser();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
-
-  // API data
-  const [emergencyContacts, setEmergencyContacts] = useState<EmergencyContact[]>([]);
-  const [helpCard, setHelpCard] = useState<UserHelpCard | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Emergency card data states
-  const [name, setName] = useState(DEFAULT_VALUES.name);
-  const [condition, setCondition] = useState(DEFAULT_VALUES.condition);
-  const [bloodType, setBloodType] = useState(DEFAULT_VALUES.bloodType);
-  const [emergencyNotes, setEmergencyNotes] = useState<string[]>(DEFAULT_VALUES.emergencyNotes);
-  const [medications, setMedications] = useState<string[]>(DEFAULT_VALUES.medications);
-  const [allergies, setAllergies] = useState(DEFAULT_VALUES.allergies);
-  const [caregiverName, setCaregiverName] = useState(DEFAULT_VALUES.caregiverName);
-  const [caregiverRelation, setCaregiverRelation] = useState(DEFAULT_VALUES.caregiverRelation);
-  const [caregiverPhone, setCaregiverPhone] = useState(DEFAULT_VALUES.caregiverPhone);
-  const [hospitalName, setHospitalName] = useState(DEFAULT_VALUES.hospitalName);
-  const [hospitalPhone, setHospitalPhone] = useState(DEFAULT_VALUES.hospitalPhone);
+  const [name, setName] = useState('');
+  const [condition, setCondition] = useState('');
+  const [bloodType, setBloodType] = useState('');
+  const [emergencyNotes, setEmergencyNotes] = useState<string[]>([]);
+  const [medications, setMedications] = useState<string[]>([]);
+  const [allergies, setAllergies] = useState('');
+  const [caregiverName, setCaregiverName] = useState('');
+  const [caregiverRelation, setCaregiverRelation] = useState('');
+  const [caregiverPhone, setCaregiverPhone] = useState('');
+  const [caregiverEmail, setCaregiverEmail] = useState('');
+  const [caregiverAddress, setCaregiverAddress] = useState('');
+  const [hospitalName, setHospitalName] = useState('');
+  const [hospitalPhone, setHospitalPhone] = useState('');
 
-  // Sync data from health card
+  // Fetch data from API
   useEffect(() => {
-    if (healthCardData) {
-      setBloodType(healthCardData.bloodType || DEFAULT_VALUES.bloodType);
-      setAllergies(healthCardData.allergies || DEFAULT_VALUES.allergies);
-      setEmergencyNotes(healthCardData.healthConditions || DEFAULT_VALUES.emergencyNotes);
-      // Convert medications string to array
-      const medsArray = healthCardData.medications
-        ? healthCardData.medications.split('、').map((s) => s.trim()).filter(Boolean)
-        : DEFAULT_VALUES.medications;
-      setMedications(medsArray);
-      // Set condition from disability
-      setCondition(healthCardData.disability || DEFAULT_VALUES.condition);
-    }
-  }, [healthCardData]);
+    if (!selectedUserId) return;
 
-  // Fetch emergency contacts and help card from API
-  const fetchEmergencyContacts = useCallback(async () => {
-    if (!userId) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch emergency contacts
-      const contacts = await getEmergencyContactsByUserId(userId);
-      setEmergencyContacts(contacts);
-
-      // Find main caregiver contact
-      const mainContact = contacts.find((c) => c.isMain) || contacts[0];
-      if (mainContact) {
-        setCaregiverName(mainContact.name);
-        setCaregiverRelation(mainContact.relationship);
-        setCaregiverPhone(mainContact.phoneNumber);
-      }
-
-      // Fetch help card for hospital info
+    const fetchData = async () => {
       try {
-        const card = await getUserHelpCardByUserId(userId);
-        setHelpCard(card);
-        setHospitalName(card.hospitalName || DEFAULT_VALUES.hospitalName);
-        setHospitalPhone(card.hospitalPhone || DEFAULT_VALUES.hospitalPhone);
-      } catch {
-        // Help card might not exist, keep defaults
-      }
-    } catch (err) {
-      setError(err as Error);
-      // Keep default values on error
-    } finally {
-      setLoading(false);
-    }
-  }, [userId]);
+        setLoading(true);
+        setError(null);
 
-  // Load data on mount
-  useEffect(() => {
-    fetchEmergencyContacts();
-  }, [fetchEmergencyContacts]);
+        // Fetch all data in parallel
+        const [statusCard, emergencyContacts, helpCard] = await Promise.all([
+          getUserStatusCardByUserId(selectedUserId).catch(() => null),
+          getEmergencyContactsByUserId(selectedUserId).catch(() => []),
+          getUserHelpCardByUserId(selectedUserId).catch(() => null),
+        ]);
 
-  const handleSave = useCallback(
-    async (data: EmergencyCardData) => {
-      // Update local state immediately
-      setName(data.name);
-      setCondition(data.condition);
-      setBloodType(data.bloodType);
-      setEmergencyNotes(data.emergencyNotes);
-      setMedications(data.medications);
-      setAllergies(data.allergies);
-      setCaregiverName(data.caregiverName);
-      setCaregiverRelation(data.caregiverRelation);
-      setCaregiverPhone(data.caregiverPhone);
-      setHospitalName(data.hospitalName);
-      setHospitalPhone(data.hospitalPhone);
+        // Set status card data
+        if (statusCard) {
+          setBloodType(statusCard.bloodType || '');
+          setCondition(statusCard.disability || '');
 
-      // Persist caregiver info to API
-      if (userId && emergencyContacts.length > 0) {
-        try {
-          const mainContact = emergencyContacts.find((c) => c.isMain) || emergencyContacts[0];
-          if (mainContact) {
-            await updateEmergencyContact(userId, mainContact.helperId, {
-              name: data.caregiverName,
-              relationship: data.caregiverRelation,
-              phoneNumber: data.caregiverPhone,
-            });
+          // Parse allergies from JSON string
+          if (statusCard.allergy) {
+            try {
+              const allergyArray = JSON.parse(statusCard.allergy);
+              setAllergies(Array.isArray(allergyArray) ? allergyArray.join('、') : statusCard.allergy);
+            } catch {
+              setAllergies(statusCard.allergy);
+            }
+          } else {
+            setAllergies('');
           }
-        } catch (err) {
-          console.error('Failed to save emergency contact:', err);
-        }
-      }
 
-      // Persist hospital info to help card
-      if (helpCard?.id) {
-        try {
-          await updateUserHelpCard(helpCard.id, {
-            hospitalName: data.hospitalName || null,
-            hospitalPhone: data.hospitalPhone || null,
-          });
-        } catch (err) {
-          console.error('Failed to save help card:', err);
+          // Parse medications from JSON string
+          if (statusCard.medicine) {
+            try {
+              const medicineArray = JSON.parse(statusCard.medicine);
+              if (Array.isArray(medicineArray)) {
+                setMedications(medicineArray.map((m: { name: string }) => m.name));
+              } else {
+                setMedications([]);
+              }
+            } catch {
+              // Fallback: treat as comma-separated string
+              setMedications(statusCard.medicine.split('、').map((m: string) => m.trim()));
+            }
+          } else {
+            setMedications([]);
+          }
+
+          // Parse notes from JSON string
+          if (statusCard.notes) {
+            try {
+              const notesObj = JSON.parse(statusCard.notes);
+              const notesText = notesObj.otherNotes || '';
+              setEmergencyNotes(notesText.split('\n').filter((n: string) => n.trim()));
+            } catch {
+              // Fallback: treat as plain text
+              setEmergencyNotes(statusCard.notes.split('。').filter((n: string) => n.trim()));
+            }
+          } else {
+            setEmergencyNotes([]);
+          }
         }
+
+        // Set main emergency contact data
+        const mainContact = emergencyContacts.find(c => c.isMain) || emergencyContacts[0];
+        if (mainContact) {
+          setCaregiverName(mainContact.name);
+          setCaregiverRelation(mainContact.relationship);
+          setCaregiverPhone(mainContact.phoneNumber);
+          setCaregiverEmail(mainContact.email || '');
+          setCaregiverAddress(mainContact.address || '');
+        }
+
+        // Set help card data
+        if (helpCard) {
+          setHospitalName(helpCard.hospitalName || '');
+          setHospitalPhone(helpCard.hospitalPhone || '');
+        }
+
+      } catch (err) {
+        console.error('Failed to fetch emergency card data:', err);
+        setError('データの取得に失敗しました');
+      } finally {
+        setLoading(false);
       }
-    },
-    [userId, emergencyContacts, helpCard]
-  );
+    };
+
+    fetchData();
+  }, [selectedUserId]);
+
+  const handleSave = useCallback((data: EmergencyCardData) => {
+    setName(data.name);
+    setCondition(data.condition);
+    setBloodType(data.bloodType);
+    setEmergencyNotes(data.emergencyNotes);
+    setMedications(data.medications);
+    setAllergies(data.allergies);
+    setCaregiverName(data.caregiverName);
+    setCaregiverRelation(data.caregiverRelation);
+    setCaregiverPhone(data.caregiverPhone);
+    setCaregiverEmail(data.caregiverEmail);
+    setCaregiverAddress(data.caregiverAddress);
+    setHospitalName(data.hospitalName);
+    setHospitalPhone(data.hospitalPhone);
+
+    // TODO: API call to update data
+  }, []);
 
   const openModal = useCallback(() => setIsModalVisible(true), []);
   const closeModal = useCallback(() => setIsModalVisible(false), []);
@@ -178,10 +170,11 @@ export function useEmergencyCard(userId?: string, healthCardData?: HealthCardDat
       caregiverName,
       caregiverRelation,
       caregiverPhone,
+      caregiverEmail,
+      caregiverAddress,
       hospitalName,
       hospitalPhone,
     },
     handleSave,
-    refetch: fetchEmergencyContacts,
   };
 }

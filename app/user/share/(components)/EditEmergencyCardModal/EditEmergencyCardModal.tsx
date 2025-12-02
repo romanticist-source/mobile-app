@@ -3,14 +3,13 @@ import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTagInput } from '@/components/forms';
+import { Form, FormInput, FormTagInput, FormButtonGroup } from '@/components/forms';
 import { editEmergencyCardFormSchema, EditEmergencyCardFormData } from './schema';
 import { styles } from './styles';
 
@@ -24,6 +23,8 @@ interface EmergencyCardData {
   caregiverName: string;
   caregiverRelation: string;
   caregiverPhone: string;
+  caregiverEmail: string;
+  caregiverAddress: string;
   hospitalName: string;
   hospitalPhone: string;
 }
@@ -49,6 +50,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
       caregiverName: '',
       caregiverRelation: '',
       caregiverPhone: '',
+      caregiverEmail: '',
+      caregiverAddress: '',
       hospitalName: '',
       hospitalPhone: '',
     },
@@ -66,6 +69,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
         caregiverName: data.caregiverName,
         caregiverRelation: data.caregiverRelation,
         caregiverPhone: data.caregiverPhone,
+        caregiverEmail: data.caregiverEmail,
+        caregiverAddress: data.caregiverAddress,
         hospitalName: data.hospitalName,
         hospitalPhone: data.hospitalPhone,
       });
@@ -83,6 +88,8 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
       caregiverName: formData.caregiverName || '',
       caregiverRelation: formData.caregiverRelation || '',
       caregiverPhone: formData.caregiverPhone || '',
+      caregiverEmail: formData.caregiverEmail || '',
+      caregiverAddress: formData.caregiverAddress || '',
       hospitalName: formData.hospitalName || '',
       hospitalPhone: formData.hospitalPhone || '',
     });
@@ -123,26 +130,31 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
             <FormInput
               name="condition"
               label="状態・役職"
+              placeholder="軽度の身体障害"
             />
 
             <FormInput
               name="bloodType"
               label="血液型"
+              placeholder="A型"
             />
 
             <FormTagInput
               name="emergencyNotes"
               label="緊急時注意事項"
+              placeholder="新しい注意事項を追加..."
             />
 
             <FormTagInput
               name="medications"
               label="服用薬"
+              placeholder="新しい薬を追加..."
             />
 
             <FormInput
               name="allergies"
               label="アレルギー"
+              placeholder="なし"
             />
 
             {/* Emergency Contacts Section */}
@@ -151,41 +163,53 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
             <FormInput
               name="caregiverName"
               label="介助者名"
+              placeholder="山田花子"
             />
 
             <FormInput
               name="caregiverRelation"
               label="続柄"
+              placeholder="娘"
             />
 
             <FormInput
               name="caregiverPhone"
               label="介助者電話番号"
               placeholder="090-YYYY-YYYY"
+              keyboardType="phone-pad"
+            />
+
+            <FormInput
+              name="caregiverEmail"
+              label="介助者メールアドレス"
+              placeholder="example@email.com"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <FormInput
+              name="caregiverAddress"
+              label="介助者住所"
+              placeholder="東京都渋谷区1-2-3"
             />
 
             <FormInput
               name="hospitalName"
               label="かかりつけ病院"
+              placeholder="サンプル病院"
             />
 
             <FormInput
               name="hospitalPhone"
               label="病院電話番号"
+              placeholder="03-XXXX-XXXX"
               keyboardType="phone-pad"
             />
           </Form>
         </ScrollView>
 
         {/* Bottom Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>キャンセル</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormButtonGroup onCancel={onClose} onSave={handleSave} />
       </KeyboardAvoidingView>
     </Modal>
   );

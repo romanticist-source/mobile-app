@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CategoryBadge } from '../CategoryBadge/CategoryBadge';
 import type { UserSchedule } from '@/_schema/schedule';
 import { styles } from './styles';
@@ -25,19 +26,19 @@ export function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) 
         <View style={styles.leftSection}>
           <CategoryBadge category={schedule.scheduleType} />
           <View style={styles.timeContainer}>
-            <Text style={styles.timeIcon}>🕐</Text>
+            <MaterialIcons name="schedule" size={14} color="#666666" />
             <Text style={styles.time}>{formatTime(schedule.startAt)}</Text>
           </View>
         </View>
         <View style={styles.actions}>
           {onEdit && (
             <TouchableOpacity onPress={onEdit} style={styles.actionButton}>
-              <Text style={styles.actionIcon}>✏️</Text>
+              <MaterialIcons name="edit" size={18} color="#666666" />
             </TouchableOpacity>
           )}
           {onDelete && (
             <TouchableOpacity onPress={onDelete} style={styles.actionButton}>
-              <Text style={styles.actionIcon}>🗑️</Text>
+              <MaterialIcons name="delete" size={18} color="#666666" />
             </TouchableOpacity>
           )}
         </View>

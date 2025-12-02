@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
-import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, type SelectOption } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, FormSaveButton, type SelectOption } from '@/components/forms';
+import { getUserStatusCardByUserId, updateUserStatusCard, createUserStatusCard } from '@/api/user-status-cards';
+import type { UpdateUserStatusCard, CreateUserStatusCard, UserStatusCard } from '@/_schema';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
 
 const bloodTypeOptions: SelectOption[] = [
@@ -18,31 +21,84 @@ interface Medication {
   dosageTime: string;
 }
 
+interface HealthProfileFormData {
+  bloodType: string;
+  height: string;
+  weight: string;
+  allergies: string[];
+  medicalHistory: string[];
+  disabilities: string;
+  otherNotes: string;
+}
+
 export default function HealthProfileScreen() {
   const router = useRouter();
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [statusCardId, setStatusCardId] = useState<string | null>(null);
 
-  const form = useForm({
+  const form = useForm<HealthProfileFormData>({
     defaultValues: {
       bloodType: '',
       height: '',
       weight: '',
-      allergies: [] as string[],
-      medicalHistory: [] as string[],
+      allergies: [],
+      medicalHistory: [],
       disabilities: '',
       otherNotes: '',
     },
   });
 
-  const [medications, setMedications] = useState<Medication[]>([
-    { name: '降圧剤', frequency: '1日1回 朝食後', dosageTime: '08:00' },
-    { name: 'ビタミンD', frequency: '1日1回 夕食後', dosageTime: '19:00' },
-  ]);
+  const formValues = form.watch();
+
+  const [medications, setMedications] = useState<Medication[]>([]);
+  const [savedMedications, setSavedMedications] = useState<Medication[]>([]);
 
   const [newMedication, setNewMedication] = useState<Medication>({
     name: '',
     frequency: '',
     dosageTime: '',
   });
+
+  // Fetch health profile data on mount
+  useEffect(() => {
+    if (!selectedUserId || isUserLoading) return;
+
+    const fetchHealthProfile = async () => {
+      try {
+        setIsLoading(true);
+        const statusCard = await getUserStatusCardByUserId(selectedUserId);
+        setStatusCardId(statusCard.id);
+
+        // Parse JSON strings back to arrays
+        const allergies = statusCard.allergy ? JSON.parse(statusCard.allergy) : [];
+        const medicalHistory = statusCard.notes ? JSON.parse(statusCard.notes).medicalHistory || [] : [];
+        const meds = statusCard.medicine ? JSON.parse(statusCard.medicine) : [];
+
+        form.reset({
+          bloodType: statusCard.bloodType || '',
+          height: statusCard.height || '',
+          weight: statusCard.weight || '',
+          allergies,
+          medicalHistory,
+          disabilities: statusCard.disability || '',
+          otherNotes: statusCard.notes ? JSON.parse(statusCard.notes).otherNotes || '' : '',
+        });
+
+        setMedications(meds);
+        setSavedMedications(meds);
+      } catch (error) {
+        // No existing status card, keep defaults
+        console.log('No existing health profile found, creating new one');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHealthProfile();
+  }, [selectedUserId, isUserLoading]);
 
   const handleAddMedication = () => {
     if (newMedication.name.trim()) {
@@ -55,15 +111,69 @@ export default function HealthProfileScreen() {
     setMedications(medications.filter((_, i) => i !== index));
   };
 
-  const handleSave = form.handleSubmit((data) => {
-    const saveData = {
-      ...data,
-      medications,
-    };
-    console.log('Save health profile:', saveData);
-    // TODO: API call to update user status card
-    router.back();
+  const handleSave = form.handleSubmit(async (data) => {
+    if (!selectedUserId) return;
+
+    try {
+      setIsSaving(true);
+
+      // Prepare data for API
+      const apiData: UpdateUserStatusCard | CreateUserStatusCard = {
+        bloodType: data.bloodType || null,
+        height: data.height || null,
+        weight: data.weight || null,
+        allergy: data.allergies.length > 0 ? JSON.stringify(data.allergies) : null,
+        medicine: medications.length > 0 ? JSON.stringify(medications) : null,
+        disability: data.disabilities || null,
+        notes: JSON.stringify({
+          medicalHistory: data.medicalHistory,
+          otherNotes: data.otherNotes,
+        }),
+      };
+
+      if (statusCardId) {
+        await updateUserStatusCard(statusCardId, apiData);
+      } else {
+        const newCard = await createUserStatusCard({
+          userId: selectedUserId,
+          ...apiData,
+        });
+        setStatusCardId(newCard.id);
+      }
+
+      setSavedMedications(medications);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Failed to save health profile:', error);
+    } finally {
+      setIsSaving(false);
+    }
   });
+
+  const handleToggleEdit = () => {
+    if (isEditing) {
+      // Cancel editing - reset form to saved values
+      form.reset();
+      setMedications(savedMedications);
+    }
+    setIsEditing(!isEditing);
+  };
+
+  const getBloodTypeLabel = (value: string) => {
+    const option = bloodTypeOptions.find(opt => opt.value === value);
+    return option ? option.label : '未設定';
+  };
+
+  if (isLoading) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={[styles.container, styles.loadingContainer]}>
+          <ActivityIndicator size="large" />
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
@@ -78,7 +188,14 @@ export default function HealthProfileScreen() {
             <Text style={styles.backIcon}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>健康プロフィール</Text>
-          <View style={styles.headerRight} />
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={handleToggleEdit}
+          >
+            <Text style={styles.editButtonText}>
+              {isEditing ? 'キャンセル' : '編集'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Content */}
@@ -95,65 +212,117 @@ export default function HealthProfileScreen() {
               </View>
             </View>
 
-            <Form form={form}>
-              {/* Basic Health Information */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>基本健康情報</Text>
+            {/* Basic Health Information */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>基本健康情報</Text>
 
-                <FormSelect
-                  name="bloodType"
-                  label="血液型"
-                  options={bloodTypeOptions}
-                  placeholder="選択してください"
-                />
+              {isEditing ? (
+                <Form form={form}>
+                  <FormSelect
+                    name="bloodType"
+                    label="血液型"
+                    options={bloodTypeOptions}
+                    placeholder="選択してください"
+                  />
 
-                <FormInput
-                  name="height"
-                  label="身長 (cm)"
-                  placeholder="170"
-                  keyboardType="numeric"
-                />
+                  <FormInput
+                    name="height"
+                    label="身長 (cm)"
+                    placeholder="170"
+                    keyboardType="numeric"
+                  />
 
-                <FormInput
-                  name="weight"
-                  label="体重 (kg)"
-                  placeholder="65"
-                  keyboardType="numeric"
-                />
-              </View>
+                  <FormInput
+                    name="weight"
+                    label="体重 (kg)"
+                    placeholder="65"
+                    keyboardType="numeric"
+                  />
+                </Form>
+              ) : (
+                <View>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>血液型</Text>
+                    <Text style={styles.displayValue}>{getBloodTypeLabel(formValues.bloodType)}</Text>
+                  </View>
 
-              {/* Allergies */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>アレルギー</Text>
-                <FormTagInput
-                  name="allergies"
-                  placeholder="アレルギーを追加"
-                  addButtonText="+"
-                />
-              </View>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>身長</Text>
+                    <Text style={styles.displayValue}>
+                      {formValues.height ? `${formValues.height} cm` : '未設定'}
+                    </Text>
+                  </View>
 
-              {/* Medication Information */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>服薬情報</Text>
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>体重</Text>
+                    <Text style={styles.displayValue}>
+                      {formValues.weight ? `${formValues.weight} kg` : '未設定'}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
 
-                {medications.map((medication, index) => (
+            {/* Allergies */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>アレルギー</Text>
+
+              {isEditing ? (
+                <Form form={form}>
+                  <FormTagInput
+                    name="allergies"
+                    placeholder="アレルギーを追加"
+                    addButtonText="+"
+                  />
+                </Form>
+              ) : (
+                <View style={styles.displayField}>
+                  <Text style={styles.displayValue}>
+                    {formValues.allergies.length > 0
+                      ? formValues.allergies.join('、')
+                      : '未設定'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Medication Information */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>服薬情報</Text>
+
+              {medications.length > 0 ? (
+                medications.map((medication, index) => (
                   <View key={index} style={styles.medicationCard}>
                     <View style={styles.medicationHeader}>
                       <Text style={styles.medicationName}>{medication.name}</Text>
-                      <TouchableOpacity
-                        style={styles.removeButton}
-                        onPress={() => handleRemoveMedication(index)}
-                      >
-                        <Text style={styles.removeButtonText}>×</Text>
-                      </TouchableOpacity>
+                      {isEditing && (
+                        <TouchableOpacity
+                          style={styles.removeButton}
+                          onPress={() => handleRemoveMedication(index)}
+                        >
+                          <Text style={styles.removeButtonText}>×</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
                     <Text style={styles.medicationDetail}>{medication.frequency}</Text>
-                    <Text style={styles.medicationDetail}>服薬時間</Text>
-                    <Text style={styles.medicationTime}>{medication.dosageTime}</Text>
+                    {medication.dosageTime && (
+                      <>
+                        <Text style={styles.medicationDetail}>服薬時間</Text>
+                        <Text style={styles.medicationTime}>{medication.dosageTime}</Text>
+                      </>
+                    )}
                   </View>
-                ))}
+                ))
+              ) : (
+                !isEditing && (
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayValue}>未設定</Text>
+                  </View>
+                )
+              )}
 
-                {/* Add New Medication */}
+              {/* Add New Medication - Only in edit mode */}
+              {isEditing && (
                 <View style={styles.addMedicationContainer}>
                   <TextInput
                     style={styles.medicationInput}
@@ -181,50 +350,82 @@ export default function HealthProfileScreen() {
                     <Text style={styles.addMedicationText}>服薬を追加</Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+              )}
+            </View>
 
-              {/* Medical History */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>既往歴</Text>
-                <FormTagInput
-                  name="medicalHistory"
-                  placeholder="既往歴を追加"
-                  addButtonText="+"
-                />
-              </View>
+            {/* Medical History */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>既往歴</Text>
 
-              {/* Disability Information */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>障害情報</Text>
-                <FormTextArea
-                  name="disabilities"
-                  label="障害の種類・程度"
-                  placeholder="軽度の歩行障害"
-                  numberOfLines={3}
-                />
-              </View>
+              {isEditing ? (
+                <Form form={form}>
+                  <FormTagInput
+                    name="medicalHistory"
+                    placeholder="既往歴を追加"
+                    addButtonText="+"
+                  />
+                </Form>
+              ) : (
+                <View style={styles.displayField}>
+                  <Text style={styles.displayValue}>
+                    {formValues.medicalHistory.length > 0
+                      ? formValues.medicalHistory.join('、')
+                      : '未設定'}
+                  </Text>
+                </View>
+              )}
+            </View>
 
-              {/* Other Notes */}
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>その他の注意事項</Text>
-                <FormTextArea
-                  name="otherNotes"
-                  label="医療従事者への伝達事項"
-                  placeholder="特記事項や注意が必要なことなどを入力してください"
-                  numberOfLines={4}
-                />
-              </View>
-            </Form>
+            {/* Disability Information */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>障害情報</Text>
+
+              {isEditing ? (
+                <Form form={form}>
+                  <FormTextArea
+                    name="disabilities"
+                    label="障害の種類・程度"
+                    placeholder="軽度の歩行障害"
+                    numberOfLines={3}
+                  />
+                </Form>
+              ) : (
+                <View style={styles.displayField}>
+                  <Text style={styles.displayLabel}>障害の種類・程度</Text>
+                  <Text style={styles.displayValue}>
+                    {formValues.disabilities || '未設定'}
+                  </Text>
+                </View>
+              )}
+            </View>
+
+            {/* Other Notes */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>その他の注意事項</Text>
+
+              {isEditing ? (
+                <Form form={form}>
+                  <FormTextArea
+                    name="otherNotes"
+                    label="医療従事者への伝達事項"
+                    placeholder="特記事項や注意が必要なことなどを入力してください"
+                    numberOfLines={4}
+                  />
+                </Form>
+              ) : (
+                <View style={styles.displayField}>
+                  <Text style={styles.displayLabel}>医療従事者への伝達事項</Text>
+                  <Text style={styles.displayValue}>
+                    {formValues.otherNotes || '未設定'}
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         </ScrollView>
 
-        {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Save Button - Only show in edit mode */}
+        {isEditing && <FormSaveButton onSave={handleSave} loading={isSaving} />}
       </View>
     </>
   );

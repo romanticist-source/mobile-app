@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import type { AlertHistory } from '@/_schema/alert';
 import { styles } from './styles';
 
@@ -31,13 +32,27 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
   rest: '休息',
 };
 
+// alertType to MaterialIcons name mapping
+const ALERT_TYPE_ICONS: Record<string, string> = {
+  medication: 'medication',
+  appointment: 'event',
+  health: 'favorite',
+  toilet: 'wc',
+  exercise: 'fitness-center',
+  emergency: 'emergency',
+  meal: 'restaurant',
+  rest: 'hotel',
+};
+
 export function NotificationCard({ alert, onPress, isRead = false, onMarkAsRead }: NotificationCardProps) {
   const alertTypeLabel = ALERT_TYPE_LABELS[alert.alertType] || alert.alertType;
+  const iconName = ALERT_TYPE_ICONS[alert.alertType] || 'notifications';
   // Get color based on importance level
   const priorityColor = PRIORITY_COLORS[alert.importance] || DEFAULT_COLOR;
 
   const dotColor = priorityColor;
   const borderColor = isRead ? '#E0E0E0' : priorityColor;
+  const iconColor = isRead ? '#999999' : priorityColor;
 
   const handleMarkAsRead = () => {
     if (!isRead && onMarkAsRead) {
@@ -58,7 +73,7 @@ export function NotificationCard({ alert, onPress, isRead = false, onMarkAsRead 
       <View style={styles.leftSection}>
         <View style={[styles.dot, { backgroundColor: isRead ? '#CCCCCC' : dotColor }]} />
         <View style={styles.iconContainer}>
-          <Text style={[styles.icon, isRead && styles.iconRead]}>{alertTypeLabel}</Text>
+          <MaterialIcons name={iconName as any} size={24} color={iconColor} />
         </View>
       </View>
 

@@ -1,88 +1,172 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, Linking } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Switch, Modal, Alert, ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Form, FormInput, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
+import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
+import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
 
-interface EmergencyContact {
-  id: string;
-  name: string;
-  avatar: string;
-  relationship: string;
-  phoneNumber: string;
-  isPrimary: boolean;
-  isFavorite: boolean;
-}
+const relationshipOptions: SelectOption[] = [
+  { label: '配偶者', value: '配偶者' },
+  { label: '父', value: '父' },
+  { label: '母', value: '母' },
+  { label: '息子', value: '息子' },
+  { label: '娘', value: '娘' },
+  { label: '兄弟', value: '兄弟' },
+  { label: '姉妹', value: '姉妹' },
+  { label: '友人', value: '友人' },
+  { label: 'その他', value: 'その他' },
+];
 
 export default function EmergencyContactScreen() {
   const router = useRouter();
+  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const [contacts, setContacts] = useState<EmergencyContact[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
 
-  const [contacts, setContacts] = useState<EmergencyContact[]>([
-    {
-      id: '1',
-      name: '山田花子',
-      avatar: '山',
-      relationship: '娘',
-      phoneNumber: '090-XXXX-XXXX',
-      isPrimary: true,
-      isFavorite: true,
+  const form = useForm<CreateEmergencyContact>({
+    resolver: zodResolver(CreateEmergencyContactSchema),
+    defaultValues: {
+      userId: selectedUserId || '',
+      helperId: '',
+      name: '',
+      relationship: '',
+      phoneNumber: '',
+      email: '',
+      address: '',
+      isMain: false,
     },
-    {
-      id: '2',
-      name: '佐藤健太',
-      avatar: '佐',
-      relationship: '息子',
-      phoneNumber: '090-YYYY-YYYY',
-      isPrimary: false,
-      isFavorite: false,
-    },
-    {
-      id: '3',
-      name: 'サンプル病院',
-      avatar: 'サ',
-      relationship: 'かかりつけ病院',
-      phoneNumber: '03-XXXX-XXXX',
-      isPrimary: false,
-      isFavorite: false,
-    },
-  ]);
+  });
 
-  const handleAddContact = () => {
-    console.log('Add contact');
-    // TODO: Navigate to add contact screen
+  // Fetch emergency contacts
+  const fetchContacts = useCallback(async () => {
+    if (!selectedUserId) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await getEmergencyContactsByUserId(selectedUserId);
+      setContacts(data);
+    } catch (err) {
+      console.error('Failed to fetch emergency contacts:', err);
+      setError('緊急連絡先の取得に失敗しました');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedUserId]);
+
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
+
+  // Open modal for adding new contact
+  const handleAdd = () => {
+    if (!selectedUserId) return;
+
+    setEditingContact(null);
+    form.reset({
+      userId: selectedUserId,
+      helperId: `helper-${Date.now()}`, // Generate temporary ID
+      name: '',
+      relationship: '',
+      phoneNumber: '',
+      email: '',
+      address: '',
+      isMain: false,
+    });
+    setModalVisible(true);
   };
 
-  const handleCall = (phoneNumber: string) => {
-    const phoneUrl = `tel:${phoneNumber}`;
-    Linking.openURL(phoneUrl);
+  // Open modal for editing existing contact
+  const handleEdit = (contact: EmergencyContact) => {
+    setEditingContact(contact);
+    form.reset({
+      userId: contact.userId,
+      helperId: contact.helperId,
+      name: contact.name,
+      relationship: contact.relationship,
+      phoneNumber: contact.phoneNumber,
+      email: contact.email || '',
+      address: contact.address || '',
+      isMain: contact.isMain,
+    });
+    setModalVisible(true);
   };
 
-  const handleToggleFavorite = (contactId: string) => {
-    setContacts((prevContacts) =>
-      prevContacts.map((contact) =>
-        contact.id === contactId
-          ? { ...contact, isFavorite: !contact.isFavorite }
-          : contact
-      )
+  // Delete contact
+  const handleDelete = (contact: EmergencyContact) => {
+    Alert.alert(
+      '削除の確認',
+      `${contact.name}を削除しますか？`,
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        {
+          text: '削除',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteEmergencyContact(contact.userId, contact.helperId);
+              await fetchContacts();
+            } catch (err) {
+              console.error('Failed to delete emergency contact:', err);
+              Alert.alert('エラー', '削除に失敗しました');
+            }
+          },
+        },
+      ]
     );
   };
 
-  const handleEdit = (contactId: string) => {
-    console.log('Edit contact:', contactId);
-    // TODO: Navigate to edit contact screen
-  };
+  // Save contact (create or update)
+  const handleSave = form.handleSubmit(async (data) => {
+    try {
+      setSaving(true);
+      if (editingContact) {
+        // Update existing contact
+        const updateData: UpdateEmergencyContact = {
+          name: data.name,
+          relationship: data.relationship,
+          phoneNumber: data.phoneNumber,
+          email: data.email || undefined,
+          address: data.address || undefined,
+          isMain: data.isMain,
+        };
+        await updateEmergencyContact(editingContact.userId, editingContact.helperId, updateData);
+      } else {
+        // Create new contact
+        const createData: CreateEmergencyContact = {
+          userId: data.userId,
+          helperId: data.helperId,
+          name: data.name,
+          relationship: data.relationship,
+          phoneNumber: data.phoneNumber,
+          email: data.email || undefined,
+          address: data.address || undefined,
+          isMain: data.isMain,
+        };
+        await createEmergencyContact(createData);
+      }
+      setModalVisible(false);
+      await fetchContacts();
+    } catch (err) {
+      console.error('Failed to save emergency contact:', err);
+      Alert.alert('エラー', '保存に失敗しました');
+    } finally {
+      setSaving(false);
+    }
+  });
 
-  const handleDelete = (contactId: string) => {
-    console.log('Delete contact:', contactId);
-    // TODO: Show confirmation dialog and delete
-    setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== contactId)
-    );
-  };
-
-  const handleSave = () => {
-    console.log('Save emergency contacts:', contacts);
-    // TODO: API call to update emergency contacts
-    router.back();
+  const closeModal = () => {
+    setModalVisible(false);
+    setEditingContact(null);
   };
 
   return (
@@ -95,141 +179,174 @@ export default function EmergencyContactScreen() {
             style={styles.backButton}
             onPress={() => router.back()}
           >
-            <Text style={styles.backIcon}>‹</Text>
+            <MaterialIcons name="arrow-back" size={24} color="#333333" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>緊急連絡先</Text>
-          <View style={styles.headerRight} />
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={handleAdd}
+          >
+            <MaterialIcons name="add" size={24} color="#FF6B6B" />
+          </TouchableOpacity>
         </View>
 
         {/* Content */}
-        <ScrollView style={styles.scrollContent}>
-          <View style={styles.contentWrapper}>
-            {/* Section Header with Add Button */}
-            <View style={styles.sectionHeader}>
-              <View style={styles.sectionHeaderLeft}>
-                <Text style={styles.sectionIcon}>📞</Text>
-                <Text style={styles.sectionTitle}>緊急連絡先</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.addButton}
-                onPress={handleAddContact}
-              >
-                <Text style={styles.addButtonIcon}>+</Text>
-                <Text style={styles.addButtonText}>追加</Text>
+        <ScrollView style={styles.content}>
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FF6B6B" />
+            </View>
+          ) : error ? (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>{error}</Text>
+              <TouchableOpacity style={styles.retryButton} onPress={fetchContacts}>
+                <Text style={styles.retryButtonText}>再試行</Text>
               </TouchableOpacity>
             </View>
-
-            {/* Contact Cards */}
-            {contacts.map((contact) => (
-              <View
-                key={contact.id}
-                style={[
-                  styles.contactCard,
-                  contact.isPrimary && styles.contactCardPrimary,
-                ]}
-              >
-                {/* Avatar and Info */}
-                <View style={styles.contactHeader}>
-                  <View style={styles.avatarContainer}>
-                    <View
-                      style={[
-                        styles.avatarCircle,
-                        contact.isPrimary && styles.avatarCirclePrimary,
-                      ]}
-                    >
-                      <Text
-                        style={[
-                          styles.avatarText,
-                          contact.isPrimary && styles.avatarTextPrimary,
-                        ]}
+          ) : contacts.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <MaterialIcons name="contact-phone" size={48} color="#CCCCCC" />
+              <Text style={styles.emptyText}>緊急連絡先が登録されていません</Text>
+              <TouchableOpacity style={styles.emptyAddButton} onPress={handleAdd}>
+                <Text style={styles.emptyAddButtonText}>追加する</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.contactList}>
+              {contacts.map((contact) => (
+                <View key={`${contact.userId}-${contact.helperId}`} style={styles.contactCard}>
+                  <TouchableOpacity
+                    style={styles.contactContent}
+                    onPress={() => handleEdit(contact)}
+                  >
+                    <View style={styles.contactHeader}>
+                      <View style={styles.contactInfo}>
+                        <View style={styles.nameRow}>
+                          <Text style={styles.contactName}>{contact.name}</Text>
+                          {contact.isMain && (
+                            <View style={styles.mainBadge}>
+                              <Text style={styles.mainBadgeText}>メイン</Text>
+                            </View>
+                          )}
+                        </View>
+                        <Text style={styles.contactRelationship}>{contact.relationship}</Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.deleteButton}
+                        onPress={() => handleDelete(contact)}
                       >
-                        {contact.avatar}
-                      </Text>
+                        <MaterialIcons name="delete" size={20} color="#FF6B6B" />
+                      </TouchableOpacity>
                     </View>
-                  </View>
 
-                  <View style={styles.contactInfo}>
-                    <View style={styles.nameRow}>
-                      <Text
-                        style={[
-                          styles.contactName,
-                          contact.isPrimary && styles.contactNamePrimary,
-                        ]}
-                      >
-                        {contact.name}
-                      </Text>
-                      {contact.isPrimary && (
-                        <Text style={styles.primaryStar}>⭐</Text>
+                    <View style={styles.contactDetails}>
+                      <View style={styles.detailRow}>
+                        <MaterialIcons name="phone" size={16} color="#666666" />
+                        <Text style={styles.detailText}>{contact.phoneNumber}</Text>
+                      </View>
+                      {contact.email && (
+                        <View style={styles.detailRow}>
+                          <MaterialIcons name="email" size={16} color="#666666" />
+                          <Text style={styles.detailText}>{contact.email}</Text>
+                        </View>
+                      )}
+                      {contact.address && (
+                        <View style={styles.detailRow}>
+                          <MaterialIcons name="location-on" size={16} color="#666666" />
+                          <Text style={styles.detailText}>{contact.address}</Text>
+                        </View>
                       )}
                     </View>
-                    <Text
-                      style={[
-                        styles.contactRelationship,
-                        contact.isPrimary && styles.contactRelationshipPrimary,
-                      ]}
-                    >
-                      {contact.relationship}
-                    </Text>
-                    <Text
-                      style={[
-                        styles.contactPhone,
-                        contact.isPrimary && styles.contactPhonePrimary,
-                      ]}
-                    >
-                      {contact.phoneNumber}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Action Buttons */}
-                <View style={styles.actionButtons}>
-                  {/* Call Button */}
-                  <TouchableOpacity
-                    style={styles.callButton}
-                    onPress={() => handleCall(contact.phoneNumber)}
-                  >
-                    <Text style={styles.callButtonIcon}>📞</Text>
-                    <Text style={styles.callButtonText}>電話をかける</Text>
                   </TouchableOpacity>
-
-                  {/* Icon Buttons */}
-                  <View style={styles.iconButtons}>
-                    <TouchableOpacity
-                      style={styles.iconButton}
-                      onPress={() => handleToggleFavorite(contact.id)}
-                    >
-                      <Text style={styles.iconButtonText}>
-                        {contact.isFavorite ? '⭐' : '☆'}
-                      </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.iconButton}
-                      onPress={() => handleEdit(contact.id)}
-                    >
-                      <Text style={styles.iconButtonText}>✏️</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={styles.iconButton}
-                      onPress={() => handleDelete(contact.id)}
-                    >
-                      <Text style={styles.iconButtonText}>🗑️</Text>
-                    </TouchableOpacity>
-                  </View>
                 </View>
-              </View>
-            ))}
-          </View>
+              ))}
+            </View>
+          )}
         </ScrollView>
 
-        {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        {/* Add/Edit Modal */}
+        <Modal
+          visible={modalVisible}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={closeModal}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>
+                  {editingContact ? '緊急連絡先を編集' : '緊急連絡先を追加'}
+                </Text>
+                <TouchableOpacity onPress={closeModal}>
+                  <MaterialIcons name="close" size={24} color="#666666" />
+                </TouchableOpacity>
+              </View>
+
+              <ScrollView style={styles.modalContent}>
+                <Form form={form}>
+                  <FormInput
+                    name="name"
+                    label="名前"
+                    required
+                    placeholder="山田 花子"
+                  />
+
+                  <FormSelect
+                    name="relationship"
+                    label="続柄"
+                    required
+                    options={relationshipOptions}
+                    placeholder="続柄を選択"
+                  />
+
+                  <FormInput
+                    name="phoneNumber"
+                    label="電話番号"
+                    required
+                    placeholder="090-1234-5678"
+                    keyboardType="phone-pad"
+                  />
+
+                  <FormInput
+                    name="email"
+                    label="メールアドレス"
+                    placeholder="example@example.com"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+
+                  <FormInput
+                    name="address"
+                    label="住所"
+                    placeholder="東京都渋谷区..."
+                  />
+
+                  <View style={styles.switchField}>
+                    <Text style={styles.switchLabel}>メイン連絡先</Text>
+                    <Controller
+                      name="isMain"
+                      control={form.control}
+                      render={({ field: { value, onChange } }) => (
+                        <Switch
+                          value={value}
+                          onValueChange={onChange}
+                          trackColor={{ false: '#D1D5DB', true: '#FCA5A5' }}
+                          thumbColor={value ? '#FF6B6B' : '#F3F4F6'}
+                        />
+                      )}
+                    />
+                  </View>
+                </Form>
+              </ScrollView>
+
+              <FormButtonGroup
+                onCancel={closeModal}
+                onSave={handleSave}
+                loading={saving}
+              />
+            </View>
+          </View>
+        </Modal>
       </View>
     </>
   );

@@ -3,18 +3,17 @@ import {
   Modal,
   View,
   Text,
-  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, SelectOption } from '@/components/forms';
+import { Form, FormInput, FormTextArea, FormDateTimePicker, FormSelect, FormButtonGroup, SelectOption } from '@/components/forms';
 import { addScheduleFormSchema, AddScheduleFormData } from './schema';
 import { styles } from './styles';
 import { createUserSchedule, updateUserSchedule } from '@/api/user-schedules';
-import { MOCK_USER_ID } from '@/constants/mockUser';
+import { useUser } from '@/contexts/UserContext';
 import type { UserSchedule } from '@/_schema';
 
 const scheduleTypeOptions: SelectOption[] = [
@@ -42,6 +41,7 @@ interface AddScheduleModalProps {
 }
 
 export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddScheduleModalProps) {
+  const { selectedUserId } = useUser();
   const isEditMode = !!schedule;
 
   // デフォルトの開始時刻（現在時刻から1時間後）
@@ -112,10 +112,10 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
 
       if (isEditMode && schedule) {
         await updateUserSchedule(schedule.id, scheduleData);
-      } else {
+      } else if (selectedUserId) {
         await createUserSchedule({
           ...scheduleData,
-          userId: MOCK_USER_ID,
+          userId: selectedUserId,
         });
       }
 
@@ -198,14 +198,7 @@ export function AddScheduleModal({ visible, onClose, schedule, onSave }: AddSche
         </ScrollView>
 
         {/* Bottom Buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={onClose} style={styles.cancelButton}>
-            <Text style={styles.cancelButtonText}>キャンセル</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
+        <FormButtonGroup onCancel={onClose} onSave={handleSave} />
       </KeyboardAvoidingView>
     </Modal>
   );

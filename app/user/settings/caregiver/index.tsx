@@ -1,120 +1,120 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { CaregiverPermissionModal } from './(components)/CaregiverPermissionModal/CaregiverPermissionModal';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { styles } from './styles';
-
-interface CaregiverPermissions {
-  location: boolean;
-  health: boolean;
-  alerts: boolean;
-  emergencyContact: boolean;
-}
-
-interface Caregiver {
-  id: string;
-  name: string;
-  avatar: string;
-  status: 'active' | 'pending';
-  role: string;
-  email: string;
-  phone: string;
-  permissions: CaregiverPermissions;
-}
-
-const initialCaregivers: Caregiver[] = [
-  {
-    id: '1',
-    name: '山田 花子',
-    avatar: '山',
-    status: 'active',
-    role: '訪問看護師',
-    email: 'hanako@example.com',
-    phone: '090-8765-4321',
-    permissions: {
-      location: true,
-      health: true,
-      alerts: true,
-      emergencyContact: true,
-    },
-  },
-  {
-    id: '2',
-    name: '佐藤 健介',
-    avatar: '佐',
-    status: 'active',
-    role: '訪問看護師',
-    email: 'sato@nursing.com',
-    phone: '080-1234-5678',
-    permissions: {
-      location: true,
-      health: true,
-      alerts: true,
-      emergencyContact: false,
-    },
-  },
-];
+import { useHelperManagement, HelperDisplay } from './(hooks)/useHelperManagement';
+import { HelperForm } from './(components)/HelperForm/HelperForm';
+import type { CreateHelper } from '@/_schema';
 
 export default function CaregiverManagementScreen() {
   const router = useRouter();
-  const [caregivers, setCaregivers] = useState<Caregiver[]>(initialCaregivers);
-  const [selectedCaregiver, setSelectedCaregiver] = useState<Caregiver | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const { helpers, loading, error, saving, addHelper, editHelper, removeHelper, refetch } = useHelperManagement();
 
-  const handleInviteCaregiver = () => {
-    console.log('Invite caregiver');
-    // TODO: Implement invite caregiver functionality
+  const [formVisible, setFormVisible] = useState(false);
+  const [editingHelper, setEditingHelper] = useState<HelperDisplay | undefined>(undefined);
+
+  const handleAddHelper = () => {
+    setEditingHelper(undefined);
+    setFormVisible(true);
   };
 
-  const handleTogglePermission = (caregiverId: string, permission: keyof CaregiverPermissions) => {
-    setCaregivers((prev) =>
-      prev.map((caregiver) =>
-        caregiver.id === caregiverId
-          ? {
-              ...caregiver,
-              permissions: {
-                ...caregiver.permissions,
-                [permission]: !caregiver.permissions[permission],
-              },
+  const handleEditHelper = (helper: HelperDisplay) => {
+    setEditingHelper(helper);
+    setFormVisible(true);
+  };
+
+  const handleFormSubmit = async (data: CreateHelper) => {
+    if (editingHelper) {
+      await editHelper(editingHelper.id, data);
+    } else {
+      await addHelper(data);
+    }
+  };
+
+  const handleDeleteHelper = (helper: HelperDisplay) => {
+    Alert.alert(
+      '介助者を削除',
+      `${helper.name}さんを削除しますか？`,
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        {
+          text: '削除',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removeHelper(helper.id);
+            } catch (err) {
+              Alert.alert('エラー', '削除に失敗しました');
             }
-          : caregiver
-      )
+          },
+        },
+      ]
     );
   };
 
-  const handleCaregiverMenu = (caregiverId: string) => {
-    const caregiver = caregivers.find((c) => c.id === caregiverId);
-    if (caregiver) {
-      setSelectedCaregiver(caregiver);
-      setModalVisible(true);
-    }
+  const handleHelperMenu = (helper: HelperDisplay) => {
+    Alert.alert(
+      helper.name,
+      '操作を選択してください',
+      [
+        { text: 'キャンセル', style: 'cancel' },
+        { text: '編集', onPress: () => handleEditHelper(helper) },
+        { text: '削除', style: 'destructive', onPress: () => handleDeleteHelper(helper) },
+      ]
+    );
   };
 
-  const handleSavePermissions = (permissions: CaregiverPermissions) => {
-    if (selectedCaregiver) {
-      setCaregivers((prev) =>
-        prev.map((caregiver) =>
-          caregiver.id === selectedCaregiver.id
-            ? { ...caregiver, permissions }
-            : caregiver
-        )
-      );
-    }
-  };
+  if (loading) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Text style={styles.backIcon}>‹</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>介助者管理</Text>
+            <View style={styles.headerRight} />
+          </View>
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#2196F3" />
+            <Text style={styles.loadingText}>読み込み中...</Text>
+          </View>
+        </View>
+      </>
+    );
+  }
 
-  const handleDeleteCaregiver = () => {
-    if (selectedCaregiver) {
-      setCaregivers((prev) => prev.filter((c) => c.id !== selectedCaregiver.id));
-      setModalVisible(false);
-      setSelectedCaregiver(null);
-    }
-  };
-
-  const handleSave = () => {
-    console.log('Save caregiver settings:', caregivers);
-    // TODO: API call to update caregiver permissions
-    router.back();
-  };
+  if (error) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <Text style={styles.backIcon}>‹</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerTitle}>介助者管理</Text>
+            <View style={styles.headerRight} />
+          </View>
+          <View style={styles.errorContainer}>
+            <MaterialIcons name="error-outline" size={48} color="#F44336" />
+            <Text style={styles.errorText}>読み込みに失敗しました</Text>
+            <TouchableOpacity style={styles.retryButton} onPress={refetch}>
+              <Text style={styles.retryButtonText}>再読み込み</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
@@ -135,181 +135,80 @@ export default function CaregiverManagementScreen() {
         {/* Content */}
         <ScrollView style={styles.scrollContent}>
           <View style={styles.contentWrapper}>
-            {/* Header Section with Count and Invite Button */}
+            {/* Header Section with Count and Add Button */}
             <View style={styles.topSection}>
               <Text style={styles.caregiverCount}>
-                登録介助者: {caregivers.length}名
+                登録介助者: {helpers.length}名
               </Text>
               <TouchableOpacity
                 style={styles.inviteButton}
-                onPress={handleInviteCaregiver}
+                onPress={handleAddHelper}
               >
-                <Text style={styles.inviteIcon}>👥</Text>
-                <Text style={styles.inviteButtonText}>介助者を招待</Text>
+                <MaterialIcons name="person-add" size={18} color="#FFFFFF" />
+                <Text style={styles.inviteButtonText}>介助者を追加</Text>
               </TouchableOpacity>
             </View>
 
-            {/* Caregiver List */}
-            {caregivers.map((caregiver) => (
-              <View key={caregiver.id} style={styles.caregiverCard}>
+            {/* Empty State */}
+            {helpers.length === 0 && (
+              <View style={styles.emptyState}>
+                <MaterialIcons name="people-outline" size={48} color="#CCCCCC" />
+                <Text style={styles.emptyStateText}>登録された介助者がいません</Text>
+                <Text style={styles.emptyStateSubtext}>
+                  「介助者を追加」ボタンから追加してください
+                </Text>
+              </View>
+            )}
+
+            {/* Helper List */}
+            {helpers.map((helper) => (
+              <View key={helper.id} style={styles.caregiverCard}>
                 {/* Avatar and Basic Info */}
                 <View style={styles.caregiverHeader}>
                   <View style={styles.avatarContainer}>
-                    <View style={styles.avatarCircle}>
-                      <Text style={styles.avatarText}>{caregiver.avatar}</Text>
+                    <View style={[styles.avatarCircle, { backgroundColor: helper.avatarColor }]}>
+                      <Text style={styles.avatarText}>{helper.avatar}</Text>
                     </View>
                   </View>
 
                   <View style={styles.caregiverInfo}>
-                    <View style={styles.nameRow}>
-                      <Text style={styles.caregiverName}>{caregiver.name}</Text>
-                      <View
-                        style={[
-                          styles.statusBadge,
-                          caregiver.status === 'active'
-                            ? styles.statusBadgeActive
-                            : styles.statusBadgePending,
-                        ]}
-                      >
-                        <Text
-                          style={[
-                            styles.statusBadgeText,
-                            caregiver.status === 'active'
-                              ? styles.statusBadgeTextActive
-                              : styles.statusBadgeTextPending,
-                          ]}
-                        >
-                          {caregiver.status === 'active' ? 'アクティブ' : '承認待ち'}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text style={styles.caregiverRole}>{caregiver.role}</Text>
+                    <Text style={styles.caregiverName}>{helper.name}</Text>
+                    <Text style={styles.caregiverRole}>{helper.nickname}</Text>
+                    <Text style={styles.caregiverRelation}>{helper.relationship}</Text>
                   </View>
 
                   <TouchableOpacity
                     style={styles.menuButton}
-                    onPress={() => handleCaregiverMenu(caregiver.id)}
+                    onPress={() => handleHelperMenu(helper)}
                   >
-                    <Text style={styles.menuIcon}>⋮</Text>
+                    <MaterialIcons name="more-vert" size={20} color="#666666" />
                   </TouchableOpacity>
                 </View>
 
                 {/* Contact Information */}
                 <View style={styles.contactInfo}>
                   <View style={styles.contactRow}>
-                    <Text style={styles.contactIcon}>✉️</Text>
-                    <Text style={styles.contactText}>{caregiver.email}</Text>
+                    <MaterialIcons name="email" size={16} color="#666666" style={styles.contactIcon} />
+                    <Text style={styles.contactText}>{helper.email}</Text>
                   </View>
                   <View style={styles.contactRow}>
-                    <Text style={styles.contactIcon}>📞</Text>
-                    <Text style={styles.contactText}>{caregiver.phone}</Text>
+                    <MaterialIcons name="phone" size={16} color="#666666" style={styles.contactIcon} />
+                    <Text style={styles.contactText}>{helper.phoneNumber}</Text>
                   </View>
-                </View>
-
-                {/* Permission Buttons */}
-                <View style={styles.permissionButtons}>
-                  <TouchableOpacity
-                    style={[
-                      styles.permissionButton,
-                      caregiver.permissions.location && styles.permissionButtonActive,
-                    ]}
-                    onPress={() => handleTogglePermission(caregiver.id, 'location')}
-                  >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.location && styles.permissionIconActive,
-                      ]}
-                    >
-                      📍
-                    </Text>
-                    <Text
-                      style={[
-                        styles.permissionButtonText,
-                        caregiver.permissions.location && styles.permissionButtonTextActive,
-                      ]}
-                    >
-                      位置情報
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[
-                      styles.permissionButton,
-                      caregiver.permissions.health && styles.permissionButtonActive,
-                    ]}
-                    onPress={() => handleTogglePermission(caregiver.id, 'health')}
-                  >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.health && styles.permissionIconActive,
-                      ]}
-                    >
-                      💚
-                    </Text>
-                    <Text
-                      style={[
-                        styles.permissionButtonText,
-                        caregiver.permissions.health && styles.permissionButtonTextActive,
-                      ]}
-                    >
-                      健康情報
-                    </Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={[
-                      styles.permissionButton,
-                      caregiver.permissions.alerts && styles.permissionButtonActive,
-                    ]}
-                    onPress={() => handleTogglePermission(caregiver.id, 'alerts')}
-                  >
-                    <Text
-                      style={[
-                        styles.permissionIcon,
-                        caregiver.permissions.alerts && styles.permissionIconActive,
-                      ]}
-                    >
-                      🚨
-                    </Text>
-                    <Text
-                      style={[
-                        styles.permissionButtonText,
-                        caregiver.permissions.alerts && styles.permissionButtonTextActive,
-                      ]}
-                    >
-                      アラート
-                    </Text>
-                  </TouchableOpacity>
                 </View>
               </View>
             ))}
           </View>
         </ScrollView>
 
-        {/* Save Button */}
-        <View style={styles.footer}>
-          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-            <Text style={styles.saveButtonIcon}>💾</Text>
-            <Text style={styles.saveButtonText}>保存</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Caregiver Permission Modal */}
-        {selectedCaregiver && (
-          <CaregiverPermissionModal
-            visible={modalVisible}
-            onClose={() => {
-              setModalVisible(false);
-              setSelectedCaregiver(null);
-            }}
-            caregiverName={selectedCaregiver.name}
-            initialPermissions={selectedCaregiver.permissions}
-            onSave={handleSavePermissions}
-            onDelete={handleDeleteCaregiver}
-          />
-        )}
+        {/* Helper Form Modal */}
+        <HelperForm
+          visible={formVisible}
+          onClose={() => setFormVisible(false)}
+          onSubmit={handleFormSubmit}
+          initialData={editingHelper}
+          isEditing={!!editingHelper}
+        />
       </View>
     </>
   );

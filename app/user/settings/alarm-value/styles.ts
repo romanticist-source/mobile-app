@@ -1,22 +1,25 @@
+import { StyleSheet } from 'react-native';
 import {
   background,
-  border,
-  fontBase,
-  fontLg,
-  fontMd,
-  fontSm,
-  fontXxxxl,
-  headerButton,
-  md,
-  radiusSm,
-  sm,
   surface,
+  border,
   textPrimary,
   textSecondary,
-  xl,
+  accentLight,
   xs,
-} from "@/styles/tokens";
-import { StyleSheet } from "react-native";
+  sm,
+  md,
+  lg,
+  xl,
+  fontMd,
+  fontLg,
+  fontXxl,
+  fontXxxxl,
+  radiusFull,
+  iconContainerSize,
+  iconSize,
+  headerButton,
+} from '@/styles/tokens';
 
 export const styles = StyleSheet.create({
   container: {
@@ -24,9 +27,9 @@ export const styles = StyleSheet.create({
     backgroundColor: background,
   },
   header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: sm,
     paddingTop: xl,
     paddingBottom: sm,
@@ -41,11 +44,11 @@ export const styles = StyleSheet.create({
   backIcon: {
     fontSize: fontXxxxl,
     color: textPrimary,
-    fontWeight: "300",
+    fontWeight: '300',
   },
   headerTitle: {
-    fontSize: fontLg,
-    fontWeight: "600",
+    fontSize: fontMd,
+    fontWeight: '600',
     color: textPrimary,
   },
   headerRight: {
@@ -55,118 +58,39 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   contentWrapper: {
-    paddingHorizontal: sm,
-    paddingVertical: md,
-  },
-  section: {
-    backgroundColor: surface,
-    borderRadius: radiusSm,
     padding: sm,
-    marginBottom: md,
   },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
+  pageHeader: {
+    backgroundColor: surface,
+    borderRadius: 12,
+    padding: sm,
+    marginBottom: sm,
+  },
+  headerIcon: {
     marginBottom: xs,
   },
-  sectionIcon: {
-    fontSize: 20,
-    marginRight: xs,
-  },
-  sectionTitle: {
-    fontSize: fontBase,
-    fontWeight: "700",
+  pageTitle: {
+    fontSize: fontLg,
+    fontWeight: '600',
     color: textPrimary,
+    marginBottom: 4,
   },
-  sectionDescription: {
-    fontSize: fontSm,
+  pageDescription: {
+    fontSize: fontMd,
     color: textSecondary,
-    marginBottom: md,
     lineHeight: 18,
-  },
-  thresholdSection: {
-    marginBottom: md,
-  },
-  thresholdHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: md,
-  },
-  thresholdIcon: {
-    fontSize: 18,
-    marginRight: xs,
-  },
-  thresholdTitle: {
-    fontSize: fontMd,
-    fontWeight: "600",
-    color: textPrimary,
-  },
-  sliderContainer: {
-    marginBottom: md,
-  },
-  sliderLabelRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: xs,
-  },
-  sliderLabel: {
-    fontSize: fontSm,
-    color: textSecondary,
-  },
-  sliderValue: {
-    fontSize: fontMd,
-    fontWeight: "600",
-    color: "#FF6B6B",
-  },
-  slider: {
-    width: "100%",
-    height: 40,
-  },
-  rangeDescription: {
-    fontSize: fontSm,
-    color: textSecondary,
-    marginTop: xs,
   },
   noticeBox: {
-    flexDirection: "row",
-    backgroundColor: "#E3F2FD",
-    borderRadius: radiusSm,
-    padding: sm,
-    alignItems: "center",
-  },
-  noticeIcon: {
-    fontSize: 18,
-    marginRight: xs,
+    backgroundColor: '#E0F2FE',
+    borderRadius: 8,
+    padding: md,
+    marginBottom: sm,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0EA5E9',
   },
   noticeText: {
-    flex: 1,
-    fontSize: fontSm,
-    color: "#1565C0",
+    fontSize: fontMd,
+    color: '#0C4A6E',
     lineHeight: 18,
-  },
-  footer: {
-    backgroundColor: surface,
-    paddingHorizontal: sm,
-    paddingVertical: sm,
-    borderTopWidth: 1,
-    borderTopColor: border,
-  },
-  saveButton: {
-    backgroundColor: "#FF6B6B",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: sm,
-    borderRadius: radiusSm,
-  },
-  saveButtonIcon: {
-    fontSize: 20,
-    marginRight: xs,
-  },
-  saveButtonText: {
-    fontSize: fontBase,
-    fontWeight: "700",
-    color: surface,
   },
 });
