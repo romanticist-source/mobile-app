@@ -16,16 +16,25 @@ class HealthManager: ObservableObject {
     @Published var heartRate: Int = 0
     @Published var oxygenLevel: Int = 0
     @Published var steps: Int = 0
+    @Published var hrv: Double = 0
     @Published var isAuthorized: Bool = false
+
+    // UserDefaults keys
+    private let hrvStorageKey = "lastHRVValue"
+    private let hrvTimestampKey = "lastHRVTimestamp"
 
     // 読み取りたいデータタイプ
     private let typesToRead: Set<HKObjectType> = [
         HKObjectType.quantityType(forIdentifier: .heartRate)!,
         HKObjectType.quantityType(forIdentifier: .oxygenSaturation)!,
-        HKObjectType.quantityType(forIdentifier: .stepCount)!
+        HKObjectType.quantityType(forIdentifier: .stepCount)!,
+        HKObjectType.quantityType(forIdentifier: .heartRateVariabilitySDNN)!
     ]
 
     init() {
+        // ローカルストレージからHRVを読み込み
+        loadHRVFromStorage()
+
         Task {
             await requestAuthorization()
         }
@@ -52,6 +61,7 @@ class HealthManager: ObservableObject {
         await fetchHeartRate()
         await fetchOxygenSaturation()
         await fetchSteps()
+        await fetchHRV()
     }
 
     // 心拍数を取得
@@ -139,5 +149,59 @@ class HealthManager: ObservableObject {
         }
 
         healthStore.execute(query)
+    }
+
+    // MARK: - HRV (Heart Rate Variability) Functions
+
+    // HRV を取得
+    func fetchHRV() async {
+        guard let hrvType = HKQuantityType.quantityType(forIdentifier: .heartRateVariabilitySDNN) else { return }
+
+        let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)
+        let query = HKSampleQuery(
+            sampleType: hrvType,
+            predicate: nil,
+            limit: 1,
+            sortDescriptors: [sortDescriptor]
+        ) { [weak self] _, samples, error in
+            guard let sample = samples?.first as? HKQuantitySample else { return }
+
+            let hrvUnit = HKUnit.secondUnit(with: .milli)
+            let value = sample.quantity.doubleValue(for: hrvUnit)
+
+            Task { @MainActor in
+                self?.hrv = value
+                self?.saveHRVToStorage(value: value)
+            }
+        }
+
+        healthStore.execute(query)
+    }
+
+    // HRV をローカルストレージに保存
+    func saveHRVToStorage(value: Double) {
+        UserDefaults.standard.set(value, forKey: hrvStorageKey)
+        UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: hrvTimestampKey)
+        print("HRV saved to storage: \(value) ms")
+    }
+
+    // HRV をローカルストレージから読み込み
+    func loadHRVFromStorage() {
+        let storedValue = UserDefaults.standard.double(forKey: hrvStorageKey)
+        if storedValue > 0 {
+            hrv = storedValue
+            print("HRV loaded from storage: \(storedValue) ms")
+        }
+    }
+
+    // 保存されたHRVの更新日時を取得
+    func getHRVTimestamp() -> Date? {
+        let timestamp = UserDefaults.standard.double(forKey: hrvTimestampKey)
+        return timestamp > 0 ? Date(timeIntervalSince1970: timestamp) : nil
+    }
+
+    // HRV を計算してストレージに保存（取得と保存を一括処理）
+    func calculateAndSaveHRV() async {
+        await fetchHRV()
     }
 }

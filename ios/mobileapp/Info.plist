@@ -27,7 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.anonymous.storybooktutorialtemplate</string>
+          <string>com.hasegawa.miso</string>
         </array>
       </dict>
     </array>

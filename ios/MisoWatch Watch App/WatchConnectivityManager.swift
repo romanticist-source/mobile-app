@@ -25,7 +25,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     }
 
     // iPhone にヘルスデータを送信
-    func sendHealthData(heartRate: Int, oxygenLevel: Int, steps: Int) {
+    func sendHealthData(heartRate: Int, oxygenLevel: Int, steps: Int, hrv: Double) {
         guard WCSession.default.isReachable else {
             print("iPhone is not reachable")
             return
@@ -36,6 +36,7 @@ class WatchConnectivityManager: NSObject, ObservableObject {
             "heartRate": heartRate,
             "oxygenLevel": oxygenLevel,
             "steps": steps,
+            "hrv": hrv,
             "timestamp": Date().timeIntervalSince1970
         ]
 
@@ -50,12 +51,13 @@ class WatchConnectivityManager: NSObject, ObservableObject {
     }
 
     // バックグラウンド転送（iPhone がスリープ中でも送信可能）
-    func transferHealthData(heartRate: Int, oxygenLevel: Int, steps: Int) {
+    func transferHealthData(heartRate: Int, oxygenLevel: Int, steps: Int, hrv: Double) {
         let data: [String: Any] = [
             "type": "healthData",
             "heartRate": heartRate,
             "oxygenLevel": oxygenLevel,
             "steps": steps,
+            "hrv": hrv,
             "timestamp": Date().timeIntervalSince1970
         ]
 

@@ -43,6 +43,14 @@ struct ContentView: View {
                         unit: "歩"
                     )
 
+                    HealthCard(
+                        icon: "waveform.path.ecg",
+                        iconColor: .purple,
+                        title: "HRV",
+                        value: healthManager.hrv > 0 ? String(format: "%.1f", healthManager.hrv) : "--",
+                        unit: "ms"
+                    )
+
                     // ボタン群
                     HStack(spacing: 8) {
                         // 更新ボタン
@@ -61,7 +69,8 @@ struct ContentView: View {
                             connectivityManager.sendHealthData(
                                 heartRate: healthManager.heartRate,
                                 oxygenLevel: healthManager.oxygenLevel,
-                                steps: healthManager.steps
+                                steps: healthManager.steps,
+                                hrv: healthManager.hrv
                             )
                         }) {
                             Image(systemName: "iphone.and.arrow.forward")
