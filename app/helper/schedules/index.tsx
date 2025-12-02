@@ -1,6 +1,7 @@
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
+import { useHelper } from '@/contexts/HelperContext';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { View } from 'react-native';
@@ -12,11 +13,14 @@ import { SchedulesSearchBar } from '@/components/features/schedules/SchedulesSea
 import { useSchedules, useNextSchedule, useScheduleModal } from './(hooks)';
 import { styles } from './styles';
 
-export default function SchedulesScreen() {
+export default function HelperSchedulesScreen() {
+  const { selectedHelperId } = useHelper();
   const [searchQuery, setSearchQuery] = useState('');
 
   // カスタムhooksを使用
-  const { schedules, fetchSchedules, deleteSchedule } = useSchedules();
+  const { schedules, fetchSchedules, deleteSchedule } = useSchedules({
+    helperId: selectedHelperId || '',
+  });
   const nextSchedule = useNextSchedule(schedules);
   const { showModal, editingSchedule, handleEdit, handleAddNew, handleClose } = useScheduleModal(schedules);
 
@@ -41,7 +45,7 @@ export default function SchedulesScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
+          <HelperHeader />
 
           <SchedulesPageHeader
             date={formatDate()}

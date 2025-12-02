@@ -5,6 +5,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { USER_ROUTES } from '@/_util/navigationRoutes';
 import { styles } from './styles';
 import type { ComponentProps } from 'react';
 
@@ -36,7 +37,7 @@ export default function SettingsScreen() {
           icon: 'notifications',
           title: '通知設定',
           description: '通知の種類とタイミングをカスタマイズ',
-          onPress: () => router.push('/user/settings/notifications'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_NOTIFICATIONS),
         },
       ],
     },
@@ -48,14 +49,14 @@ export default function SettingsScreen() {
           icon: 'person',
           title: 'プロフィール設定',
           description: '名前、生年月日、連絡先など',
-          onPress: () => router.push('/user/settings/profile'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_PROFILE),
         },
         {
           id: 'health-profile',
           icon: 'favorite',
           title: '健康プロフィール',
           description: '既往歴、アレルギー、服薬情報',
-          onPress: () => router.push('/user/settings/health-profile'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_HEALTH_PROFILE),
         },
       ],
     },
@@ -67,7 +68,7 @@ export default function SettingsScreen() {
           icon: 'group',
           title: '介助者管理',
           description: '介助者の追加・削除・権限設定',
-          onPress: () => router.push('/user/settings/caregiver'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_CAREGIVER),
         },
       ],
     },
@@ -79,21 +80,21 @@ export default function SettingsScreen() {
           icon: 'schedule',
           title: 'トイレタイミング',
           description: 'リマインダーの間隔と通知設定',
-          onPress: () => router.push('/user/settings/toilet-timing'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_TOILET_TIMING),
         },
         {
           id: 'alarm-value',
           icon: 'notifications-active',
           title: 'アラート閾値',
           description: '心拍数、疲労度などの通知基準',
-          onPress: () => router.push('/user/settings/alarm-value'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_ALARM_VALUE),
         },
         {
           id: 'emergency-contact',
           icon: 'emergency',
           title: '緊急連絡先',
           description: '緊急時の連絡先を管理',
-          onPress: () => router.push('/user/settings/emergency-contact'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_EMERGENCY_CONTACT),
         },
       ],
     },
@@ -105,7 +106,7 @@ export default function SettingsScreen() {
           icon: 'watch',
           title: '接続デバイス管理',
           description: 'Apple Watch、Pixel Watchの管理',
-          onPress: () => router.push('/user/settings/connected-devices'),
+          onPress: () => router.push(USER_ROUTES.SETTINGS_CONNECTED_DEVICES),
         },
       ],
     },

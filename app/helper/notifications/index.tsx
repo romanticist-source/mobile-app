@@ -1,8 +1,8 @@
 import type { AlertHistory } from '@/_schema/alert';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { useUser } from '@/contexts/UserContext';
+import { useHelper } from '@/contexts/HelperContext';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
@@ -12,8 +12,8 @@ import { NotificationsList } from '@/components/features/notifications/Notificat
 import { useNotifications } from './(hooks)/useNotifications';
 import { styles } from './styles';
 
-export default function NotificationsScreen() {
-  const { selectedUserId } = useUser();
+export default function HelperNotificationsScreen() {
+  const { selectedHelperId } = useHelper();
 
   const {
     filteredNotifications,
@@ -28,7 +28,7 @@ export default function NotificationsScreen() {
     markAllAsRead,
     isRead,
   } = useNotifications({
-    userId: selectedUserId || '',
+    helperId: selectedHelperId || '',
   });
 
   const handleMarkAllRead = async () => {
@@ -45,7 +45,7 @@ export default function NotificationsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
+          <HelperHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>

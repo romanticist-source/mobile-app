@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useUser } from '@/contexts/UserContext';
+import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
 import {
   getUserStatusCardByUserId,
   updateUserStatusCard,
@@ -20,7 +20,7 @@ export interface HealthCardData {
 }
 
 export function useHealthCard() {
-  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const { userId, loading: connectionLoading } = useHelperUserConnection();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -38,13 +38,14 @@ export function useHealthCard() {
 
   // Fetch health card data from API
   const fetchHealthCard = useCallback(async () => {
-    if (!selectedUserId || isUserLoading) return;
+    if (!userId || connectionLoading) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const statusCard = await getUserStatusCardByUserId(selectedUserId);
+      // Use userId from helper-user connection
+      const statusCard = await getUserStatusCardByUserId(userId);
       setStatusCardId(statusCard.id);
 
       // Set basic info
@@ -114,7 +115,7 @@ export function useHealthCard() {
     } finally {
       setLoading(false);
     }
-  }, [selectedUserId, isUserLoading]);
+  }, [userId, connectionLoading]);
 
   useEffect(() => {
     fetchHealthCard();
@@ -131,7 +132,7 @@ export function useHealthCard() {
   }, [height, weight]);
 
   const handleSave = useCallback(async (data: HealthCardData) => {
-    if (!selectedUserId) return;
+    if (!userId) return;
 
     try {
       // Prepare API data
@@ -148,8 +149,9 @@ export function useHealthCard() {
       if (statusCardId) {
         await updateUserStatusCard(statusCardId, apiData);
       } else {
+        // Create status card using userId from helper-user connection
         const newCard = await createUserStatusCard({
-          userId: selectedUserId,
+          userId: userId,
           ...apiData,
         });
         setStatusCardId(newCard.id);
@@ -168,7 +170,7 @@ export function useHealthCard() {
       console.error('Failed to save health card:', err);
       throw err;
     }
-  }, [selectedUserId, statusCardId]);
+  }, [userId, statusCardId]);
 
   const openModal = useCallback(() => setIsModalVisible(true), []);
   const closeModal = useCallback(() => setIsModalVisible(false), []);

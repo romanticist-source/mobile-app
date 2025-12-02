@@ -11,7 +11,7 @@ import { ErrorState } from '@/components/layouts/ErrorState/ErrorState';
 import { EmergencyContactCard } from '@/components/features/settings/emergency-contact/EmergencyContactCard/EmergencyContactCard';
 import { CreateEmergencyContactSchema, CreateEmergencyContact, EmergencyContact, UpdateEmergencyContact } from '@/_schema/emergency-contact';
 import { getEmergencyContactsByUserId, createEmergencyContact, updateEmergencyContact, deleteEmergencyContact } from '@/api/emergency-contacts';
-import { useUser } from '@/contexts/UserContext';
+import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
 import { styles } from './styles';
 
 const relationshipOptions: SelectOption[] = [
@@ -26,8 +26,8 @@ const relationshipOptions: SelectOption[] = [
   { label: 'その他', value: 'その他' },
 ];
 
-export default function EmergencyContactScreen() {
-  const { selectedUserId, isLoading: isUserLoading } = useUser();
+export default function HelperEmergencyContactScreen() {
+  const { userId, loading: connectionLoading } = useHelperUserConnection();
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -35,10 +35,15 @@ export default function EmergencyContactScreen() {
   const [modalVisible, setModalVisible] = useState(false);
   const [editingContact, setEditingContact] = useState<EmergencyContact | null>(null);
 
+  // Debug: Log userId changes
+  useEffect(() => {
+    console.log('[EmergencyContact Screen] userId changed:', userId);
+  }, [userId]);
+
   const form = useForm<CreateEmergencyContact>({
     resolver: zodResolver(CreateEmergencyContactSchema),
     defaultValues: {
-      userId: selectedUserId || '',
+      userId: userId || '',
       helperId: '',
       name: '',
       relationship: '',
@@ -51,20 +56,41 @@ export default function EmergencyContactScreen() {
 
   // Fetch emergency contacts
   const fetchContacts = useCallback(async () => {
-    if (!selectedUserId) return;
+    if (!userId || connectionLoading) {
+      console.log('[EmergencyContact] ⏸️ Waiting for userId...', { userId, connectionLoading });
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
-      const data = await getEmergencyContactsByUserId(selectedUserId);
+
+      console.log('========================================');
+      console.log('[EmergencyContact] 📞 緊急連絡先を取得中...');
+      console.log('[EmergencyContact] 使用するuserId:', userId);
+      console.log('[EmergencyContact] APIエンドポイント: /emergency-contacts/user/' + userId);
+
+      // Use userId from helper-user connection
+      const data = await getEmergencyContactsByUserId(userId);
+
+      console.log('[EmergencyContact] ✅ APIレスポンス受信');
+      console.log('[EmergencyContact] 取得件数:', data.length);
+      console.log('[EmergencyContact] 連絡先一覧:', data.map(c => ({
+        名前: c.name,
+        userId: c.userId,
+        helperId: c.helperId,
+        続柄: c.relationship,
+      })));
+      console.log('========================================');
+
       setContacts(data);
     } catch (err) {
-      console.error('Failed to fetch emergency contacts:', err);
+      console.error('[EmergencyContact] ❌ エラー発生:', err);
       setError('緊急連絡先の取得に失敗しました');
     } finally {
       setLoading(false);
     }
-  }, [selectedUserId]);
+  }, [userId, connectionLoading]);
 
   useEffect(() => {
     fetchContacts();
@@ -72,11 +98,11 @@ export default function EmergencyContactScreen() {
 
   // Open modal for adding new contact
   const handleAdd = () => {
-    if (!selectedUserId) return;
+    if (!userId) return;
 
     setEditingContact(null);
     form.reset({
-      userId: selectedUserId,
+      userId: userId,
       helperId: `helper-${Date.now()}`, // Generate temporary ID
       name: '',
       relationship: '',

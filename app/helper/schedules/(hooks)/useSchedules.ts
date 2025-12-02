@@ -3,6 +3,10 @@ import { Alert } from 'react-native';
 import { getUserSchedules, deleteUserSchedule } from '@/api/user-schedules';
 import type { UserSchedule } from '@/_schema';
 
+interface UseSchedulesOptions {
+  helperId: string;
+}
+
 interface UseSchedulesReturn {
   schedules: UserSchedule[];
   loading: boolean;
@@ -11,15 +15,22 @@ interface UseSchedulesReturn {
   deleteSchedule: (scheduleId: string) => Promise<void>;
 }
 
-export function useSchedules(): UseSchedulesReturn {
+export function useSchedules({ helperId }: UseSchedulesOptions): UseSchedulesReturn {
   const [schedules, setSchedules] = useState<UserSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchSchedules = useCallback(async () => {
+    if (!helperId) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-      const data = await getUserSchedules();
+      // TODO: Replace with getSchedulesByHelperId when API is ready
+      // For now, using getUserSchedules as fallback
+      const data = await getUserSchedules(); // This needs to be replaced with proper helper API
       // 開始時刻でソート（最新が上）
       const sortedData = data.sort(
         (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime()
@@ -31,7 +42,7 @@ export function useSchedules(): UseSchedulesReturn {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [helperId]);
 
   useEffect(() => {
     fetchSchedules();

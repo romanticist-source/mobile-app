@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, FormSaveButton, type SelectOption } from '@/components/forms';
 import { getUserStatusCardByUserId, updateUserStatusCard, createUserStatusCard } from '@/api/user-status-cards';
 import type { UpdateUserStatusCard, CreateUserStatusCard, UserStatusCard } from '@/_schema';
-import { useUser } from '@/contexts/UserContext';
+import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
 import { styles } from './styles';
 
 const bloodTypeOptions: SelectOption[] = [
@@ -31,9 +31,9 @@ interface HealthProfileFormData {
   otherNotes: string;
 }
 
-export default function HealthProfileScreen() {
+export default function HelperHealthProfileScreen() {
   const router = useRouter();
-  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const { userId, loading: connectionLoading } = useHelperUserConnection();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -64,12 +64,13 @@ export default function HealthProfileScreen() {
 
   // Fetch health profile data on mount
   useEffect(() => {
-    if (!selectedUserId || isUserLoading) return;
+    if (!userId || connectionLoading) return;
 
     const fetchHealthProfile = async () => {
       try {
         setIsLoading(true);
-        const statusCard = await getUserStatusCardByUserId(selectedUserId);
+        // Use userId from helper-user connection
+        const statusCard = await getUserStatusCardByUserId(userId);
         setStatusCardId(statusCard.id);
 
         // Parse JSON strings back to arrays
@@ -98,7 +99,7 @@ export default function HealthProfileScreen() {
     };
 
     fetchHealthProfile();
-  }, [selectedUserId, isUserLoading]);
+  }, [userId, connectionLoading]);
 
   const handleAddMedication = () => {
     if (newMedication.name.trim()) {
@@ -112,7 +113,7 @@ export default function HealthProfileScreen() {
   };
 
   const handleSave = form.handleSubmit(async (data) => {
-    if (!selectedUserId) return;
+    if (!userId) return;
 
     try {
       setIsSaving(true);
@@ -134,8 +135,9 @@ export default function HealthProfileScreen() {
       if (statusCardId) {
         await updateUserStatusCard(statusCardId, apiData);
       } else {
+        // Create status card using userId from helper-user connection
         const newCard = await createUserStatusCard({
-          userId: selectedUserId,
+          userId: userId,
           ...apiData,
         });
         setStatusCardId(newCard.id);

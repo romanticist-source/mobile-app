@@ -22,7 +22,7 @@ export const ALERT_TYPE_OPTIONS: { value: AlertTypeFilter; label: string }[] = [
 ];
 
 interface UseNotificationsOptions {
-  userId: string;
+  helperId: string;
 }
 
 interface UseNotificationsReturn {
@@ -49,7 +49,7 @@ interface UseNotificationsReturn {
 }
 
 export function useNotifications({
-  userId,
+  helperId,
 }: UseNotificationsOptions): UseNotificationsReturn {
   const [notifications, setNotifications] = useState<AlertHistory[]>([]);
   const [checkedAlerts, setCheckedAlerts] = useState<Set<string>>(new Set());
@@ -62,25 +62,34 @@ export function useNotifications({
 
   // Fetch notifications from API
   const fetchNotifications = useCallback(async () => {
+    if (!helperId) {
+      setIsLoading(false);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Fetch alerts
-      const alerts = await getAlertsByUserId(userId);
+      // TODO: Replace with getAlertsByHelperId when API is ready
+      // For now, using userId-based API as fallback
+      // const alerts = await getAlertsByHelperId(helperId);
+
+      // Temporary: Get alerts for all users associated with this helper
+      const alerts = await getAlertsByUserId(helperId); // This needs to be replaced with proper helper API
       setNotifications(alerts);
 
       // Fetch user alert history
       try {
-        const history = await getUserAlertHistory(userId);
-        console.log('Fetched user alert history:', history);
+        const history = await getUserAlertHistory(helperId); // This needs to be replaced with proper helper API
+        console.log('Fetched helper alert history:', history);
         const checkedIds = new Set(
           history.filter((h: UserAlertHistory) => h.isChecked).map((h: UserAlertHistory) => h.alertId)
         );
         console.log('Checked alert IDs:', Array.from(checkedIds));
         setCheckedAlerts(checkedIds);
       } catch (err) {
-        console.error('Failed to fetch user alert history:', err);
+        console.error('Failed to fetch helper alert history:', err);
         setCheckedAlerts(new Set());
       }
     } catch (err) {
@@ -89,7 +98,7 @@ export function useNotifications({
     } finally {
       setIsLoading(false);
     }
-  }, [userId]);
+  }, [helperId]);
 
   // Initial fetch
   useEffect(() => {
@@ -130,8 +139,9 @@ export function useNotifications({
     if (checkedAlerts.has(alertId)) return;
 
     try {
-      const result = await markAlertAsCheckedByUser(alertId, userId);
-      console.log('Marked as read:', alertId, result);
+      // TODO: Replace with markAlertAsCheckedByHelper when API is ready
+      const result = await markAlertAsCheckedByUser(alertId, helperId);
+      console.log('Marked as read by helper:', alertId, result);
     } catch (err) {
       console.error('Failed to mark as read:', alertId, err);
     }
@@ -142,7 +152,7 @@ export function useNotifications({
       newSet.add(alertId);
       return newSet;
     });
-  }, [checkedAlerts, userId]);
+  }, [checkedAlerts, helperId]);
 
   // Mark all notifications as read
   const markAllAsRead = useCallback(async () => {
@@ -151,8 +161,9 @@ export function useNotifications({
       .map((n) => n.id);
 
     // Call API for each unread notification (ignore errors)
+    // TODO: Replace with markAlertAsCheckedByHelper when API is ready
     await Promise.allSettled(
-      unreadIds.map((id) => markAlertAsCheckedByUser(id, userId))
+      unreadIds.map((id) => markAlertAsCheckedByUser(id, helperId))
     );
 
     // Update local state regardless of API result
@@ -161,7 +172,7 @@ export function useNotifications({
       unreadIds.forEach((id) => newSet.add(id));
       return newSet;
     });
-  }, [notifications, checkedAlerts, userId]);
+  }, [notifications, checkedAlerts, helperId]);
 
   return {
     notifications,

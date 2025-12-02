@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { getEmergencyContactsByUserId } from '@/api/emergency-contacts';
 import { getUserStatusCardByUserId } from '@/api/user-status-cards';
 import { getUserHelpCardByUserId } from '@/api/user-help-cards';
-import { useUser } from '@/contexts/UserContext';
+import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
 
 export interface EmergencyCardData {
   name: string;
@@ -21,7 +21,7 @@ export interface EmergencyCardData {
 }
 
 export function useEmergencyCard() {
-  const { selectedUserId } = useUser();
+  const { userId, loading: connectionLoading } = useHelperUserConnection();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,18 +43,19 @@ export function useEmergencyCard() {
 
   // Fetch data from API
   useEffect(() => {
-    if (!selectedUserId) return;
+    if (!userId || connectionLoading) return;
 
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
 
+        // Use userId from helper-user connection
         // Fetch all data in parallel
         const [statusCard, emergencyContacts, helpCard] = await Promise.all([
-          getUserStatusCardByUserId(selectedUserId).catch(() => null),
-          getEmergencyContactsByUserId(selectedUserId).catch(() => []),
-          getUserHelpCardByUserId(selectedUserId).catch(() => null),
+          getUserStatusCardByUserId(userId).catch(() => null),
+          getEmergencyContactsByUserId(userId).catch(() => []),
+          getUserHelpCardByUserId(userId).catch(() => null),
         ]);
 
         // Set status card data
@@ -99,7 +100,7 @@ export function useEmergencyCard() {
     };
 
     fetchData();
-  }, [selectedUserId]);
+  }, [userId, connectionLoading]);
 
   const handleSave = useCallback((data: EmergencyCardData) => {
     setName(data.name);

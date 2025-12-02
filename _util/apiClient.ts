@@ -39,7 +39,7 @@ const createApiClient = (): AxiosInstance => {
 
 const apiClient = createApiClient();
 
-export const apiGet = async (url: string) => {
+export const apiGet = async <T = any>(url: string): Promise<T> => {
     try {
         const response = await apiClient.get(url);
         return response.data;
@@ -48,7 +48,7 @@ export const apiGet = async (url: string) => {
     }
 };
 
-export const apiPost = async (url: string, data?: unknown) => {
+export const apiPost = async <T = any>(url: string, data?: unknown): Promise<T> => {
     try {
         const response = await apiClient.post(url, data);
         return response.data;
@@ -57,7 +57,7 @@ export const apiPost = async (url: string, data?: unknown) => {
     }
 };
 
-export const apiPut = async (url: string, data?: unknown) => {
+export const apiPut = async <T = any>(url: string, data?: unknown): Promise<T> => {
     try {
         const response = await apiClient.put(url, data);
         return response.data;
@@ -66,7 +66,7 @@ export const apiPut = async (url: string, data?: unknown) => {
     }
 };
 
-export const apiPatch = async (url: string, data?: unknown) => {
+export const apiPatch = async <T = any>(url: string, data?: unknown): Promise<T> => {
     try {
         const response = await apiClient.patch(url, data);
         return response.data;
@@ -75,7 +75,7 @@ export const apiPatch = async (url: string, data?: unknown) => {
     }
 };
 
-export const apiDelete = async (url: string) => {
+export const apiDelete = async <T = any>(url: string): Promise<T> => {
     try {
         const response = await apiClient.delete(url);
         return response.data;

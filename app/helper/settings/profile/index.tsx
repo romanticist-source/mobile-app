@@ -3,9 +3,9 @@ import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'rea
 import { Stack, useRouter } from 'expo-router';
 import { useForm } from 'react-hook-form';
 import { Form, FormInput, FormSaveButton } from '@/components/forms';
-import { getUserById, updateUser } from '@/api/users';
-import type { UpdateUser } from '@/_schema';
-import { useUser } from '@/contexts/UserContext';
+import { getHelperById, updateHelper } from '@/api/helpers';
+import type { UpdateHelper } from '@/_schema';
+import { useHelper } from '@/contexts/HelperContext';
 import { styles } from './styles';
 
 interface ProfileFormData {
@@ -15,9 +15,9 @@ interface ProfileFormData {
   address: string;
 }
 
-export default function ProfileSettingsScreen() {
+export default function HelperProfileSettingsScreen() {
   const router = useRouter();
-  const { selectedUserId, isLoading: isUserLoading } = useUser();
+  const { selectedHelperId, isLoading: isHelperLoading } = useHelper();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -33,45 +33,47 @@ export default function ProfileSettingsScreen() {
 
   const formValues = form.watch();
 
-  // Fetch user data on mount
+  // Fetch helper data on mount
   useEffect(() => {
-    if (!selectedUserId || isUserLoading) return;
+    if (!selectedHelperId || isHelperLoading) return;
 
-    const fetchUser = async () => {
+    const fetchHelper = async () => {
       try {
         setIsLoading(true);
-        const user = await getUserById(selectedUserId);
+        // TODO: Replace with getHelperById when API is ready
+        const helper = await getHelperById(selectedHelperId);
         form.reset({
-          name: user.name,
-          age: user.age,
-          mail: user.mail,
-          address: user.address || '',
+          name: helper.name,
+          age: helper.age,
+          mail: helper.email,
+          address: helper.address || '',
         });
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error('Failed to fetch helper:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUser();
-  }, [selectedUserId, isUserLoading]);
+    fetchHelper();
+  }, [selectedHelperId, isHelperLoading]);
 
   const handleSave = form.handleSubmit(async (data) => {
-    if (!selectedUserId) return;
+    if (!selectedHelperId) return;
 
     try {
       setIsSaving(true);
-      const updateData: UpdateUser = {
+      // TODO: Replace with updateHelper when API is ready
+      const updateData: UpdateHelper = {
         name: data.name,
         age: data.age,
-        mail: data.mail,
+        email: data.mail,
         address: data.address || undefined,
       };
-      await updateUser(selectedUserId, updateData);
+      await updateHelper(selectedHelperId, updateData);
       setIsEditing(false);
     } catch (error) {
-      console.error('Failed to update user:', error);
+      console.error('Failed to update helper:', error);
     } finally {
       setIsSaving(false);
     }

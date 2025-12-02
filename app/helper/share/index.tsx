@@ -1,9 +1,9 @@
-import type { User } from '@/_schema/user';
-import { getUserById } from '@/api/users';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
+import type { Helper } from '@/_schema';
+import { getHelperById } from '@/api/helpers';
+import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { useUser } from '@/contexts/UserContext';
+import { useHelper } from '@/contexts/HelperContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Stack } from 'expo-router';
 import React, { useEffect, useState } from 'react';
@@ -13,8 +13,8 @@ import { EditHealthCardModal } from '@/components/features/share/EditHealthCardM
 import { EditEmergencyCardModal } from '@/components/features/share/EditEmergencyCardModal/EditEmergencyCardModal';
 import { useShareScreen } from './(hooks)/useShareScreen';
 
-export default function ShareScreen() {
-  const { selectedUserId, isLoading: isUserLoading } = useUser();
+export default function HelperShareScreen() {
+  const { selectedHelperId, isLoading: isHelperLoading } = useHelper();
   const {
     activeTab,
     setActiveTab,
@@ -36,26 +36,27 @@ export default function ShareScreen() {
     caregiversError,
   } = useShareScreen();
 
-  const [userData, setUserData] = useState<User | null>(null);
-  const [userLoading, setUserLoading] = useState(true);
+  const [helperData, setHelperData] = useState<Helper | null>(null);
+  const [helperDataLoading, setHelperDataLoading] = useState(true);
 
   useEffect(() => {
-    if (!selectedUserId || isUserLoading) return;
+    if (!selectedHelperId || isHelperLoading) return;
 
-    const fetchUser = async () => {
+    const fetchHelper = async () => {
       try {
-        const user = await getUserById(selectedUserId);
-        setUserData(user);
+        // TODO: Replace with getHelperById when API is ready
+        const helper = await getHelperById(selectedHelperId);
+        setHelperData(helper);
       } catch (error) {
-        console.error('Failed to fetch user:', error);
+        console.error('Failed to fetch helper:', error);
       } finally {
-        setUserLoading(false);
+        setHelperDataLoading(false);
       }
     };
-    fetchUser();
-  }, [selectedUserId, isUserLoading]);
+    fetchHelper();
+  }, [selectedHelperId, isHelperLoading]);
 
-  if (userLoading || !userData) {
+  if (helperDataLoading || !helperData) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
         <ActivityIndicator size="large" color="#FF6B6B" />
@@ -68,7 +69,7 @@ export default function ShareScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
+          <HelperHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>
@@ -108,10 +109,10 @@ export default function ShareScreen() {
                 </View>
 
                 <View style={styles.cardBody}>
-                  {/* User Info */}
+                  {/* Helper Info */}
                   <View style={styles.userInfo}>
                     <View style={styles.userAvatar}>
-                      <Text style={styles.userAvatarText}>{userData.name.charAt(0)}</Text>
+                      <Text style={styles.userAvatarText}>{helperData.name.charAt(0)}</Text>
                     </View>
                     <Text style={styles.userName2}>
 
@@ -191,7 +192,7 @@ export default function ShareScreen() {
                   <View style={styles.emergencyInfoGrid}>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>お名前</Text>
-                      <Text style={styles.emergencyInfoValue}>{userData.name}</Text>
+                      <Text style={styles.emergencyInfoValue}>{helperData.name}</Text>
                     </View>
                     <View style={styles.emergencyInfoItem}>
                       <Text style={styles.emergencyInfoLabel}>役職</Text>
@@ -344,7 +345,7 @@ export default function ShareScreen() {
         onClose={closeEmergencyModal}
         data={emergencyCardData}
         onSave={handleEmergencyCardSave}
-        userName={userData.name}
+        userName={helperData.name}
       />
     </>
   );
