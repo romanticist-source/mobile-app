@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { styles } from './styles';
 import { useRouter } from 'expo-router';
+import { useNavigationContext } from '@/hooks/useNavigationContext';
 import {
   HouseFill,
   HouseLine,
@@ -24,27 +25,28 @@ interface BottomNavigationProps {
 
 export function BottomNavigation({ activeTab = 'home', onTabPress }: BottomNavigationProps) {
   const router = useRouter();
+  const { routes } = useNavigationContext();
 
   const handlePress = (tab: NavTab) => {
     if (onTabPress) {
       onTabPress(tab);
     } else {
-      // Default navigation behavior
+      // Default navigation behavior - automatically routes to /user or /helper based on context
       switch (tab) {
         case 'home':
-          router.push('/user');
+          router.push(routes.HOME);
           break;
         case 'schedule':
-          router.push('/user/schedules');
+          router.push(routes.SCHEDULES);
           break;
         case 'notification':
-          router.push('/user/notifications');
+          router.push(routes.NOTIFICATIONS);
           break;
         case 'share':
-          router.push('/user/share');
+          router.push(routes.SHARE);
           break;
         case 'settings':
-          router.push('/user/settings');
+          router.push(routes.SETTINGS);
           break;
       }
     }

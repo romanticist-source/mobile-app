@@ -4,11 +4,11 @@ import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayo
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { AddScheduleModal } from './(components)/AddScheduleModal/AddScheduleModal';
-import { NextScheduleCard } from './(components)/NextScheduleCard/NextScheduleCard';
-import { SchedulesList } from './(components)/SchedulesList/SchedulesList';
-import { SchedulesPageHeader } from './(components)/SchedulesPageHeader/SchedulesPageHeader';
-import { SchedulesSearchBar } from './(components)/SchedulesSearchBar/SchedulesSearchBar';
+import { AddScheduleModal } from '@/components/features/schedules/AddScheduleModal/AddScheduleModal';
+import { NextScheduleCard } from '@/components/features/schedules/NextScheduleCard/NextScheduleCard';
+import { SchedulesList } from '@/components/features/schedules/SchedulesList/SchedulesList';
+import { SchedulesPageHeader } from '@/components/features/schedules/SchedulesPageHeader/SchedulesPageHeader';
+import { SchedulesSearchBar } from '@/components/features/schedules/SchedulesSearchBar/SchedulesSearchBar';
 import { useSchedules, useNextSchedule, useScheduleModal } from './(hooks)';
 import { styles } from './styles';
 
