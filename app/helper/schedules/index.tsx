@@ -1,7 +1,6 @@
 import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { useHelper } from '@/contexts/HelperContext';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
 import { View } from 'react-native';
@@ -14,13 +13,10 @@ import { useSchedules, useNextSchedule, useScheduleModal } from './(hooks)';
 import { styles } from './styles';
 
 export default function HelperSchedulesScreen() {
-  const { selectedHelperId } = useHelper();
   const [searchQuery, setSearchQuery] = useState('');
 
   // カスタムhooksを使用
-  const { schedules, fetchSchedules, deleteSchedule } = useSchedules({
-    helperId: selectedHelperId || '',
-  });
+  const { schedules, fetchSchedules, deleteSchedule } = useSchedules();
   const nextSchedule = useNextSchedule(schedules);
   const { showModal, editingSchedule, handleEdit, handleAddNew, handleClose } = useScheduleModal(schedules);
 

@@ -1,11 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Alert } from 'react-native';
-import { getUserSchedules, deleteUserSchedule } from '@/api/user-schedules';
+import { getUserSchedulesByUserId, deleteUserSchedule } from '@/api/user-schedules';
+import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
 import type { UserSchedule } from '@/_schema';
-
-interface UseSchedulesOptions {
-  helperId: string;
-}
 
 interface UseSchedulesReturn {
   schedules: UserSchedule[];
@@ -15,22 +12,25 @@ interface UseSchedulesReturn {
   deleteSchedule: (scheduleId: string) => Promise<void>;
 }
 
-export function useSchedules({ helperId }: UseSchedulesOptions): UseSchedulesReturn {
+export function useSchedules(): UseSchedulesReturn {
+  const { userId, loading: userConnectionLoading } = useHelperUserConnection();
   const [schedules, setSchedules] = useState<UserSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   const fetchSchedules = useCallback(async () => {
-    if (!helperId) {
+    if (!userId || userConnectionLoading) {
+      console.log('[useSchedules (Helper)] Waiting for userId...', { userId, userConnectionLoading });
       setLoading(false);
       return;
     }
 
     try {
       setLoading(true);
-      // TODO: Replace with getSchedulesByHelperId when API is ready
-      // For now, using getUserSchedules as fallback
-      const data = await getUserSchedules(); // This needs to be replaced with proper helper API
+      console.log('[useSchedules (Helper)] Fetching schedules for userId:', userId);
+      const data = await getUserSchedulesByUserId(userId);
+      console.log('[useSchedules (Helper)] Fetched schedules:', data.length);
+
       // 開始時刻でソート（最新が上）
       const sortedData = data.sort(
         (a, b) => new Date(b.startAt).getTime() - new Date(a.startAt).getTime()
@@ -38,11 +38,12 @@ export function useSchedules({ helperId }: UseSchedulesOptions): UseSchedulesRet
       setSchedules(sortedData);
       setError(null);
     } catch (err) {
+      console.error('[useSchedules (Helper)] Error fetching schedules:', err);
       setError(err as Error);
     } finally {
       setLoading(false);
     }
-  }, [helperId]);
+  }, [userId, userConnectionLoading]);
 
   useEffect(() => {
     fetchSchedules();

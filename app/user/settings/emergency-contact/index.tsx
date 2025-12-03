@@ -51,15 +51,20 @@ export default function EmergencyContactScreen() {
 
   // Fetch emergency contacts
   const fetchContacts = useCallback(async () => {
-    if (!selectedUserId) return;
+    if (!selectedUserId) {
+      console.log('[EmergencyContact] No selectedUserId');
+      return;
+    }
 
     try {
       setLoading(true);
       setError(null);
+      console.log('[EmergencyContact] Fetching contacts for userId:', selectedUserId);
       const data = await getEmergencyContactsByUserId(selectedUserId);
+      console.log('[EmergencyContact] Received contacts:', data.length, data);
       setContacts(data);
     } catch (err) {
-      console.error('Failed to fetch emergency contacts:', err);
+      console.error('[EmergencyContact] Failed to fetch emergency contacts:', err);
       setError('緊急連絡先の取得に失敗しました');
     } finally {
       setLoading(false);

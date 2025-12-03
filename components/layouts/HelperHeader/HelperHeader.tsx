@@ -20,20 +20,20 @@ export function HelperHeader() {
         const helperList = await getHelpers();
         setHelpers(helperList);
 
-        // 保存されたヘルパーIDがあればそのヘルパーを選択、なければ最初のヘルパー
+        // 保存されたヘルパーIDがあればそのヘルパーを選択、なければ2番目のヘルパー（一時的に[1]）
         if (selectedHelperId) {
           const savedHelper = helperList.find(h => h.id === selectedHelperId);
           if (savedHelper) {
             setSelectedHelper(savedHelper);
-          } else if (helperList.length > 0) {
-            // 保存されたヘルパーが見つからない場合のみ最初のヘルパーを設定
-            setSelectedHelper(helperList[0]);
-            setSelectedHelperId(helperList[0].id);
+          } else if (helperList.length > 1) {
+            // 保存されたヘルパーが見つからない場合は2番目のヘルパーを設定
+            setSelectedHelper(helperList[1]);
+            setSelectedHelperId(helperList[1].id);
           }
-        } else if (helperList.length > 0) {
-          // 保存されたヘルパーIDがない場合のみ最初のヘルパーを設定
-          setSelectedHelper(helperList[0]);
-          setSelectedHelperId(helperList[0].id);
+        } else if (helperList.length > 1) {
+          // 保存されたヘルパーIDがない場合は2番目のヘルパーを設定
+          setSelectedHelper(helperList[1]);
+          setSelectedHelperId(helperList[1].id);
         }
       } catch (error) {
         console.error('Failed to fetch helpers:', error);

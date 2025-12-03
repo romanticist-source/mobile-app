@@ -2,7 +2,6 @@ import type { AlertHistory } from '@/_schema/alert';
 import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { useHelper } from '@/contexts/HelperContext';
 import { Stack } from 'expo-router';
 import React from 'react';
 import { Text, View, ActivityIndicator } from 'react-native';
@@ -13,8 +12,6 @@ import { useNotifications } from './(hooks)/useNotifications';
 import { styles } from './styles';
 
 export default function HelperNotificationsScreen() {
-  const { selectedHelperId } = useHelper();
-
   const {
     filteredNotifications,
     isLoading,
@@ -27,9 +24,7 @@ export default function HelperNotificationsScreen() {
     markAsRead,
     markAllAsRead,
     isRead,
-  } = useNotifications({
-    helperId: selectedHelperId || '',
-  });
+  } = useNotifications();
 
   const handleMarkAllRead = async () => {
     await markAllAsRead();
