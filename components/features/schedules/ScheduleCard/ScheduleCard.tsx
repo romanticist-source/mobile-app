@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { CategoryBadge } from '../CategoryBadge/CategoryBadge';
-import type { UserSchedule } from '@/_schema/schedule';
+import type { UserSchedule, ScheduleCategory } from '@/_schema/schedule';
 import { styles } from './styles';
 
 interface ScheduleCardProps {
@@ -19,9 +19,46 @@ const formatTime = (isoString: string): string => {
   return `${hours}:${minutes}`;
 };
 
+// Category colors - use text color from CategoryBadge for border
+const CATEGORY_BORDER_COLORS: Record<string, string> = {
+  // 日本語
+  '予定': '#FF6B6B',
+  '休息': '#20C9A6',
+  'トイレ': '#2196F3',
+  '服薬': '#F57C00',
+  '食事': '#8E24AA',
+  '運動': '#43A047',
+  'その他': '#757575',
+  // 英語（バックエンドから返される値）
+  'appointment': '#FF6B6B',
+  'rest': '#20C9A6',
+  'toilet': '#2196F3',
+  'medication': '#F57C00',
+  'meal': '#8E24AA',
+  'exercise': '#43A047',
+  'other': '#757575',
+};
+
+const DEFAULT_BORDER_COLOR = '#757575';
+
 export function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
+  const borderColor = CATEGORY_BORDER_COLORS[schedule.scheduleType as ScheduleCategory] || DEFAULT_BORDER_COLOR;
+
+  // Debug: Log schedule type to check what value we're getting
+  if (!CATEGORY_BORDER_COLORS[schedule.scheduleType as ScheduleCategory]) {
+    console.log('[ScheduleCard] Unknown scheduleType:', schedule.scheduleType, 'Title:', schedule.title);
+  }
+
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        {
+          borderColor,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <View style={styles.content}>
         <View style={styles.leftSection}>
           <CategoryBadge category={schedule.scheduleType} />

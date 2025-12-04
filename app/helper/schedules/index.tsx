@@ -1,4 +1,4 @@
-import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
@@ -41,7 +41,7 @@ export default function HelperSchedulesScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <HelperHeader />
+          <AppHeader />
 
           <SchedulesPageHeader
             date={formatDate()}
@@ -53,6 +53,7 @@ export default function HelperSchedulesScreen() {
             <NextScheduleCard
               title={nextSchedule.title}
               time={nextSchedule.time}
+              scheduleType={nextSchedule.scheduleType}
             />
           </View>
 

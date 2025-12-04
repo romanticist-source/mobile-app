@@ -64,7 +64,10 @@ export function NotificationCard({ alert, onPress, isRead = false, onMarkAsRead 
     <TouchableOpacity
       style={[
         styles.card,
-        { borderColor, borderWidth: 1.5 },
+        {
+          borderColor: isRead ? '#CCCCCC' : priorityColor,
+          borderWidth: 2,
+        },
         isRead && styles.cardRead,
       ]}
       onPress={onPress}

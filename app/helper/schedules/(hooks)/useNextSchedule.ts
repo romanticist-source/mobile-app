@@ -4,6 +4,7 @@ import type { UserSchedule } from '@/_schema';
 interface NextScheduleInfo {
   title: string;
   time: string;
+  scheduleType: string;
 }
 
 export function useNextSchedule(schedules: UserSchedule[]): NextScheduleInfo {
@@ -22,8 +23,9 @@ export function useNextSchedule(schedules: UserSchedule[]): NextScheduleInfo {
       return {
         title: next.title || next.scheduleType,
         time: startTime,
+        scheduleType: next.scheduleType,
       };
     }
-    return { title: '予定なし', time: '' };
+    return { title: '予定なし', time: '', scheduleType: 'other' };
   }, [schedules]);
 }
