@@ -53,6 +53,7 @@ export default function SchedulesScreen() {
             <NextScheduleCard
               title={nextSchedule.title}
               time={nextSchedule.time}
+              scheduleType={nextSchedule.scheduleType}
             />
           </View>
 

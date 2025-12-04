@@ -1,6 +1,6 @@
 import type { Helper } from '@/_schema';
 import { getHelperById } from '@/api/helpers';
-import { HelperHeader } from '@/components/layouts/HelperHeader/HelperHeader';
+import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { useHelper } from '@/contexts/HelperContext';
@@ -69,7 +69,7 @@ export default function HelperShareScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <HelperHeader />
+          <AppHeader />
 
           {/* Page Title */}
           <View style={styles.pageHeader}>
