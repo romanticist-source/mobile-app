@@ -4,7 +4,6 @@ import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { HELPER_ROUTES } from '@/_util/navigationRoutes';
 import { styles } from './styles';
 import type { ComponentProps } from 'react';
@@ -108,9 +107,6 @@ export default function SettingsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          {/* Header */}
-          <AppHeader />
-
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>設定</Text>
