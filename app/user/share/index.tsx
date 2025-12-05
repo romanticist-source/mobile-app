@@ -1,6 +1,5 @@
 import type { User } from '@/_schema/user';
 import { getUserById } from '@/api/users';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { useUser } from '@/contexts/UserContext';
@@ -68,8 +67,6 @@ export default function ShareScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
-
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>共有</Text>

@@ -1,5 +1,4 @@
 import type { AlertHistory } from '@/_schema/alert';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
@@ -40,8 +39,6 @@ export default function NotificationsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
-
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>通知</Text>

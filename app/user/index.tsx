@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import { Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { styles } from './styles';
@@ -15,8 +14,6 @@ export default function UserHomeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
-
           {/* User Profile Card */}
           <View style={styles.profileCard}>
             <View style={styles.profileLeft}>

@@ -1,4 +1,3 @@
-import { AppHeader } from '@/components/layouts/AppHeader/AppHeader';
 import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
 import { Stack } from 'expo-router';
@@ -41,8 +40,6 @@ export default function SchedulesScreen() {
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         <UserHomeLayout>
-          <AppHeader />
-
           <SchedulesPageHeader
             date={formatDate()}
             onAddPress={handleAddNew}
