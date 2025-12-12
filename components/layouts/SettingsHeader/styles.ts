@@ -3,7 +3,7 @@ import {
   surface,
   border,
   textPrimary,
-  primary,
+  accentPrimary,
   xs,
   sm,
   xl,
@@ -47,7 +47,7 @@ export const styles = StyleSheet.create({
   },
   rightButtonText: {
     fontSize: fontMd,
-    color: primary,
+    color: accentPrimary,
     fontWeight: '500',
   },
 });

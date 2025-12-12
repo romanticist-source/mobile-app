@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { textPrimary, textSecondary, primary, md, xs } from '@/styles/tokens';
+import { textPrimary, textSecondary, accentPrimary, md, xs } from '@/styles/tokens';
 
 export const styles = StyleSheet.create({
   container: {
@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     marginTop: md,
     paddingHorizontal: md,
     paddingVertical: xs,
-    backgroundColor: primary,
+    backgroundColor: accentPrimary,
     borderRadius: 8,
   },
   retryButtonText: {

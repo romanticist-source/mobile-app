@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { View, Button, Alert } from "react-native";
 import * as Notifications from "expo-notifications";
+import { SchedulableTriggerInputTypes } from "expo-notifications";
 import * as Device from "expo-device";
 import { Link } from "expo-router"; // ページ遷移用
 
@@ -31,7 +32,7 @@ export default function NotificationTest() {
         title: "リマインダー通知",
         body: "1分経ちました⏰",
       },
-      trigger: { seconds: 60 },
+      trigger: { type: SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 60 },
     });
 
     setTimeout(() => {
