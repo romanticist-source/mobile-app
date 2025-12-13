@@ -221,6 +221,7 @@ export interface ExampleItem {
 **Important Notes**:
 - Use `@/` path alias for imports: `@/_schema/...` and `@/api/`
 - Mock data should be realistic and representative of actual use cases
+- Schema files use Zod for validation - import reusable validators from `@/_util/validations.ts`
 
 ### API Client Functions
 
@@ -292,7 +293,7 @@ export const deleteResource = async (id: string): Promise<{ success: boolean }> 
 - Group related endpoints in the same file (e.g., status cards + diseases)
 - Keep function names concise but clear about what they do
 
-**Example - User Status Cards API** (`_api/user-status-cards.ts`):
+**Example - User Status Cards API** (`api/user-status-cards.ts`):
 
 ```typescript
 import { apiGet, apiPost, apiPut, apiDelete } from '@/_util/apiClient';
@@ -361,7 +362,7 @@ export const getUserStatusCardDiseasesByStatusCardId = async (statusCardId: stri
 
 **Generating API Functions from OpenAPI**:
 1. Reference the OpenAPI specification at `/backend/openapi.json`
-2. For each endpoint group (tag), create a corresponding file in `_api/`
+2. For each endpoint group (tag), create a corresponding file in `api/`
 3. Import required types from `@/_schema`
 4. Use appropriate HTTP method helper (`apiGet`, `apiPost`, etc.)
 5. Match endpoint paths exactly as defined in OpenAPI

@@ -1,10 +1,11 @@
 export default {
   name: "mobile-app",
   slug: "mobile-app",
+  scheme: "miso",
   android: {
-    package: "com.anonymous.storybooktutorialtemplate",
+    package: "com.hasegawa.miso",
   },
   ios: {
-    bundleIdentifier: "com.anonymous.storybooktutorialtemplate",
+    bundleIdentifier: "com.hasegawa.miso",
   },
 };
