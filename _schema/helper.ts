@@ -11,6 +11,8 @@ import {
   optionalPhoneNumberSchema,
   optionalEmailSchema,
   optionalRelationshipSchema,
+  optionalAgeSchema,
+  optionalAddressSchema,
 } from '@/_util/validations';
 
 // Helper Schemas
@@ -21,6 +23,8 @@ export const HelperSchema = z.object({
   phoneNumber: phoneNumberSchema,
   email: emailSchema,
   relationship: relationshipSchema,
+  age: optionalAgeSchema,
+  address: optionalAddressSchema,
 });
 
 export const CreateHelperSchema = z.object({
@@ -37,6 +41,8 @@ export const UpdateHelperSchema = z.object({
   phoneNumber: optionalPhoneNumberSchema,
   email: optionalEmailSchema,
   relationship: optionalRelationshipSchema,
+  age: optionalAgeSchema,
+  address: optionalAddressSchema,
 });
 
 // Export inferred types
