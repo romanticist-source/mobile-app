@@ -47,8 +47,9 @@ struct ContentView: View {
                         icon: "waveform.path.ecg",
                         iconColor: .purple,
                         title: "HRV",
-                        value: healthManager.hrv > 0 ? String(format: "%.1f", healthManager.hrv) : "--",
-                        unit: "ms"
+                        value: healthManager.isHRVMeasuring ? "測定中..." : (healthManager.hrv > 0 ? String(format: "%.1f", healthManager.hrv) : "--"),
+                        unit: healthManager.isHRVMeasuring ? "" : "ms",
+                        subtitle: healthManager.isHRVMeasuring ? nil : healthManager.hrvDataSource.displayName
                     )
 
                     // ボタン群
@@ -113,6 +114,7 @@ struct HealthCard: View {
     let title: String
     let value: String
     let unit: String
+    var subtitle: String? = nil
 
     var body: some View {
         HStack {
@@ -133,6 +135,13 @@ struct HealthCard: View {
                     Text(unit)
                         .font(.caption2)
                         .foregroundColor(.gray)
+                }
+
+                // サブタイトル（データソースなど）
+                if let subtitle = subtitle, subtitle != "--" {
+                    Text(subtitle)
+                        .font(.caption2)
+                        .foregroundColor(.gray.opacity(0.7))
                 }
             }
             Spacer()
