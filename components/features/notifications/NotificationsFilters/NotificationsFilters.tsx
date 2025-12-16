@@ -6,7 +6,7 @@ import {
   type AlertTypeFilter,
   type ReadFilter,
   ALERT_TYPE_OPTIONS,
-} from '@/app/user/notifications/(hooks)/useNotifications';
+} from '@/screens/user/notifications/_hooks/useNotifications';
 
 interface NotificationsFiltersProps {
   alertTypeFilter: AlertTypeFilter;
