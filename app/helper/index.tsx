@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
-import { NotificationCard } from '@/components/features/notifications/NotificationCard/NotificationCard';
-import { useHelperUserConnection } from '@/hooks/useHelperUserConnection';
-import { getAlertsByUserId, getUserAlertHistory, markAlertAsCheckedByUser } from '@/api/alerts';
-import { getUserSchedulesByUserId } from '@/api/user-schedules';
-import { getUserById } from '@/api/users';
-import type { AlertHistory, UserAlertHistory } from '@/_schema/alert';
-import type { User } from '@/_schema/user';
-import { styles } from './styles';
+import type { AlertHistory, UserAlertHistory } from "@/_schema/alert";
+import type { User } from "@/_schema/user";
+import {
+  getAlertsByUserId,
+  getUserAlertHistory,
+  markAlertAsCheckedByUser,
+} from "@/api/alerts";
+import { getUserSchedulesByUserId } from "@/api/user-schedules";
+import { getUserById } from "@/api/users";
+import { NotificationCard } from "@/components/features/notifications/NotificationCard/NotificationCard";
+import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNavigation";
+import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
+import { useHelperUserConnection } from "@/hooks/useHelperUserConnection";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Stack, useRouter } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { styles } from "./styles";
 
 export default function HelperHomeScreen() {
   const router = useRouter();
   const { userId, loading: connectionLoading } = useHelperUserConnection();
 
-  const [urgentNotifications, setUrgentNotifications] = useState<AlertHistory[]>([]);
+  const [urgentNotifications, setUrgentNotifications] = useState<
+    AlertHistory[]
+  >([]);
   const [todayScheduleCount, setTodayScheduleCount] = useState(0);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [checkedAlertIds, setCheckedAlertIds] = useState<Set<string>>(new Set());
+  const [checkedAlertIds, setCheckedAlertIds] = useState<Set<string>>(
+    new Set()
+  );
 
   // Mock data for fatigue level - 将来的にはAPIから取得
   const fatigueLevel = 45;
@@ -29,11 +37,26 @@ export default function HelperHomeScreen() {
 
   const getFatigueColors = (level: number) => {
     if (level < 30) {
-      return { bg: '#E8F5E9', border: '#4CAF50', text: '#4CAF50', status: '良好' };
+      return {
+        bg: "#E8F5E9",
+        border: "#4CAF50",
+        text: "#4CAF50",
+        status: "良好",
+      };
     } else if (level < 60) {
-      return { bg: '#FFF8E1', border: '#FFA726', text: '#FFA726', status: '注意' };
+      return {
+        bg: "#FFF8E1",
+        border: "#FFA726",
+        text: "#FFA726",
+        status: "注意",
+      };
     } else {
-      return { bg: '#FFEBEE', border: '#EF5350', text: '#EF5350', status: '警告' };
+      return {
+        bg: "#FFEBEE",
+        border: "#EF5350",
+        text: "#EF5350",
+        status: "警告",
+      };
     }
   };
 
@@ -56,11 +79,13 @@ export default function HelperHomeScreen() {
       try {
         const history = await getUserAlertHistory(userId);
         checkedIds = new Set(
-          history.filter((h: UserAlertHistory) => h.isChecked).map((h: UserAlertHistory) => h.alertId)
+          history
+            .filter((h: UserAlertHistory) => h.isChecked)
+            .map((h: UserAlertHistory) => h.alertId)
         );
         setCheckedAlertIds(checkedIds);
       } catch (err) {
-        console.error('Failed to fetch alert history:', err);
+        console.error("Failed to fetch alert history:", err);
       }
 
       // Filter urgent unread notifications (importance >= 2 and not checked)
@@ -71,13 +96,13 @@ export default function HelperHomeScreen() {
 
       // Fetch today's schedules
       const schedules = await getUserSchedulesByUserId(userId);
-      const today = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split("T")[0];
       const todaySchedules = schedules.filter((schedule) =>
         schedule.startAt?.startsWith(today)
       );
       setTodayScheduleCount(todaySchedules.length);
     } catch (error) {
-      console.error('Failed to fetch helper home data:', error);
+      console.error("Failed to fetch helper home data:", error);
     } finally {
       setLoading(false);
     }
@@ -96,20 +121,24 @@ export default function HelperHomeScreen() {
     try {
       await markAlertAsCheckedByUser(alertId, userId);
       // Update local state
-      setCheckedAlertIds(prev => new Set(prev).add(alertId));
+      setCheckedAlertIds((prev) => new Set(prev).add(alertId));
       // Refresh data to update the list
       await fetchData();
     } catch (error) {
-      console.error('Failed to mark alert as read:', error);
+      console.error("Failed to mark alert as read:", error);
     }
   };
 
   const handleNotificationPress = async (alert: AlertHistory) => {
-    router.push('/helper/notifications');
+    router.push("/helper/notifications");
   };
 
-  const unreadHighCount = urgentNotifications.filter(n => n.importance === 3).length;
-  const unreadMediumCount = urgentNotifications.filter(n => n.importance === 2).length;
+  const unreadHighCount = urgentNotifications.filter(
+    (n) => n.importance === 3
+  ).length;
+  const unreadMediumCount = urgentNotifications.filter(
+    (n) => n.importance === 2
+  ).length;
 
   return (
     <>
@@ -121,9 +150,11 @@ export default function HelperHomeScreen() {
             <Text style={styles.pageTitle}>ホーム</Text>
             <TouchableOpacity
               style={styles.switchViewButton}
-              onPress={() => router.push('/user')}
+              onPress={() => router.push("/user")}
             >
-              <Text style={styles.switchViewButtonText}>ユーザービューに切替</Text>
+              <Text style={styles.switchViewButtonText}>
+                ユーザービューに切替
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -131,16 +162,20 @@ export default function HelperHomeScreen() {
           <View style={styles.userOverviewCard}>
             <View style={styles.userInfoSection}>
               <View style={styles.avatarCircle}>
-                <Text style={styles.avatarText}>{user?.name?.[0] || '?'}</Text>
+                <Text style={styles.avatarText}>{user?.name?.[0] || "?"}</Text>
               </View>
               <View style={styles.userInfo}>
-                <Text style={styles.userName}>{user?.name || '読み込み中...'}さん</Text>
+                <Text style={styles.userName}>
+                  {user?.name || "読み込み中..."}さん
+                </Text>
               </View>
             </View>
 
             <View style={styles.quickStats}>
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{urgentNotifications.length}</Text>
+                <Text style={styles.statValue}>
+                  {urgentNotifications.length}
+                </Text>
                 <Text style={styles.statLabel}>要対応</Text>
               </View>
               <View style={styles.statDivider} />
@@ -162,10 +197,21 @@ export default function HelperHomeScreen() {
           >
             <View style={styles.fatigueHeader}>
               <Text style={styles.fatigueTitle}>疲労度</Text>
-              <Text style={[styles.fatigueStatusText, { color: fatigueColors.text }]}>{fatigueColors.status}</Text>
+              <Text
+                style={[
+                  styles.fatigueStatusText,
+                  { color: fatigueColors.text },
+                ]}
+              >
+                {fatigueColors.status}
+              </Text>
             </View>
             <View style={styles.fatigueBody}>
-              <Text style={[styles.fatigueValue, { color: fatigueColors.text }]}>{fatigueLevel}%</Text>
+              <Text
+                style={[styles.fatigueValue, { color: fatigueColors.text }]}
+              >
+                {fatigueLevel}%
+              </Text>
             </View>
             <View style={styles.fatigueProgressContainer}>
               <View style={styles.fatigueProgressBg}>
@@ -186,20 +232,52 @@ export default function HelperHomeScreen() {
           {urgentNotifications.length > 0 && (
             <View style={styles.alertSummaryCard}>
               <View style={styles.alertSummaryHeader}>
-                <MaterialIcons name="notifications-active" size={20} color="#FF6B6B" />
-                <Text style={styles.alertSummaryTitle}>未対応の通知があります</Text>
+                <MaterialIcons
+                  name="notifications-active"
+                  size={20}
+                  color="#FF6B6B"
+                />
+                <Text style={styles.alertSummaryTitle}>
+                  未対応の通知があります
+                </Text>
               </View>
               <View style={styles.alertCounts}>
                 {unreadHighCount > 0 && (
-                  <View style={[styles.alertCountItem, { backgroundColor: '#FFEBEE' }]}>
-                    <Text style={[styles.alertCountNumber, { color: '#FF6B6B' }]}>{unreadHighCount}</Text>
-                    <Text style={[styles.alertCountLabel, { color: '#FF6B6B' }]}>緊急</Text>
+                  <View
+                    style={[
+                      styles.alertCountItem,
+                      { backgroundColor: "#FFEBEE" },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.alertCountNumber, { color: "#FF6B6B" }]}
+                    >
+                      {unreadHighCount}
+                    </Text>
+                    <Text
+                      style={[styles.alertCountLabel, { color: "#FF6B6B" }]}
+                    >
+                      緊急
+                    </Text>
                   </View>
                 )}
                 {unreadMediumCount > 0 && (
-                  <View style={[styles.alertCountItem, { backgroundColor: '#FCE4EC' }]}>
-                    <Text style={[styles.alertCountNumber, { color: '#FF9ECD' }]}>{unreadMediumCount}</Text>
-                    <Text style={[styles.alertCountLabel, { color: '#FF9ECD' }]}>重要</Text>
+                  <View
+                    style={[
+                      styles.alertCountItem,
+                      { backgroundColor: "#FCE4EC" },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.alertCountNumber, { color: "#FF9ECD" }]}
+                    >
+                      {unreadMediumCount}
+                    </Text>
+                    <Text
+                      style={[styles.alertCountLabel, { color: "#FF9ECD" }]}
+                    >
+                      重要
+                    </Text>
                   </View>
                 )}
               </View>
@@ -210,7 +288,9 @@ export default function HelperHomeScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>重要な通知</Text>
-              <TouchableOpacity onPress={() => router.push('/helper/notifications')}>
+              <TouchableOpacity
+                onPress={() => router.push("/helper/notifications")}
+              >
                 <Text style={styles.sectionLink}>すべて見る</Text>
               </TouchableOpacity>
             </View>
@@ -223,7 +303,9 @@ export default function HelperHomeScreen() {
               <View style={styles.emptyState}>
                 <MaterialIcons name="check-circle" size={48} color="#20C9A6" />
                 <Text style={styles.emptyStateTitle}>すべて対応済みです</Text>
-                <Text style={styles.emptyStateText}>重要な通知はありません</Text>
+                <Text style={styles.emptyStateText}>
+                  重要な通知はありません
+                </Text>
               </View>
             ) : (
               <View style={styles.notificationsList}>
@@ -249,7 +331,7 @@ export default function HelperHomeScreen() {
 }
 
 function getFatigueStatus(level: number): string {
-  if (level < 30) return '良好';
-  if (level < 60) return '注意';
-  return '警告';
+  if (level < 30) return "良好";
+  if (level < 60) return "注意";
+  return "警告";
 }

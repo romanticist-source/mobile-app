@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
-import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNavigation';
-import { styles } from './styles';
+import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNavigation";
+import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { Stack, useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { styles } from "./styles";
 
 export default function UserHomeScreen() {
   const [showHelpModal, setShowHelpModal] = useState(false);
@@ -12,39 +12,39 @@ export default function UserHomeScreen() {
 
   // Mock data - 将来的にはAPIから取得
   const fatigueLevel = 45; // 疲労度 (0-100)
-  const fatigueStatus = '注意'; // 良好 | 注意 | 警告
+  const fatigueStatus = "注意"; // 良好 | 注意 | 警告
 
   const urgentNotifications = [
     {
-      id: '1',
-      title: '水分補給の時間です',
-      description: '前回の水分補給から2時間が経過しました',
-      time: '5分前',
-      color: '#FFA726',
+      id: "1",
+      title: "水分補給の時間です",
+      description: "前回の水分補給から2時間が経過しました",
+      time: "5分前",
+      color: "#FFA726",
     },
     {
-      id: '2',
-      title: '休憩のおすすめ',
-      description: '疲労度が上昇しています。15分程度の休憩をお勧めします',
-      time: '15分前',
-      color: '#42A5F5',
+      id: "2",
+      title: "休憩のおすすめ",
+      description: "疲労度が上昇しています。15分程度の休憩をお勧めします",
+      time: "15分前",
+      color: "#42A5F5",
     },
   ];
 
   const recentActivities = [
-    '午前の散歩を完了しました',
-    '水分補給リマインダー',
-    '朝のバイタル測定完了',
+    "午前の散歩を完了しました",
+    "水分補給リマインダー",
+    "朝のバイタル測定完了",
   ];
 
   // 疲労度に応じた背景色とボーダー色を取得
   const getFatigueColors = (level: number) => {
     if (level < 30) {
-      return { bg: '#E8F5E9', border: '#4CAF50', progress: '#4CAF50' }; // 緑系
+      return { bg: "#E8F5E9", border: "#4CAF50", progress: "#4CAF50" }; // 緑系
     } else if (level < 60) {
-      return { bg: '#FFF8E1', border: '#FFA726', progress: '#FFA726' }; // 黄色/オレンジ系
+      return { bg: "#FFF8E1", border: "#FFA726", progress: "#FFA726" }; // 黄色/オレンジ系
     } else {
-      return { bg: '#FFEBEE', border: '#EF5350', progress: '#EF5350' }; // 赤系
+      return { bg: "#FFEBEE", border: "#EF5350", progress: "#EF5350" }; // 赤系
     }
   };
 
@@ -60,9 +60,11 @@ export default function UserHomeScreen() {
             <Text style={styles.pageTitle}>ホーム</Text>
             <TouchableOpacity
               style={styles.switchViewButton}
-              onPress={() => router.push('/helper')}
+              onPress={() => router.push("/helper")}
             >
-              <Text style={styles.switchViewButtonText}>介助者ビューに切替</Text>
+              <Text style={styles.switchViewButtonText}>
+                介助者ビューに切替
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -79,7 +81,7 @@ export default function UserHomeScreen() {
             </View>
             <TouchableOpacity
               style={styles.settingsButton}
-              onPress={() => router.push('/user/settings')}
+              onPress={() => router.push("/user/settings")}
             >
               <Text style={styles.settingsButtonText}>設定</Text>
             </TouchableOpacity>
@@ -95,7 +97,15 @@ export default function UserHomeScreen() {
           </TouchableOpacity>
 
           {/* Fatigue Level Card */}
-          <View style={[styles.fatigueCard, { backgroundColor: fatigueColors.bg, borderColor: fatigueColors.border }]}>
+          <View
+            style={[
+              styles.fatigueCard,
+              {
+                backgroundColor: fatigueColors.bg,
+                borderColor: fatigueColors.border,
+              },
+            ]}
+          >
             <View style={styles.fatigueHeader}>
               <View style={styles.fatigueTitle}>
                 <MaterialIcons name="show-chart" size={20} color="#333333" />
@@ -113,7 +123,15 @@ export default function UserHomeScreen() {
 
             {/* Progress Bar */}
             <View style={styles.fatigueProgressContainer}>
-              <View style={[styles.fatigueProgressBar, { backgroundColor: fatigueColors.progress, width: `${fatigueLevel}%` }]} />
+              <View
+                style={[
+                  styles.fatigueProgressBar,
+                  {
+                    backgroundColor: fatigueColors.progress,
+                    width: `${fatigueLevel}%`,
+                  },
+                ]}
+              />
             </View>
 
             <Text style={styles.fatigueDescription}>
@@ -124,23 +142,45 @@ export default function UserHomeScreen() {
           {/* Urgent Notifications Section */}
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <MaterialIcons name="notifications-active" size={20} color="#FF6B6B" />
+              <MaterialIcons
+                name="notifications-active"
+                size={20}
+                color="#FF6B6B"
+              />
               <Text style={styles.sectionTitle}>要対応</Text>
             </View>
 
             <View style={styles.urgentNotificationsList}>
               {urgentNotifications.map((notification) => (
-                <View key={notification.id} style={styles.urgentNotificationItem}>
-                  <View style={[styles.urgentNotificationIndicator, { backgroundColor: notification.color }]} />
+                <View
+                  key={notification.id}
+                  style={styles.urgentNotificationItem}
+                >
+                  <View
+                    style={[
+                      styles.urgentNotificationIndicator,
+                      { backgroundColor: notification.color },
+                    ]}
+                  />
                   <View style={styles.urgentNotificationContent}>
                     <View style={styles.urgentNotificationTop}>
-                      <Text style={styles.urgentNotificationTitle}>{notification.title}</Text>
+                      <Text style={styles.urgentNotificationTitle}>
+                        {notification.title}
+                      </Text>
                       <View style={styles.urgentNotificationTime}>
-                        <MaterialIcons name="access-time" size={14} color="#999999" />
-                        <Text style={styles.urgentNotificationTimeText}>{notification.time}</Text>
+                        <MaterialIcons
+                          name="access-time"
+                          size={14}
+                          color="#999999"
+                        />
+                        <Text style={styles.urgentNotificationTimeText}>
+                          {notification.time}
+                        </Text>
                       </View>
                     </View>
-                    <Text style={styles.urgentNotificationDescription}>{notification.description}</Text>
+                    <Text style={styles.urgentNotificationDescription}>
+                      {notification.description}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -184,7 +224,7 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
   const [includeLocation, setIncludeLocation] = useState(true);
 
   const handleSendHelp = () => {
-    console.log('Send help request with location:', includeLocation);
+    console.log("Send help request with location:", includeLocation);
     onClose();
   };
 
@@ -222,8 +262,17 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
               <Text style={styles.modalSectionTitle}>送信先</Text>
               <View style={styles.recipientsList}>
                 <View style={styles.recipientItem}>
-                  <View style={[styles.recipientAvatar, { backgroundColor: '#FFE5E5' }]}>
-                    <Text style={[styles.recipientAvatarText, { color: '#FF6B6B' }]}>山</Text>
+                  <View
+                    style={[
+                      styles.recipientAvatar,
+                      { backgroundColor: "#FFE5E5" },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.recipientAvatarText, { color: "#FF6B6B" }]}
+                    >
+                      山
+                    </Text>
                   </View>
                   <View style={styles.recipientInfo}>
                     <Text style={styles.recipientName}>山田花子</Text>
@@ -231,8 +280,17 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
                   </View>
                 </View>
                 <View style={styles.recipientItem}>
-                  <View style={[styles.recipientAvatar, { backgroundColor: '#FFE5E5' }]}>
-                    <Text style={[styles.recipientAvatarText, { color: '#FF6B6B' }]}>佐</Text>
+                  <View
+                    style={[
+                      styles.recipientAvatar,
+                      { backgroundColor: "#FFE5E5" },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.recipientAvatarText, { color: "#FF6B6B" }]}
+                    >
+                      佐
+                    </Text>
                   </View>
                   <View style={styles.recipientInfo}>
                     <Text style={styles.recipientName}>佐藤健太</Text>
@@ -274,10 +332,12 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
                 <Text style={styles.locationSubtitle}>現在地: 自宅</Text>
               </View>
               <View style={styles.checkboxContainer}>
-                <View style={[
-                  styles.checkbox,
-                  includeLocation && styles.checkboxChecked
-                ]}>
+                <View
+                  style={[
+                    styles.checkbox,
+                    includeLocation && styles.checkboxChecked,
+                  ]}
+                >
                   {includeLocation && (
                     <Text style={styles.checkboxIcon}>✓</Text>
                   )}
@@ -288,10 +348,7 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
 
           {/* Modal Footer */}
           <View style={styles.modalFooter}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={onClose}
-            >
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
               <Text style={styles.cancelButtonText}>キャンセル</Text>
             </TouchableOpacity>
             <TouchableOpacity
