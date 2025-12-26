@@ -5,170 +5,41 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  header: {
+  // Page Header
+  pageHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    paddingTop: 16,
+    paddingBottom: 8,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  appIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appIconText: {
-    fontSize: 20,
-  },
-  appTitle: {
-    fontSize: 16,
+  pageTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333333',
   },
-  appSubtitle: {
-    fontSize: 11,
-    color: '#888888',
+  switchViewButton: {
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  switchViewButtonText: {
+    fontSize: 12,
+    color: '#666666',
   },
-  userIconContainer: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  userIcon: {
-    fontSize: 16,
-    color: '#FF6B6B',
-  },
-  userName: {
-    fontSize: 14,
-    color: '#333333',
-  },
+  // Profile Card - Compact
   profileCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  profileLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  profileInfo: {
-    gap: 4,
-  },
-  profileName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  profileStatus: {
-    fontSize: 13,
-    color: '#666666',
-  },
-  settingsButton: {
-    backgroundColor: '#D4F4E7',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  settingsButtonText: {
-    fontSize: 14,
-    color: '#20C9A6',
-    fontWeight: '600',
-  },
-  helpButton: {
-    backgroundColor: '#C84F2A',
     marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 12,
-    paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  helpButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  helpIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  helpIconText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
-  helpButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  section: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 16,
-  },
-  vitalGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  vitalCard: {
-    width: '48%',
-    backgroundColor: '#FFFFFF',
-    padding: 16,
+    marginVertical: 12,
+    padding: 12,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -176,49 +47,229 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  vitalHeader: {
+  profileLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  avatarCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#FF6B6B',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  profileInfo: {
+    gap: 2,
+  },
+  profileName: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  profileStatus: {
+    fontSize: 12,
+    color: '#666666',
+  },
+  settingsButton: {
+    backgroundColor: '#D4F4E7',
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  settingsButtonText: {
+    fontSize: 13,
+    color: '#20C9A6',
+    fontWeight: '600',
+  },
+  // Help Button
+  helpButton: {
+    backgroundColor: '#C84F2A',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    paddingVertical: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
+  },
+  helpButtonText: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  // Fatigue Card
+  fatigueCard: {
+    marginHorizontal: 16,
+    marginBottom: 20,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  fatigueHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  fatigueTitle: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 8,
   },
-  vitalIcon: {
-    fontSize: 16,
+  fatigueTitleText: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333333',
   },
-  vitalLabel: {
-    fontSize: 12,
-    color: '#666666',
+  fatigueStatusBadge: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
   },
-  vitalValue: {
-    fontSize: 28,
+  fatigueStatusText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  fatigueContent: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 16,
+  },
+  fatigueValue: {
+    fontSize: 56,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 8,
+    lineHeight: 56,
   },
-  vitalUnit: {
-    fontSize: 14,
-    fontWeight: 'normal',
-    color: '#999999',
+  fatigueUnit: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#666666',
+    marginLeft: 4,
   },
-  vitalBar: {
-    height: 6,
-    borderRadius: 3,
-    marginBottom: 8,
+  fatigueProgressContainer: {
+    height: 12,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 6,
     overflow: 'hidden',
+    marginBottom: 12,
   },
-  vitalBarFill: {
+  fatigueProgressBar: {
     height: '100%',
-    borderRadius: 3,
+    borderRadius: 6,
   },
-  vitalStatus: {
+  fatigueDescription: {
     fontSize: 12,
     color: '#666666',
+    lineHeight: 18,
   },
+  // Section
+  section: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333333',
+  },
+  // Urgent Notifications
+  urgentNotificationsList: {
+    gap: 12,
+  },
+  urgentNotificationItem: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  urgentNotificationIndicator: {
+    width: 4,
+  },
+  urgentNotificationContent: {
+    flex: 1,
+    padding: 14,
+  },
+  urgentNotificationTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  urgentNotificationTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#333333',
+    flex: 1,
+  },
+  urgentNotificationTime: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginLeft: 8,
+  },
+  urgentNotificationTimeText: {
+    fontSize: 12,
+    color: '#999999',
+  },
+  urgentNotificationDescription: {
+    fontSize: 13,
+    color: '#666666',
+    lineHeight: 18,
+  },
+  // Activity List
   activityList: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
-    minHeight: 100,
+    gap: 12,
+  },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  activityBullet: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#FF6B6B',
+  },
+  activityText: {
+    fontSize: 14,
+    color: '#333333',
+    flex: 1,
   },
   // Modal Styles
   modalOverlay: {
@@ -360,9 +411,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  locationIcon: {
-    fontSize: 20,
   },
   locationTextContainer: {
     flex: 1,

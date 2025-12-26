@@ -5,169 +5,37 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5',
   },
-  header: {
+  // Page Header
+  pageHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 50,
-    paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
+    paddingTop: 16,
+    paddingBottom: 8,
   },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  appIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  appIconText: {
-    fontSize: 20,
-  },
-  appTitle: {
-    fontSize: 16,
+  pageTitle: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333333',
   },
-  appSubtitle: {
-    fontSize: 11,
-    color: '#888888',
+  switchViewButton: {
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
   },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  userIconContainer: {
-    width: 24,
-    height: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  userIcon: {
-    fontSize: 16,
-    color: '#FF6B6B',
-  },
-  userName: {
-    fontSize: 14,
-    color: '#333333',
-  },
-  profileCard: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    margin: 16,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  profileLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  avatarCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF6B6B',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  profileInfo: {
-    gap: 4,
-  },
-  profileName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  profileStatus: {
-    fontSize: 13,
+  switchViewButtonText: {
+    fontSize: 12,
     color: '#666666',
   },
-  settingsButton: {
-    backgroundColor: '#D4F4E7',
-    paddingHorizontal: 20,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  settingsButtonText: {
-    fontSize: 14,
-    color: '#20C9A6',
-    fontWeight: '600',
-  },
-  helpButton: {
-    backgroundColor: '#C84F2A',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 12,
-    paddingVertical: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  helpButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  helpIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  helpIconText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
-  helpButtonText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  section: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 16,
-  },
-  vitalGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-  },
-  vitalCard: {
-    width: '48%',
+  // User Overview Card
+  userOverviewCard: {
     backgroundColor: '#FFFFFF',
+    marginHorizontal: 16,
+    marginVertical: 12,
     padding: 16,
     borderRadius: 12,
     shadowColor: '#000',
@@ -176,270 +44,203 @@ export const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
-  vitalHeader: {
+  userInfoSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 8,
+    marginBottom: 16,
   },
-  vitalIcon: {
-    fontSize: 16,
+  avatarCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FF6B6B',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
   },
-  vitalLabel: {
-    fontSize: 12,
-    color: '#666666',
+  avatarText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#FFFFFF',
   },
-  vitalValue: {
-    fontSize: 28,
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  vitalUnit: {
-    fontSize: 14,
-    fontWeight: 'normal',
-    color: '#999999',
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
-  vitalBar: {
-    height: 6,
-    borderRadius: 3,
-    marginBottom: 8,
-    overflow: 'hidden',
+  statusText: {
+    fontSize: 13,
+    color: '#666666',
   },
-  vitalBarFill: {
-    height: '100%',
-    borderRadius: 3,
+  quickStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#F0F0F0',
   },
-  vitalStatus: {
+  statItem: {
+    alignItems: 'center',
+  },
+  statValue: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF6B6B',
+    marginBottom: 4,
+  },
+  statLabel: {
     fontSize: 12,
     color: '#666666',
   },
-  activityList: {
+  statDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#E0E0E0',
+  },
+  // Fatigue Level Card
+  fatigueCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    marginHorizontal: 16,
+    marginBottom: 16,
     padding: 16,
-    minHeight: 100,
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
   },
-  // Modal Styles
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContainer: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    maxHeight: '90%',
-  },
-  modalHeader: {
+  fatigueHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
-  modalTitleContainer: {
+  fatigueTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  fatigueBody: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  fatigueValue: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  fatigueStatusText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  fatigueProgressContainer: {
+    marginTop: 12,
+  },
+  fatigueProgressBg: {
+    height: 8,
+    backgroundColor: '#F0F0F0',
+    borderRadius: 4,
+    overflow: 'hidden',
+  },
+  fatigueProgressBar: {
+    height: '100%',
+    borderRadius: 4,
+  },
+  // Alert Summary Card
+  alertSummaryCard: {
+    backgroundColor: '#FFF8F8',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FFE0E0',
+  },
+  alertSummaryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    marginBottom: 12,
   },
-  modalWarningIcon: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: '#FFE5E5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  modalWarningIconText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  alertSummaryTitle: {
+    fontSize: 15,
+    fontWeight: '600',
     color: '#FF6B6B',
   },
-  modalTitle: {
+  alertCounts: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  alertCountItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  alertCountNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  alertCountLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  // Section
+  section: {
+    paddingHorizontal: 16,
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
   },
-  modalCloseButton: {
-    width: 32,
-    height: 32,
+  sectionLink: {
+    fontSize: 14,
+    color: '#2196F3',
+    fontWeight: '600',
+  },
+  // Empty State
+  emptyState: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 32,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  modalCloseIcon: {
-    fontSize: 24,
+  emptyStateTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  emptyStateText: {
+    fontSize: 14,
     color: '#999999',
   },
-  modalContent: {
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  modalDescription: {
-    fontSize: 14,
-    color: '#666666',
-    lineHeight: 20,
-    marginBottom: 24,
-  },
-  modalSection: {
-    marginBottom: 24,
-  },
-  modalSectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333333',
-    marginBottom: 12,
-  },
-  recipientsList: {
-    gap: 12,
-  },
-  recipientItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8F8F8',
-    padding: 12,
-    borderRadius: 12,
-  },
-  recipientAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  recipientAvatarText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  recipientInfo: {
-    marginLeft: 12,
-  },
-  recipientName: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 2,
-  },
-  recipientRelation: {
-    fontSize: 13,
-    color: '#666666',
-  },
-  infoList: {
-    gap: 8,
-  },
-  infoItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  infoBullet: {
-    fontSize: 16,
-    color: '#FF6B6B',
-    fontWeight: 'bold',
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#333333',
-  },
-  locationOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F0F7FF',
-    padding: 16,
-    borderRadius: 12,
-    marginTop: 8,
-  },
-  locationIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  locationIcon: {
-    fontSize: 20,
-  },
-  locationTextContainer: {
-    flex: 1,
-    marginLeft: 12,
-  },
-  locationTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 2,
-  },
-  locationSubtitle: {
-    fontSize: 12,
-    color: '#666666',
-  },
-  checkboxContainer: {
-    marginLeft: 8,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#CCCCCC',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: {
-    backgroundColor: '#2196F3',
-    borderColor: '#2196F3',
-  },
-  checkboxIcon: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-  },
-  modalFooter: {
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    gap: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#666666',
-  },
-  sendHelpButton: {
-    flex: 1,
-    backgroundColor: '#C84F2A',
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendHelpButtonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  sendHelpIcon: {
-    fontSize: 16,
-    color: '#FFFFFF',
-  },
-  sendHelpButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+  // Notifications List
+  notificationsList: {
+    gap: 0,
   },
 });
