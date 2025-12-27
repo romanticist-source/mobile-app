@@ -52,6 +52,8 @@ export function HelperProvider({ children }: HelperProviderProps) {
   );
 }
 
+HelperProvider.displayName = 'HelperProvider';
+
 export function useHelper() {
   const context = useContext(HelperContext);
   if (context === undefined) {

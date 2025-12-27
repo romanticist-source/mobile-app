@@ -85,6 +85,12 @@ buck-out/
 .expo/*
 web-build/
 
+# Tamagui
+.tamagui/
+
+# Claude Code
+.claude/
+
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
