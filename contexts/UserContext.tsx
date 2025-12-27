@@ -52,6 +52,8 @@ export function UserProvider({ children }: UserProviderProps) {
   );
 }
 
+UserProvider.displayName = 'UserProvider';
+
 export function useUser() {
   const context = useContext(UserContext);
   if (context === undefined) {

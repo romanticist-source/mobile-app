@@ -1,4 +1,7 @@
 {
+  "name": "miso-mobile-app",
+  "main": "expo-router/entry",
+  "version": "1.0.0",
   "dependencies": {
     "@expo/metro-runtime": "~6.1.2",
     "@expo/vector-icons": "^15.0.3",
@@ -11,17 +14,17 @@
     "@tamagui/config": "^1.137.2",
     "@types/react": "~19.1.17",
     "axios": "^1.13.2",
-    "expo": "^54.0.28",
+    "expo": "^54.0.30",
     "expo-blur": "~15.0.8",
-    "expo-constants": "~18.0.11",
+    "expo-constants": "~18.0.12",
     "expo-device": "~8.0.10",
     "expo-font": "~14.0.10",
     "expo-haptics": "~15.0.8",
     "expo-image": "~3.0.11",
-    "expo-linking": "~8.0.10",
-    "expo-notifications": "~0.32.14",
-    "expo-router": "~6.0.18",
-    "expo-splash-screen": "~31.0.12",
+    "expo-linking": "~8.0.11",
+    "expo-notifications": "~0.32.15",
+    "expo-router": "~6.0.21",
+    "expo-splash-screen": "~31.0.13",
     "expo-status-bar": "~3.0.9",
     "expo-symbols": "~1.0.8",
     "expo-web-browser": "~15.0.10",
@@ -31,9 +34,10 @@
     "react-dom": "19.1.0",
     "react-hook-form": "^7.66.1",
     "react-icons": "^5.5.0",
-    "react-native": "0.81.5",
+    "react-native": "^0.81.5",
+    "react-native-worklets": "0.5.1",
     "react-native-screens": "4.16.0",
-    "react-native-web": "^0.21.2",
+    "react-native-web": "^0.21.0",
     "tamagui": "^1.137.2",
     "zod": "^4.1.12"
   },
@@ -59,8 +63,6 @@
     "build": "expo export",
     "typecheck": "tsc --noEmit"
   },
-  "version": "1.0.0",
   "private": true,
-  "name": "storybook-tutorial-template",
   "packageManager": "pnpm@10.17.0+sha512.fce8a3dd29a4ed2ec566fb53efbb04d8c44a0f05bc6f24a73046910fb9c3ce7afa35a0980500668fa3573345bd644644fa98338fa168235c80f4aa17aa17fbef"
 }
