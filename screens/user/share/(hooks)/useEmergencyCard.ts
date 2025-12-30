@@ -1,8 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getEmergencyContactsByUserId } from '@/api/emergency-contacts';
-import { getUserStatusCardByUserId } from '@/api/user-status-cards';
-import { getUserHelpCardByUserId } from '@/api/user-help-cards';
+import { Alert } from 'react-native';
+import { getEmergencyContactsByUserId, updateEmergencyContact, createEmergencyContact } from '@/api/emergency-contacts';
+import { getUserStatusCardByUserId, updateUserStatusCard } from '@/api/user-status-cards';
+import { getUserHelpCardByUserId, updateUserHelpCard } from '@/api/user-help-cards';
 import { useUser } from '@/contexts/UserContext';
+import type { EmergencyContact } from '@/_schema/emergency-contact';
 
 export interface EmergencyCardData {
   name: string;
@@ -25,6 +27,11 @@ export function useEmergencyCard() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // IDs for updating
+  const [statusCardId, setStatusCardId] = useState<string | null>(null);
+  const [helpCardId, setHelpCardId] = useState<string | null>(null);
+  const [mainEmergencyContact, setMainEmergencyContact] = useState<EmergencyContact | null>(null);
 
   // Emergency card data states
   const [name, setName] = useState('');
@@ -59,6 +66,7 @@ export function useEmergencyCard() {
 
         // Set status card data
         if (statusCard) {
+          setStatusCardId(statusCard.id);
           setBloodType(statusCard.bloodType || '');
           setCondition(statusCard.disability || '');
 
@@ -109,6 +117,7 @@ export function useEmergencyCard() {
         // Set main emergency contact data
         const mainContact = emergencyContacts.find(c => c.isMain) || emergencyContacts[0];
         if (mainContact) {
+          setMainEmergencyContact(mainContact);
           setCaregiverName(mainContact.name);
           setCaregiverRelation(mainContact.relationship);
           setCaregiverPhone(mainContact.phoneNumber);
@@ -118,6 +127,7 @@ export function useEmergencyCard() {
 
         // Set help card data
         if (helpCard) {
+          setHelpCardId(helpCard.id);
           setHospitalName(helpCard.hospitalName || '');
           setHospitalPhone(helpCard.hospitalPhone || '');
         }
@@ -133,26 +143,133 @@ export function useEmergencyCard() {
     fetchData();
   }, [selectedUserId]);
 
-  const handleSave = useCallback((data: EmergencyCardData) => {
-    setName(data.name);
-    setCondition(data.condition);
-    setBloodType(data.bloodType);
-    setEmergencyNotes(data.emergencyNotes);
-    setMedications(data.medications);
-    setAllergies(data.allergies);
-    setCaregiverName(data.caregiverName);
-    setCaregiverRelation(data.caregiverRelation);
-    setCaregiverPhone(data.caregiverPhone);
-    setCaregiverEmail(data.caregiverEmail);
-    setCaregiverAddress(data.caregiverAddress);
-    setHospitalName(data.hospitalName);
-    setHospitalPhone(data.hospitalPhone);
+  const handleSave = useCallback(async (data: EmergencyCardData) => {
+    console.log('🔵 handleSave called with data:', data);
+    console.log('🔵 selectedUserId:', selectedUserId);
+    console.log('🔵 statusCardId:', statusCardId);
+    console.log('🔵 helpCardId:', helpCardId);
+    console.log('🔵 mainEmergencyContact:', mainEmergencyContact);
 
-    // TODO: API call to update data
-  }, []);
+    if (!selectedUserId) {
+      console.log('🔴 No selectedUserId, showing error alert');
+      Alert.alert('エラー', 'ユーザーIDが見つかりません');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log('🟢 Starting update process...');
+
+      // 1. Update User Status Card
+      if (statusCardId) {
+        console.log('🟡 Updating User Status Card...');
+        // Format medications as JSON array
+        const medicationsJson = JSON.stringify(
+          data.medications.map(med => ({ name: med }))
+        );
+
+        // Format notes as JSON object
+        const notesJson = JSON.stringify({
+          otherNotes: data.emergencyNotes.join('\n')
+        });
+
+        console.log('🟡 Status card update payload:', {
+          bloodType: data.bloodType || null,
+          allergy: data.allergies || null,
+          medicine: medicationsJson || null,
+          disability: data.condition || null,
+          notes: notesJson || null,
+        });
+
+        await updateUserStatusCard(statusCardId, {
+          bloodType: data.bloodType || null,
+          allergy: data.allergies || null,
+          medicine: medicationsJson || null,
+          disability: data.condition || null,
+          notes: notesJson || null,
+        });
+        console.log('✅ User Status Card updated successfully');
+      } else {
+        console.log('⚠️ No statusCardId, skipping status card update');
+      }
+
+      // 2. Update or Create Emergency Contact
+      if (mainEmergencyContact && data.caregiverPhone) {
+        console.log('🟡 Updating Emergency Contact...');
+        console.log('🟡 Emergency contact update payload:', {
+          name: data.caregiverName,
+          relationship: data.caregiverRelation,
+          phoneNumber: data.caregiverPhone,
+          email: data.caregiverEmail || null,
+          address: data.caregiverAddress || null,
+        });
+
+        // Update existing contact
+        await updateEmergencyContact(
+          mainEmergencyContact.userId,
+          mainEmergencyContact.helperId,
+          {
+            name: data.caregiverName,
+            relationship: data.caregiverRelation,
+            phoneNumber: data.caregiverPhone,
+            email: data.caregiverEmail || null,
+            address: data.caregiverAddress || null,
+          }
+        );
+        console.log('✅ Emergency Contact updated successfully');
+      } else {
+        console.log('⚠️ No mainEmergencyContact or caregiverPhone, skipping emergency contact update');
+      }
+
+      // 3. Update Help Card (if hospital info is provided)
+      if (helpCardId && (data.hospitalName || data.hospitalPhone)) {
+        console.log('🟡 Updating Help Card...');
+        console.log('🟡 Help card update payload:', {
+          hospitalName: data.hospitalName || null,
+          hospitalPhone: data.hospitalPhone || null,
+        });
+
+        await updateUserHelpCard(helpCardId, {
+          hospitalName: data.hospitalName || null,
+          hospitalPhone: data.hospitalPhone || null,
+        });
+        console.log('✅ Help Card updated successfully');
+      } else {
+        console.log('⚠️ No helpCardId or hospital info, skipping help card update');
+      }
+
+      // Update local state
+      console.log('🟢 Updating local state...');
+      setName(data.name);
+      setCondition(data.condition);
+      setBloodType(data.bloodType);
+      setEmergencyNotes(data.emergencyNotes);
+      setMedications(data.medications);
+      setAllergies(data.allergies);
+      setCaregiverName(data.caregiverName);
+      setCaregiverRelation(data.caregiverRelation);
+      setCaregiverPhone(data.caregiverPhone);
+      setCaregiverEmail(data.caregiverEmail);
+      setCaregiverAddress(data.caregiverAddress);
+      setHospitalName(data.hospitalName);
+      setHospitalPhone(data.hospitalPhone);
+
+      console.log('✅ All updates completed successfully, showing success alert');
+      Alert.alert('成功', '緊急カードを更新しました');
+      closeModal();
+    } catch (err) {
+      console.error('🔴 Failed to update emergency card:', err);
+      Alert.alert('エラー', '緊急カードの更新に失敗しました');
+    } finally {
+      setLoading(false);
+      console.log('🔵 handleSave completed');
+    }
+  }, [selectedUserId, statusCardId, helpCardId, mainEmergencyContact]);
 
   const openModal = useCallback(() => setIsModalVisible(true), []);
-  const closeModal = useCallback(() => setIsModalVisible(false), []);
+  const closeModal = useCallback(() => {
+    setIsModalVisible(false);
+  }, []);
 
   return {
     isModalVisible,

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const editEmergencyCardFormSchema = z.object({
-  name: z.string().min(1, { message: 'お名前を入力してください' }),
+  name: z.string().optional(), // Read-only field, not editable in form
   condition: z.string().optional(),
   bloodType: z.string().optional(),
   emergencyNotes: z.array(z.string()),

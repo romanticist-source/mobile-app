@@ -60,7 +60,7 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
   useEffect(() => {
     if (visible) {
       form.reset({
-        name: data.name,
+        name: userName || data.name,
         condition: data.condition,
         bloodType: data.bloodType,
         emergencyNotes: [...data.emergencyNotes],
@@ -75,26 +75,44 @@ export function EditEmergencyCardModal({ visible, onClose, data, onSave, userNam
         hospitalPhone: data.hospitalPhone,
       });
     }
-  }, [visible, data, form]);
+  }, [visible, data, form, userName]);
 
-  const handleSave = form.handleSubmit((formData) => {
-    onSave({
-      name: formData.name,
-      condition: formData.condition || '',
-      bloodType: formData.bloodType || '',
-      emergencyNotes: formData.emergencyNotes,
-      medications: formData.medications,
-      allergies: formData.allergies || '',
-      caregiverName: formData.caregiverName || '',
-      caregiverRelation: formData.caregiverRelation || '',
-      caregiverPhone: formData.caregiverPhone || '',
-      caregiverEmail: formData.caregiverEmail || '',
-      caregiverAddress: formData.caregiverAddress || '',
-      hospitalName: formData.hospitalName || '',
-      hospitalPhone: formData.hospitalPhone || '',
-    });
-    onClose();
-  });
+  const handleSave = () => {
+    console.log('🟣 handleSave button clicked!');
+    console.log('🟣 Form values:', form.getValues());
+    console.log('🟣 Form errors:', form.formState.errors);
+
+    form.handleSubmit(async (formData) => {
+      console.log('🟣 Form validation passed, formData:', formData);
+
+      try {
+        console.log('🟣 Calling onSave...');
+        await onSave({
+          name: formData.name || userName || data.name,
+          condition: formData.condition || '',
+          bloodType: formData.bloodType || '',
+          emergencyNotes: formData.emergencyNotes,
+          medications: formData.medications,
+          allergies: formData.allergies || '',
+          caregiverName: formData.caregiverName || '',
+          caregiverRelation: formData.caregiverRelation || '',
+          caregiverPhone: formData.caregiverPhone || '',
+          caregiverEmail: formData.caregiverEmail || '',
+          caregiverAddress: formData.caregiverAddress || '',
+          hospitalName: formData.hospitalName || '',
+          hospitalPhone: formData.hospitalPhone || '',
+        });
+        console.log('🟣 onSave completed successfully');
+        // onSaveが成功したらモーダルを閉じる（handleSave内でcloseModalを呼んでいるので不要）
+        // onClose();
+      } catch (error) {
+        console.error('🔴 Modal handleSave error:', error);
+        // エラーは handleSave 内で Alert 表示されるので、ここでは何もしない
+      }
+    }, (errors) => {
+      console.log('🔴 Form validation failed, errors:', errors);
+    })();
+  };
 
   return (
     <Modal
