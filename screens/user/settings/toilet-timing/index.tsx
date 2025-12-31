@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, Alert } from 'react-native';
+import { View, ScrollView, Alert, TouchableOpacity, Text } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormSaveButton } from '@/components/forms';
@@ -7,6 +7,7 @@ import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHead
 import { ToiletNotificationSettings } from '@/components/features/settings/toilet-timing/ToiletNotificationSettings/ToiletNotificationSettings';
 import { ToiletRecordsList } from '@/components/features/settings/toilet-timing/ToiletRecordsList/ToiletRecordsList';
 import { useUser } from '@/contexts/UserContext';
+import { createToiletNotification } from '@/_util/notificationHelper';
 import { styles } from './styles';
 
 const TOILET_TIMING_STORAGE_KEY = '@toilet_timing_settings';
@@ -73,6 +74,22 @@ export default function ToiletTimingScreen() {
     }
   };
 
+  // Test notification function
+  const handleTestNotification = async () => {
+    if (!selectedUserId) {
+      Alert.alert('エラー', 'ユーザーIDが見つかりません');
+      return;
+    }
+
+    try {
+      await createToiletNotification(selectedUserId);
+      Alert.alert('成功', 'テスト通知を作成しました。通知ページをご確認ください。');
+    } catch (error) {
+      console.error('Failed to create test notification:', error);
+      Alert.alert('エラー', 'テスト通知の作成に失敗しました');
+    }
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -93,6 +110,22 @@ export default function ToiletTimingScreen() {
 
             {/* Today's Records */}
             <ToiletRecordsList records={todayRecords} />
+
+            {/* Test Notification Button */}
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#F5F5F5',
+                padding: 16,
+                borderRadius: 8,
+                marginTop: 16,
+                alignItems: 'center',
+              }}
+              onPress={handleTestNotification}
+            >
+              <Text style={{ color: '#FF6B6B', fontSize: 14, fontWeight: '600' }}>
+                テスト通知を送信
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
 
