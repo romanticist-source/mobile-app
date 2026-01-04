@@ -4,7 +4,7 @@
  */
 
 import { apiGet, apiPost, apiPut, apiDelete, apiPatch } from '@/_util/apiClient';
-import type { User, CreateUser, UpdateUser } from '@/_schema';
+import type { User, CreateUser, UpdateUser, CreateUserGoogle } from '@/_schema';
 
 export const getUsers = async (includeDeleted?: string): Promise<User[]> => {
   const params = includeDeleted ? `?includeDeleted=${includeDeleted}` : '';
@@ -33,4 +33,8 @@ export const getUserByEmail = async (email: string): Promise<User> => {
 
 export const softDeleteUser = async (id: string): Promise<{ success: boolean }> => {
   return apiPatch(`/users/${id}/soft-delete`);
+};
+
+export const createUserGoogle = async (data: CreateUserGoogle): Promise<User> => {
+  return apiPost('/google', data);
 };
