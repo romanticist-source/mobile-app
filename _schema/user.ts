@@ -39,6 +39,15 @@ export const CreateUserSchema = z.object({
   comment: optionalCommentSchema,
 });
 
+export const CreateUserGoogleSchema = z.object({
+  name: nameSchema,
+  age: optionalAgeSchema,
+  mail: emailSchema,
+  password: optionalPasswordSchema,
+  address: optionalAddressSchema,
+  comment: optionalCommentSchema,
+});
+
 export const UpdateUserSchema = z.object({
   name: optionalNameSchema,
   age: optionalAgeSchema,
@@ -52,3 +61,4 @@ export const UpdateUserSchema = z.object({
 export type User = z.infer<typeof UserSchema>;
 export type CreateUser = z.infer<typeof CreateUserSchema>;
 export type UpdateUser = z.infer<typeof UpdateUserSchema>;
+export type CreateUserGoogle = z.infer<typeof CreateUserGoogleSchema>;
