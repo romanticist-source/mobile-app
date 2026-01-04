@@ -79,7 +79,12 @@ export function useNotifications(): UseNotificationsReturn {
     try {
       const alerts = await getAlertsByUserId(selectedUserId);
 
-      setNotifications(alerts);
+      // Sort by createdAt descending (newest first)
+      const sortedAlerts = alerts.sort((a, b) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+
+      setNotifications(sortedAlerts);
 
       // Fetch user alert history
       try {

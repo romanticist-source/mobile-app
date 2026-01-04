@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import { Image, Text, View, TouchableOpacity, Platform } from "react-native";
 import { styles, logoStyles } from './styles';
-import AuthComponent from "./login";
 
 
 const logoImage = require('../../assets/images/logo.png');
@@ -67,10 +66,8 @@ export default function LoginScreen() {
         <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>
           ログイン (開発用)
         </Text>
-
       </TouchableOpacity>
 
-        <AuthComponent />
       <Text style={{ marginTop: 16, fontSize: 12, color: '#999999' }}>
         {Platform.OS === 'web' ? 'Web版' : `${Platform.OS.toUpperCase()}版 - Google認証は未実装`}
       </Text>

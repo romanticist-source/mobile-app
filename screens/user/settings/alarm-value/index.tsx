@@ -1,25 +1,65 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormSaveButton } from '@/components/forms';
 import { HeartRateSection } from '@/components/features/settings/alarm-value/HeartRateSection/HeartRateSection';
+import { useUser } from '@/contexts/UserContext';
 import { styles } from './styles';
+
+const ALARM_VALUE_STORAGE_KEY = '@alarm_value_settings';
 
 export default function AlarmValueScreen() {
   const router = useRouter();
+  const { selectedUserId } = useUser();
 
   // Heart rate thresholds
   const [minHeartRate, setMinHeartRate] = useState(60);
   const [maxHeartRate, setMaxHeartRate] = useState(100);
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    console.log('Save alarm value settings:', {
-      minHeartRate,
-      maxHeartRate,
-    });
-    // TODO: API call to update alarm value settings
-    router.back();
+  // Load saved settings on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      if (!selectedUserId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const storageKey = `${ALARM_VALUE_STORAGE_KEY}_${selectedUserId}`;
+        const savedSettings = await AsyncStorage.getItem(storageKey);
+        if (savedSettings) {
+          const { minHeartRate: savedMin, maxHeartRate: savedMax } = JSON.parse(savedSettings);
+          setMinHeartRate(savedMin);
+          setMaxHeartRate(savedMax);
+        }
+      } catch (error) {
+        console.error('Failed to load alarm settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, [selectedUserId]);
+
+  const handleSave = async () => {
+    if (!selectedUserId) {
+      Alert.alert('エラー', 'ユーザーIDが見つかりません');
+      return;
+    }
+
+    try {
+      const settings = { minHeartRate, maxHeartRate };
+      const storageKey = `${ALARM_VALUE_STORAGE_KEY}_${selectedUserId}`;
+      await AsyncStorage.setItem(storageKey, JSON.stringify(settings));
+      Alert.alert('成功', 'アラート閾値を保存しました');
+      router.back();
+    } catch (error) {
+      console.error('Failed to save alarm settings:', error);
+      Alert.alert('エラー', '設定の保存に失敗しました');
+    }
   };
 
   return (

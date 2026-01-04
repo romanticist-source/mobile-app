@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
-import { View, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, ScrollView, Alert, TouchableOpacity, Text } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormSaveButton } from '@/components/forms';
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
 import { ToiletNotificationSettings } from '@/components/features/settings/toilet-timing/ToiletNotificationSettings/ToiletNotificationSettings';
 import { ToiletRecordsList } from '@/components/features/settings/toilet-timing/ToiletRecordsList/ToiletRecordsList';
+import { useUser } from '@/contexts/UserContext';
+import { createToiletNotification } from '@/_util/notificationHelper';
+import {
+  requestNotificationPermissions,
+  scheduleToiletNotifications,
+  cancelToiletNotifications,
+  getScheduledToiletNotifications,
+} from '@/_util/localNotificationScheduler';
 import { styles } from './styles';
+
+const TOILET_TIMING_STORAGE_KEY = '@toilet_timing_settings';
 
 interface ToiletRecord {
   time: string;
@@ -14,9 +25,11 @@ interface ToiletRecord {
 
 export default function ToiletTimingScreen() {
   const router = useRouter();
+  const { selectedUserId } = useUser();
 
   const [notificationEnabled, setNotificationEnabled] = useState(true);
   const [intervalHours, setIntervalHours] = useState(4);
+  const [loading, setLoading] = useState(true);
 
   const todayRecords: ToiletRecord[] = [
     { time: '08:00', type: 'scheduled' },
@@ -24,13 +37,92 @@ export default function ToiletTimingScreen() {
     { time: '16:00', type: 'manual' },
   ];
 
-  const handleSave = () => {
-    console.log('Save toilet timing settings:', {
-      notificationEnabled,
-      intervalHours,
-    });
-    // TODO: API call to update toilet timing settings
-    router.back();
+  // Load saved settings on mount
+  useEffect(() => {
+    const loadSettings = async () => {
+      if (!selectedUserId) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const storageKey = `${TOILET_TIMING_STORAGE_KEY}_${selectedUserId}`;
+        const savedSettings = await AsyncStorage.getItem(storageKey);
+        if (savedSettings) {
+          const { notificationEnabled: savedEnabled, intervalHours: savedInterval } = JSON.parse(savedSettings);
+          setNotificationEnabled(savedEnabled);
+          setIntervalHours(savedInterval);
+        }
+
+        // Check if there are scheduled notifications
+        const scheduledNotifications = await getScheduledToiletNotifications();
+        console.log(`📅 Found ${scheduledNotifications.length} scheduled toilet notifications`);
+      } catch (error) {
+        console.error('Failed to load toilet timing settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, [selectedUserId]);
+
+  const handleSave = async () => {
+    if (!selectedUserId) {
+      Alert.alert('エラー', 'ユーザーIDが見つかりません');
+      return;
+    }
+
+    try {
+      // Save settings to AsyncStorage
+      const settings = { notificationEnabled, intervalHours };
+      const storageKey = `${TOILET_TIMING_STORAGE_KEY}_${selectedUserId}`;
+      await AsyncStorage.setItem(storageKey, JSON.stringify(settings));
+
+      // Handle notification scheduling
+      if (notificationEnabled) {
+        // Request permissions
+        const hasPermission = await requestNotificationPermissions();
+        if (!hasPermission) {
+          Alert.alert(
+            '通知の許可が必要です',
+            '通知を受け取るには、設定から通知の許可を有効にしてください。'
+          );
+          return;
+        }
+
+        // Schedule notifications
+        await scheduleToiletNotifications(intervalHours, selectedUserId);
+        Alert.alert(
+          '成功',
+          `トイレタイミング通知を設定しました\n${intervalHours}時間ごとに通知が届きます`
+        );
+      } else {
+        // Cancel notifications if disabled
+        await cancelToiletNotifications();
+        Alert.alert('成功', 'トイレタイミング設定を保存しました（通知はOFFです）');
+      }
+
+      router.back();
+    } catch (error) {
+      console.error('Failed to save toilet timing settings:', error);
+      Alert.alert('エラー', '設定の保存に失敗しました');
+    }
+  };
+
+  // Test notification function
+  const handleTestNotification = async () => {
+    if (!selectedUserId) {
+      Alert.alert('エラー', 'ユーザーIDが見つかりません');
+      return;
+    }
+
+    try {
+      await createToiletNotification(selectedUserId);
+      Alert.alert('成功', 'テスト通知を作成しました。通知ページをご確認ください。');
+    } catch (error) {
+      console.error('Failed to create test notification:', error);
+      Alert.alert('エラー', 'テスト通知の作成に失敗しました');
+    }
   };
 
   return (
@@ -53,6 +145,22 @@ export default function ToiletTimingScreen() {
 
             {/* Today's Records */}
             <ToiletRecordsList records={todayRecords} />
+
+            {/* Test Notification Button */}
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#F5F5F5',
+                padding: 16,
+                borderRadius: 8,
+                marginTop: 16,
+                alignItems: 'center',
+              }}
+              onPress={handleTestNotification}
+            >
+              <Text style={{ color: '#FF6B6B', fontSize: 14, fontWeight: '600' }}>
+                テスト通知を送信
+              </Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
 

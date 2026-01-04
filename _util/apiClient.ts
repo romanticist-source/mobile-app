@@ -83,12 +83,3 @@ export const apiDelete = async <T = any>(url: string): Promise<T> => {
         return Promise.reject(error);
     }
 };
-
-export const apiGoogle = async <T = any>(url: string, data?: unknown): Promise<T> => {
-    try {
-        const response = await apiClient.post(url, data);
-        return response.data;
-    } catch (error) {
-        return Promise.reject(error);
-    }
-};
