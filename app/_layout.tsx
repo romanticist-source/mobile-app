@@ -1,11 +1,19 @@
 import { Stack } from 'expo-router';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { TamaguiProvider } from 'tamagui';
 import config from '../tamagui.config';
 import { UserProvider } from '@/contexts/UserContext';
 import { HelperProvider } from '@/contexts/HelperContext';
+import { setupNotificationListener } from '@/_util/localNotificationScheduler';
 
 export default function RootLayout() {
+  // Setup notification listeners
+  useEffect(() => {
+    const cleanup = setupNotificationListener();
+    return cleanup;
+  }, []);
+
   return (
     <TamaguiProvider config={config}>
       <UserProvider>

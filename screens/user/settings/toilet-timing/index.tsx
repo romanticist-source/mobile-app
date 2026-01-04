@@ -8,6 +8,12 @@ import { ToiletNotificationSettings } from '@/components/features/settings/toile
 import { ToiletRecordsList } from '@/components/features/settings/toilet-timing/ToiletRecordsList/ToiletRecordsList';
 import { useUser } from '@/contexts/UserContext';
 import { createToiletNotification } from '@/_util/notificationHelper';
+import {
+  requestNotificationPermissions,
+  scheduleToiletNotifications,
+  cancelToiletNotifications,
+  getScheduledToiletNotifications,
+} from '@/_util/localNotificationScheduler';
 import { styles } from './styles';
 
 const TOILET_TIMING_STORAGE_KEY = '@toilet_timing_settings';
@@ -47,6 +53,10 @@ export default function ToiletTimingScreen() {
           setNotificationEnabled(savedEnabled);
           setIntervalHours(savedInterval);
         }
+
+        // Check if there are scheduled notifications
+        const scheduledNotifications = await getScheduledToiletNotifications();
+        console.log(`📅 Found ${scheduledNotifications.length} scheduled toilet notifications`);
       } catch (error) {
         console.error('Failed to load toilet timing settings:', error);
       } finally {
@@ -63,10 +73,35 @@ export default function ToiletTimingScreen() {
     }
 
     try {
+      // Save settings to AsyncStorage
       const settings = { notificationEnabled, intervalHours };
       const storageKey = `${TOILET_TIMING_STORAGE_KEY}_${selectedUserId}`;
       await AsyncStorage.setItem(storageKey, JSON.stringify(settings));
-      Alert.alert('成功', 'トイレタイミング設定を保存しました');
+
+      // Handle notification scheduling
+      if (notificationEnabled) {
+        // Request permissions
+        const hasPermission = await requestNotificationPermissions();
+        if (!hasPermission) {
+          Alert.alert(
+            '通知の許可が必要です',
+            '通知を受け取るには、設定から通知の許可を有効にしてください。'
+          );
+          return;
+        }
+
+        // Schedule notifications
+        await scheduleToiletNotifications(intervalHours, selectedUserId);
+        Alert.alert(
+          '成功',
+          `トイレタイミング通知を設定しました\n${intervalHours}時間ごとに通知が届きます`
+        );
+      } else {
+        // Cancel notifications if disabled
+        await cancelToiletNotifications();
+        Alert.alert('成功', 'トイレタイミング設定を保存しました（通知はOFFです）');
+      }
+
       router.back();
     } catch (error) {
       console.error('Failed to save toilet timing settings:', error);
