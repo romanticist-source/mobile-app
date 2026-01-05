@@ -5,29 +5,27 @@ const LOGO_SIZE = 180; // ロゴとテキスト全体を考慮したサイズ（
 export const logoStyles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 80, // キャッチフレーズが上にあるため、ボタンまでの距離を調整
+    marginBottom: 40,
   },
   logoImage: {
-    // ロゴ画像（テキスト含む）のサイズを調整
-    width: LOGO_SIZE, 
+    width: LOGO_SIZE,
     height: LOGO_SIZE,
-    resizeMode: 'contain', // 画像の縦横比を維持してコンテナに収める
-    marginBottom: 20, 
+    resizeMode: 'contain',
   },
   catchphraseContainer: {
     alignItems: 'center',
-    marginBottom: 40, // ロゴとキャッチフレーズの間のスペース
+    marginBottom: 24,
   },
   catchphraseLine1: {
-    fontSize: 14,
+    fontSize: 15,
     color: 'white',
-    // フォントの太さやスタイルを画像に合わせて調整
-    marginBottom: 2, 
+    fontWeight: '400',
+    marginBottom: 4,
   },
   catchphraseLine2: {
-    fontSize: 14,
+    fontSize: 15,
     color: 'white',
-    // フォントの太さやスタイルを画像に合わせて調整
+    fontWeight: '400',
   },
 });
 
@@ -35,9 +33,55 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     // 画像の背景色に合わせて鮮やかな赤/ピンクを設定
-    backgroundColor: '#FF3366', 
+    backgroundColor: '#FF3366',
     justifyContent: "center",
     alignItems: "center",
-    paddingBottom: 50, // 画面全体の配置を微調整
+    paddingHorizontal: 32,
+    paddingBottom: 50,
+  },
+  formContainer: {
+    width: '100%',
+    maxWidth: 400,
+    marginTop: 20,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderRadius: 8,
+    fontSize: 16,
+    marginBottom: 12,
+    color: '#333',
+  },
+  loginButton: {
+    backgroundColor: '#FFFFFF',
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  loginButtonText: {
+    color: '#FF3366',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  registerButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  registerButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
