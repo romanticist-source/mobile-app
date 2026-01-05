@@ -1,7 +1,8 @@
 import { useRouter } from "expo-router";
-import { Image, Text, View, TouchableOpacity, Platform } from "react-native";
+import { useState } from "react";
+import { Image, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { styles, logoStyles } from './styles';
-
+import { useAuth } from '@/contexts/AuthContext';
 
 const logoImage = require('../../assets/images/logo.png');
 
@@ -19,58 +20,103 @@ function Catchphrase() {
 function MielinkLogo() {
   return (
     <View style={logoStyles.logoContainer}>
-      {/* 実際に提供されたPNG画像を表示 */}
       <Image
         source={logoImage}
         style={logoStyles.logoImage}
         resizeMode="contain"
       />
-      {/* 画像に「ミエリンク」のテキストが含まれているため、ここではテキストは不要です。 */}
     </View>
   );
 }
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = () => {
-    // 一時的にログインをスキップ（開発用）
-    router.replace("/user");
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('エラー', 'メールアドレスとパスワードを入力してください');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      await login({ mail: email, password });
+      router.replace("/user");
+    } catch (error: any) {
+      Alert.alert('ログイン失敗', error.message || 'メールアドレスまたはパスワードが正しくありません');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRegister = () => {
+    router.push("/register");
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1 }}
+    >
+      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+        <View style={styles.container}>
+          {/* キャッチフレーズ */}
+          <Catchphrase />
 
-      {/* 新しく追加されたキャッチフレーズ */}
-      <Catchphrase />
+          {/* ロゴ */}
+          <MielinkLogo />
 
-      {/* ロゴコンポーネントを配置 */}
-      <MielinkLogo />
+          {/* ログインフォーム */}
+          <View style={styles.formContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="メールアドレス"
+              placeholderTextColor="#AAA"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="パスワード"
+              placeholderTextColor="#AAA"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              autoCapitalize="none"
+              autoComplete="password"
+            />
 
-      {/* 開発用ログインボタン (iOS/Android用) */}
-      <TouchableOpacity
-        onPress={handleLogin}
-        style={{
-          backgroundColor: '#4285F4',
-          paddingHorizontal: 32,
-          paddingVertical: 14,
-          borderRadius: 8,
-          marginTop: 32,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.2,
-          shadowRadius: 4,
-          elevation: 3,
-        }}
-      >
-        <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>
-          ログイン (開発用)
-        </Text>
-      </TouchableOpacity>
+            {/* ログインボタン */}
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={styles.loginButton}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Text style={styles.loginButtonText}>ログイン</Text>
+              )}
+            </TouchableOpacity>
 
-      <Text style={{ marginTop: 16, fontSize: 12, color: '#999999' }}>
-        {Platform.OS === 'web' ? 'Web版' : `${Platform.OS.toUpperCase()}版 - Google認証は未実装`}
-      </Text>
-    </View>
+            {/* 新規登録ボタン */}
+            <TouchableOpacity
+              onPress={handleRegister}
+              style={styles.registerButton}
+              disabled={isLoading}
+            >
+              <Text style={styles.registerButtonText}>新規登録</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

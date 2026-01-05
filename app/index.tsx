@@ -1,19 +1,27 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useEffect } from 'react';
 import { useRouter } from 'expo-router';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Index() {
   const router = useRouter();
+  const { user, isLoading } = useAuth();
 
+  useEffect(() => {
+    if (!isLoading) {
+      // ログイン済みの場合は /user へ、未ログインなら /login へ
+      if (user) {
+        router.replace('/user');
+      } else {
+        router.replace('/login');
+      }
+    }
+  }, [isLoading, user]);
+
+  // ローディング中の表示
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Hello World - Test Screen</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => router.push('/user')}
-      >
-        <Text style={styles.buttonText}>Go to User Page</Text>
-      </TouchableOpacity>
+      <ActivityIndicator size="large" color="#FF3366" />
     </View>
   );
 }
@@ -24,21 +32,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
-    gap: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });

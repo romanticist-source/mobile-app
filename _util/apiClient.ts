@@ -1,5 +1,6 @@
 import axios from "axios";
 import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const createApiError = (errorMessage: string, errorCode: number) => {
     const error = new Error(errorMessage) as Error & { errorCode: number };
@@ -9,6 +10,7 @@ const createApiError = (errorMessage: string, errorCode: number) => {
 };
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:3000';
+const TOKEN_KEY = 'auth_token';
 
 // Axiosクライアントのインスタンスを作成
 const createApiClient = (): AxiosInstance => {
@@ -18,6 +20,20 @@ const createApiClient = (): AxiosInstance => {
             'Content-Type': 'application/json',
         },
     });
+
+    // リクエスト前にトークンを追加
+    client.interceptors.request.use(
+        async (config) => {
+            const token = await AsyncStorage.getItem(TOKEN_KEY);
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
+            return config;
+        },
+        (error) => {
+            return Promise.reject(error);
+        }
+    );
 
     // 成功時のハンドラー
     const handleSuccess = (response: AxiosResponse) => response;
