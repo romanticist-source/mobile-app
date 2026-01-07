@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { emailSchema } from '@/_util/validations';
+import { UserSchema } from './user';
+import { HelperSchema } from './helper';
 
 // Auth Role
 export const AuthRoleSchema = z.enum(['user', 'helper']);
@@ -15,16 +17,8 @@ export const LoginRequestSchema = z.object({
 export const LoginResponseSchema = z.object({
   token: z.string(),
   role: AuthRoleSchema,
-  user: z.object({
-    id: z.string(),
-    name: z.string(),
-    mail: emailSchema,
-  }).optional(),
-  helper: z.object({
-    id: z.string(),
-    name: z.string(),
-    email: emailSchema,
-  }).optional(),
+  user: UserSchema.optional(),
+  helper: HelperSchema.optional(),
 });
 
 // Register Request Schema (for both User and Helper)
