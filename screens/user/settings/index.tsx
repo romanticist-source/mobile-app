@@ -70,6 +70,13 @@ export default function SettingsScreen() {
           onPress: () => router.push(USER_ROUTES.SETTINGS_ADD_HELPER),
         },
         {
+          id: 'connected-helpers',
+          icon: 'people',
+          title: '紐づき済み介助者',
+          description: '接続済みの介助者を管理',
+          onPress: () => router.push('/user/settings/connected-helpers'),
+        },
+        {
           id: 'caregiver',
           icon: 'group',
           title: '介助者管理',
