@@ -54,7 +54,7 @@ export default function LoginScreen() {
   };
 
   const handleRegister = () => {
-    router.push("/register");
+    router.push("/role-select");
   };
 
   return (

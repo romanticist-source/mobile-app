@@ -61,8 +61,9 @@ export default function RegisterScreen() {
       });
 
       await register({
+        role: 'user',
         name,
-        mail: email,
+        email,
         password,
         age: ageNumber,
         address: address || undefined,
