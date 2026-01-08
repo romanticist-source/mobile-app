@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
@@ -11,39 +11,27 @@ export default function RequestsScreen() {
   const { requests, loading, error, approveRequest, rejectRequest } = useRequests();
 
   const handleApprove = async (id: string) => {
-    Alert.alert('承認の確認', 'このリクエストを承認しますか？', [
-      { text: 'キャンセル', style: 'cancel' },
-      {
-        text: '承認',
-        style: 'default',
-        onPress: async () => {
-          const success = await approveRequest(id);
-          if (success) {
-            Alert.alert('承認完了', 'リクエストを承認しました');
-          } else {
-            Alert.alert('エラー', '承認に失敗しました');
-          }
-        },
-      },
-    ]);
+    const confirmed = window.confirm('このリクエストを承認しますか？');
+    if (!confirmed) return;
+
+    const success = await approveRequest(id);
+    if (success) {
+      window.alert('リクエストを承認しました');
+    } else {
+      window.alert('承認に失敗しました');
+    }
   };
 
   const handleReject = async (id: string) => {
-    Alert.alert('拒否の確認', 'このリクエストを拒否しますか？', [
-      { text: 'キャンセル', style: 'cancel' },
-      {
-        text: '拒否',
-        style: 'destructive',
-        onPress: async () => {
-          const success = await rejectRequest(id);
-          if (success) {
-            Alert.alert('拒否完了', 'リクエストを拒否しました');
-          } else {
-            Alert.alert('エラー', '拒否に失敗しました');
-          }
-        },
-      },
-    ]);
+    const confirmed = window.confirm('このリクエストを拒否しますか？');
+    if (!confirmed) return;
+
+    const success = await rejectRequest(id);
+    if (success) {
+      window.alert('リクエストを拒否しました');
+    } else {
+      window.alert('拒否に失敗しました');
+    }
   };
 
   return (
