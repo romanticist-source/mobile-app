@@ -35,7 +35,7 @@ export default function ConnectedHelpersScreen() {
   const handleDelete = (connection: HelperConnectWithDetails) => {
     Alert.alert(
       '接続を解除',
-      `${connection.helperName || connection.helperEmail} との接続を解除しますか？`,
+      `${connection.helper?.name || connection.helper?.email} との接続を解除しますか？`,
       [
         { text: 'キャンセル', style: 'cancel' },
         {
@@ -101,16 +101,16 @@ export default function ConnectedHelpersScreen() {
                     </View>
                     <View style={styles.info}>
                       <Text style={styles.name}>
-                        {connection.helperName || '不明な介助者'}
+                        {connection.helper?.name || '不明な介助者'}
                       </Text>
-                      <Text style={styles.email}>{connection.helperEmail}</Text>
+                      <Text style={styles.email}>{connection.helper?.email || connection.helperId}</Text>
                     </View>
                   </View>
 
                   <View style={styles.dateContainer}>
                     <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
                     <Text style={styles.dateText}>
-                      承認日: {connection.approvedAt ? formatDate(connection.approvedAt) : '不明'}
+                      承認日: {formatDate(connection.updatedAt)}
                     </Text>
                   </View>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, ActivityIndicator, Alert, Platform } from 'react-native';
 import { Stack } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { SettingsHeader } from '@/components/layouts/SettingsHeader/SettingsHeader';
@@ -11,26 +11,68 @@ export default function RequestsScreen() {
   const { requests, loading, error, approveRequest, rejectRequest } = useRequests();
 
   const handleApprove = async (id: string) => {
-    const confirmed = window.confirm('このリクエストを承認しますか？');
+    let confirmed = false;
+
+    if (Platform.OS === 'web') {
+      confirmed = window.confirm('このリクエストを承認しますか？');
+    } else {
+      confirmed = await new Promise<boolean>((resolve) => {
+        Alert.alert('承認の確認', 'このリクエストを承認しますか？', [
+          { text: 'キャンセル', style: 'cancel', onPress: () => resolve(false) },
+          { text: '承認', style: 'default', onPress: () => resolve(true) },
+        ]);
+      });
+    }
+
     if (!confirmed) return;
 
     const success = await approveRequest(id);
-    if (success) {
-      window.alert('リクエストを承認しました');
+
+    if (Platform.OS === 'web') {
+      if (success) {
+        window.alert('リクエストを承認しました');
+      } else {
+        window.alert('承認に失敗しました');
+      }
     } else {
-      window.alert('承認に失敗しました');
+      if (success) {
+        Alert.alert('承認完了', 'リクエストを承認しました');
+      } else {
+        Alert.alert('エラー', '承認に失敗しました');
+      }
     }
   };
 
   const handleReject = async (id: string) => {
-    const confirmed = window.confirm('このリクエストを拒否しますか？');
+    let confirmed = false;
+
+    if (Platform.OS === 'web') {
+      confirmed = window.confirm('このリクエストを拒否しますか？');
+    } else {
+      confirmed = await new Promise<boolean>((resolve) => {
+        Alert.alert('拒否の確認', 'このリクエストを拒否しますか？', [
+          { text: 'キャンセル', style: 'cancel', onPress: () => resolve(false) },
+          { text: '拒否', style: 'destructive', onPress: () => resolve(true) },
+        ]);
+      });
+    }
+
     if (!confirmed) return;
 
     const success = await rejectRequest(id);
-    if (success) {
-      window.alert('リクエストを拒否しました');
+
+    if (Platform.OS === 'web') {
+      if (success) {
+        window.alert('リクエストを拒否しました');
+      } else {
+        window.alert('拒否に失敗しました');
+      }
     } else {
-      window.alert('拒否に失敗しました');
+      if (success) {
+        Alert.alert('拒否完了', 'リクエストを拒否しました');
+      } else {
+        Alert.alert('エラー', '拒否に失敗しました');
+      }
     }
   };
 
