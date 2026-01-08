@@ -29,6 +29,18 @@ export default function SettingsScreen() {
 
   const settingSections: SettingSection[] = [
     {
+      title: '接続管理',
+      items: [
+        {
+          id: 'requests',
+          icon: 'person-add',
+          title: '接続リクエスト',
+          description: 'ユーザーからの接続リクエストを管理',
+          onPress: () => router.push('/helper/requests'),
+        },
+      ],
+    },
+    {
       title: '通知とアラート',
       items: [
         {

@@ -4,26 +4,14 @@
  */
 
 import { apiPost, apiGet } from '@/_util/apiClient';
-import type { User } from '@/_schema';
-
-export interface LoginRequest {
-  mail: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  token: string;
-  user: User;
-}
-
-export interface RegisterRequest {
-  name: string;
-  mail: string;
-  password: string;
-  age: number;
-  address?: string;
-  comment?: string;
-}
+import type {
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  User,
+  Helper,
+  AuthRole,
+} from '@/_schema';
 
 /**
  * ログイン
@@ -33,9 +21,21 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
 };
 
 /**
- * 現在のユーザー情報取得
+ * 現在の認証情報取得（User or Helper）
+ * Backend returns user info with role field
  */
-export const getCurrentUser = async (): Promise<User> => {
+export const getCurrentAuth = async (): Promise<{
+  id: string;
+  role: AuthRole;
+  name: string;
+  mail: string;
+  age: number | null;
+  icon: string | null;
+  address: string | null;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+}> => {
   return apiGet('/auth/me');
 };
 

@@ -1,47 +1,62 @@
 /**
- * Helper Connect API
- * HAL Backend API - Helper-User connection endpoints
+ * HelperConnect API
+ * HAL Backend API - HelperConnect endpoints
  */
 
-import { apiGet } from '@/_util/apiClient';
-
-export interface HelperUserConnectionResponse {
-  helperId: string;
-  userIds: string[];
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface HelperUserConnection {
-  helperId: string;
-  userId: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { apiGet, apiPost, apiPatch, apiDelete } from '@/_util/apiClient';
+import type {
+  HelperConnect,
+  CreateHelperConnectRequest,
+  HelperConnectWithDetails,
+} from '@/_schema';
 
 /**
- * Get User ID by Helper ID
- * @param helperId - The helper's ID
- * @returns The user ID connected to this helper
+ * Send connection request from User to Helper
+ * Backend returns { success: boolean, message: string }
  */
-export const getUserIdByHelperId = async (helperId: string): Promise<string> => {
-  const response = await apiGet<HelperUserConnectionResponse>(`/helper-connect/${helperId}`);
-  // APIはuserIds配列を返すので、最初の要素を取得
-  return response.userIds[0];
+export const sendHelperConnectRequest = async (
+  data: CreateHelperConnectRequest
+): Promise<{ success: boolean; message: string }> => {
+  return apiPost('/helper-connect/request', data);
 };
 
 /**
- * Get full connection data by Helper ID
- * @param helperId - The helper's ID
- * @returns Full connection data including helperId, userId, timestamps
+ * Get pending connection requests (for Helper)
+ * Backend returns { connections: [...] }
  */
-export const getHelperUserConnection = async (helperId: string): Promise<HelperUserConnection> => {
-  const response = await apiGet<HelperUserConnectionResponse>(`/helper-connect/${helperId}`);
-  // APIレスポンスをHelperUserConnection型に変換
-  return {
-    helperId: response.helperId,
-    userId: response.userIds[0], // 配列の最初の要素を使用
-    createdAt: response.createdAt,
-    updatedAt: response.updatedAt,
-  };
+export const getPendingRequests = async (): Promise<HelperConnectWithDetails[]> => {
+  const response = await apiGet<{ connections: HelperConnectWithDetails[] }>('/helper-connect/pending');
+  return response.connections;
+};
+
+/**
+ * Approve connection request (Helper approves User's request)
+ * Backend returns { success: boolean, message: string }
+ */
+export const approveHelperConnectRequest = async (id: string): Promise<{ success: boolean; message: string }> => {
+  return apiPatch(`/helper-connect/${id}/approve`);
+};
+
+/**
+ * Reject connection request (Helper rejects User's request)
+ * Backend returns { success: boolean, message: string }
+ */
+export const rejectHelperConnectRequest = async (id: string): Promise<{ success: boolean; message: string }> => {
+  return apiPatch(`/helper-connect/${id}/reject`);
+};
+
+/**
+ * Get approved connections (for both User and Helper)
+ * Backend returns { connections: [...] }
+ */
+export const getConnections = async (): Promise<HelperConnectWithDetails[]> => {
+  const response = await apiGet<{ connections: HelperConnectWithDetails[] }>('/helper-connect/connections');
+  return response.connections;
+};
+
+/**
+ * Delete connection (soft delete)
+ */
+export const deleteHelperConnect = async (id: string): Promise<{ success: boolean }> => {
+  return apiDelete(`/helper-connect/${id}`);
 };

@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 const HELPER_ID_STORAGE_KEY = '@selected_helper_id';
 
@@ -16,24 +17,19 @@ interface HelperProviderProps {
 }
 
 export function HelperProvider({ children }: HelperProviderProps) {
+  const { user, helper, role } = useAuth();
   const [selectedHelperId, setSelectedHelperIdState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ログイン中のHelperIDを自動的に設定
   useEffect(() => {
-    const loadHelperId = async () => {
-      try {
-        const storedHelperId = await AsyncStorage.getItem(HELPER_ID_STORAGE_KEY);
-        if (storedHelperId) {
-          setSelectedHelperIdState(storedHelperId);
-        }
-      } catch (error) {
-        console.error('Failed to load helper ID from storage:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadHelperId();
-  }, []);
+    if (role === 'helper' && helper) {
+      setSelectedHelperIdState(helper.id);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, helper, role]);
 
   const setSelectedHelperId = async (helperId: string) => {
     try {

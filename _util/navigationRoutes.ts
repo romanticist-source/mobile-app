@@ -15,6 +15,7 @@ export const USER_ROUTES = {
   SETTINGS_NOTIFICATIONS: '/user/settings/notifications',
   SETTINGS_PROFILE: '/user/settings/profile',
   SETTINGS_HEALTH_PROFILE: '/user/settings/health-profile',
+  SETTINGS_ADD_HELPER: '/user/settings/add-helper',
   SETTINGS_CAREGIVER: '/user/settings/caregiver',
   SETTINGS_TOILET_TIMING: '/user/settings/toilet-timing',
   SETTINGS_ALARM_VALUE: '/user/settings/alarm-value',

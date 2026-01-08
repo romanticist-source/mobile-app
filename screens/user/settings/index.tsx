@@ -63,6 +63,20 @@ export default function SettingsScreen() {
       title: '安全と共有',
       items: [
         {
+          id: 'add-helper',
+          icon: 'person-add',
+          title: '介助者を追加',
+          description: '新しい介助者にリクエストを送信',
+          onPress: () => router.push(USER_ROUTES.SETTINGS_ADD_HELPER),
+        },
+        {
+          id: 'connected-helpers',
+          icon: 'people',
+          title: '紐づき済み介助者',
+          description: '接続済みの介助者を管理',
+          onPress: () => router.push('/user/settings/connected-helpers'),
+        },
+        {
           id: 'caregiver',
           icon: 'group',
           title: '介助者管理',

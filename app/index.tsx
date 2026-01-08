@@ -5,18 +5,20 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function Index() {
   const router = useRouter();
-  const { user, isLoading } = useAuth();
+  const { user, helper, role, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading) {
-      // ログイン済みの場合は /user へ、未ログインなら /login へ
-      if (user) {
+      // ログイン済みの場合はroleに応じてリダイレクト
+      if (role === 'user' && user) {
         router.replace('/user');
+      } else if (role === 'helper' && helper) {
+        router.replace('/helper');
       } else {
         router.replace('/login');
       }
     }
-  }, [isLoading, user]);
+  }, [isLoading, user, helper, role]);
 
   // ローディング中の表示
   return (

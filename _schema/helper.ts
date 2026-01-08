@@ -13,6 +13,7 @@ import {
   optionalRelationshipSchema,
   optionalAgeSchema,
   optionalAddressSchema,
+  isoDateStringSchema,
 } from '@/_util/validations';
 
 // Helper Schemas
@@ -25,6 +26,10 @@ export const HelperSchema = z.object({
   relationship: relationshipSchema,
   age: optionalAgeSchema,
   address: optionalAddressSchema,
+  password: z.string().nullable().optional(), // Nullable for existing helpers without password
+  createdAt: isoDateStringSchema.optional(),
+  updatedAt: isoDateStringSchema.optional(),
+  isDeleted: z.boolean().optional(),
 });
 
 export const CreateHelperSchema = z.object({

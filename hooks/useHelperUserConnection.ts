@@ -1,6 +1,6 @@
 import {
-  getHelperUserConnection,
-  type HelperUserConnection,
+  getConnections,
+  type HelperConnectWithDetails,
 } from "@/api/helper-connect";
 import { useHelper } from "@/contexts/HelperContext";
 import { useEffect, useState } from "react";
@@ -13,7 +13,7 @@ export function useHelperUserConnection() {
   const { selectedHelperId, isLoading: isHelperLoading } = useHelper();
   const [userId, setUserId] = useState<string | null>(null);
   const [connectionData, setConnectionData] =
-    useState<HelperUserConnection | null>(null);
+    useState<HelperConnectWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -33,11 +33,21 @@ export function useHelperUserConnection() {
         setLoading(true);
         setError(null);
 
-        // Fetch full connection data
-        const connection = await getHelperUserConnection(selectedHelperId);
+        // Fetch all approved connections for this helper
+        const connections = await getConnections();
 
-        setConnectionData(connection);
-        setUserId(connection.userId);
+        // Find the first approved connection (helper can have multiple users)
+        const approvedConnection = connections.find(
+          (conn) => conn.status === 'approved' && conn.helperId === selectedHelperId
+        );
+
+        if (approvedConnection) {
+          setConnectionData(approvedConnection);
+          setUserId(approvedConnection.userId);
+        } else {
+          setConnectionData(null);
+          setUserId(null);
+        }
       } catch (err) {
         console.error("[useHelperUserConnection] ❌ API Error:", err);
         console.error("[useHelperUserConnection] Error details:", {
@@ -65,9 +75,18 @@ export function useHelperUserConnection() {
     try {
       setLoading(true);
       setError(null);
-      const connection = await getHelperUserConnection(selectedHelperId);
-      setConnectionData(connection);
-      setUserId(connection.userId);
+      const connections = await getConnections();
+      const approvedConnection = connections.find(
+        (conn) => conn.status === 'approved' && conn.helperId === selectedHelperId
+      );
+
+      if (approvedConnection) {
+        setConnectionData(approvedConnection);
+        setUserId(approvedConnection.userId);
+      } else {
+        setConnectionData(null);
+        setUserId(null);
+      }
     } catch (err) {
       console.error("Failed to refetch helper-user connection:", err);
       setError(err as Error);

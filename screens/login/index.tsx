@@ -45,7 +45,8 @@ export default function LoginScreen() {
     setIsLoading(true);
     try {
       await login({ mail: email, password });
-      router.replace("/user");
+      // ログイン成功後、ルートにリダイレクト（roleに応じて自動遷移）
+      router.replace('/');
     } catch (error: any) {
       Alert.alert('ログイン失敗', error.message || 'メールアドレスまたはパスワードが正しくありません');
     } finally {
@@ -54,7 +55,7 @@ export default function LoginScreen() {
   };
 
   const handleRegister = () => {
-    router.push("/register");
+    router.push("/role-select");
   };
 
   return (
