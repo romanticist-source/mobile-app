@@ -1,5 +1,7 @@
 import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNavigation";
 import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
+
+import { useWatchHrv } from "@/hooks/useWatchConnection";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -11,7 +13,8 @@ export default function UserHomeScreen() {
   const router = useRouter();
 
   // Mock data - 将来的にはAPIから取得
-  const fatigueLevel = 45; // 疲労度 (0-100)
+  // const fatigueLevel = 45; // 疲労度 (0-100)
+  const hrv = useWatchHrv(); // 疲労度 (0-100)
   const fatigueStatus = "注意"; // 良好 | 注意 | 警告
 
   const urgentNotifications = [
@@ -48,7 +51,7 @@ export default function UserHomeScreen() {
     }
   };
 
-  const fatigueColors = getFatigueColors(fatigueLevel);
+  const fatigueColors = getFatigueColors(hrv);
 
   return (
     <>
@@ -117,7 +120,7 @@ export default function UserHomeScreen() {
             </View>
 
             <View style={styles.fatigueContent}>
-              <Text style={styles.fatigueValue}>{fatigueLevel}</Text>
+              <Text style={styles.fatigueValue}>{hrv}</Text>
               <Text style={styles.fatigueUnit}>%</Text>
             </View>
 
@@ -128,7 +131,7 @@ export default function UserHomeScreen() {
                   styles.fatigueProgressBar,
                   {
                     backgroundColor: fatigueColors.progress,
-                    width: `${fatigueLevel}%`,
+                    width: `${hrv}%`,
                   },
                 ]}
               />
