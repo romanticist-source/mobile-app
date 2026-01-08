@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useAuth } from './AuthContext';
 
 const USER_ID_STORAGE_KEY = '@selected_user_id';
 
@@ -16,24 +17,22 @@ interface UserProviderProps {
 }
 
 export function UserProvider({ children }: UserProviderProps) {
+  const { user, helper, role } = useAuth();
   const [selectedUserId, setSelectedUserIdState] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ログイン中のユーザーIDを自動的に設定
   useEffect(() => {
-    const loadUserId = async () => {
-      try {
-        const storedUserId = await AsyncStorage.getItem(USER_ID_STORAGE_KEY);
-        if (storedUserId) {
-          setSelectedUserIdState(storedUserId);
-        }
-      } catch (error) {
-        console.error('Failed to load user ID from storage:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadUserId();
-  }, []);
+    if (role === 'user' && user) {
+      setSelectedUserIdState(user.id);
+      setIsLoading(false);
+    } else if (role === 'helper' && helper) {
+      // Helper用は別途処理が必要な場合はここに追加
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
+    }
+  }, [user, helper, role]);
 
   const setSelectedUserId = async (userId: string) => {
     try {

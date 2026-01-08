@@ -49,11 +49,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const authData = await getCurrentAuth();
         setRole(authData.role);
 
-        if (authData.role === 'user' && authData.user) {
-          setUser(authData.user);
+        // Backend returns user info in single object with role field
+        if (authData.role === 'user') {
+          setUser({
+            id: authData.id,
+            name: authData.name,
+            mail: authData.mail,
+            age: authData.age,
+            icon: authData.icon,
+            address: authData.address,
+            comment: authData.comment,
+          } as User);
           setHelper(null);
-        } else if (authData.role === 'helper' && authData.helper) {
-          setHelper(authData.helper);
+        } else if (authData.role === 'helper') {
+          setHelper({
+            id: authData.id,
+            name: authData.name,
+            email: authData.mail,
+          } as Helper);
           setUser(null);
         }
 
@@ -78,11 +91,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(response.token);
       setRole(response.role);
 
-      if (response.role === 'user' && response.user) {
+      // Backend returns data in "user" field for both roles
+      if (response.role === 'user') {
         setUser(response.user);
         setHelper(null);
-      } else if (response.role === 'helper' && response.helper) {
-        setHelper(response.helper);
+      } else if (response.role === 'helper') {
+        // Convert user field to helper
+        setHelper({
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.mail,
+        } as Helper);
         setUser(null);
       }
 
@@ -106,11 +125,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setToken(response.token);
       setRole(response.role);
 
-      if (response.role === 'user' && response.user) {
+      // Backend returns data in "user" field for both roles
+      if (response.role === 'user') {
         setUser(response.user);
         setHelper(null);
-      } else if (response.role === 'helper' && response.helper) {
-        setHelper(response.helper);
+      } else if (response.role === 'helper') {
+        // Convert user field to helper
+        setHelper({
+          id: response.user.id,
+          name: response.user.name,
+          email: response.user.mail,
+        } as Helper);
         setUser(null);
       }
 

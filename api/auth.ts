@@ -22,8 +22,20 @@ export const login = async (data: LoginRequest): Promise<LoginResponse> => {
 
 /**
  * 現在の認証情報取得（User or Helper）
+ * Backend returns user info with role field
  */
-export const getCurrentAuth = async (): Promise<{ role: AuthRole; user?: User; helper?: Helper }> => {
+export const getCurrentAuth = async (): Promise<{
+  id: string;
+  role: AuthRole;
+  name: string;
+  mail: string;
+  age: number | null;
+  icon: string | null;
+  address: string | null;
+  comment: string | null;
+  createdAt: string;
+  updatedAt: string;
+}> => {
   return apiGet('/auth/me');
 };
 

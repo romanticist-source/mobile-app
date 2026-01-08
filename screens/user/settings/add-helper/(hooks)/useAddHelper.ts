@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { sendHelperConnectRequest } from '@/api/helper-connect';
+import { getHelperByEmail } from '@/api/helpers';
 import type { CreateHelperConnectRequest } from '@/_schema';
 
 export function useAddHelper() {
@@ -11,8 +12,17 @@ export function useAddHelper() {
     setError(null);
 
     try {
+      // First, get Helper ID from email
+      const helper = await getHelperByEmail(helperEmail);
+
+      if (!helper) {
+        setError('指定されたメールアドレスのHelperが見つかりませんでした');
+        return false;
+      }
+
+      // Then send connection request with Helper ID
       const data: CreateHelperConnectRequest = {
-        helperEmail,
+        helperId: helper.id,
       };
 
       await sendHelperConnectRequest(data);

@@ -12,39 +12,46 @@ import type {
 
 /**
  * Send connection request from User to Helper
+ * Backend returns { success: boolean, message: string }
  */
 export const sendHelperConnectRequest = async (
   data: CreateHelperConnectRequest
-): Promise<HelperConnect> => {
+): Promise<{ success: boolean; message: string }> => {
   return apiPost('/helper-connect/request', data);
 };
 
 /**
  * Get pending connection requests (for Helper)
+ * Backend returns { connections: [...] }
  */
 export const getPendingRequests = async (): Promise<HelperConnectWithDetails[]> => {
-  return apiGet('/helper-connect/pending');
+  const response = await apiGet<{ connections: HelperConnectWithDetails[] }>('/helper-connect/pending');
+  return response.connections;
 };
 
 /**
  * Approve connection request (Helper approves User's request)
+ * Backend returns { success: boolean, message: string }
  */
-export const approveHelperConnectRequest = async (id: string): Promise<HelperConnect> => {
+export const approveHelperConnectRequest = async (id: string): Promise<{ success: boolean; message: string }> => {
   return apiPatch(`/helper-connect/${id}/approve`);
 };
 
 /**
  * Reject connection request (Helper rejects User's request)
+ * Backend returns { success: boolean, message: string }
  */
-export const rejectHelperConnectRequest = async (id: string): Promise<HelperConnect> => {
+export const rejectHelperConnectRequest = async (id: string): Promise<{ success: boolean; message: string }> => {
   return apiPatch(`/helper-connect/${id}/reject`);
 };
 
 /**
  * Get approved connections (for both User and Helper)
+ * Backend returns { connections: [...] }
  */
 export const getConnections = async (): Promise<HelperConnectWithDetails[]> => {
-  return apiGet('/helper-connect/connections');
+  const response = await apiGet<{ connections: HelperConnectWithDetails[] }>('/helper-connect/connections');
+  return response.connections;
 };
 
 /**

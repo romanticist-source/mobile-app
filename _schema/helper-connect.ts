@@ -11,26 +11,34 @@ import {
 export const HelperConnectStatusSchema = z.enum(['pending', 'approved', 'rejected']);
 export type HelperConnectStatus = z.infer<typeof HelperConnectStatusSchema>;
 
-// HelperConnect Schemas
+// HelperConnect Schemas - matching backend structure
 export const HelperConnectSchema = z.object({
   id: idSchema,
   userId: userIdSchema,
-  helperEmail: emailSchema,
+  helperId: idSchema,
   status: HelperConnectStatusSchema,
+  isDeleted: z.boolean(),
+  deletedAt: z.string().nullable(),
+  deletedBy: z.string().nullable(),
   createdAt: isoDateStringSchema,
   updatedAt: isoDateStringSchema,
-  approvedAt: optionalIsoDateStringSchema,
-  rejectedAt: optionalIsoDateStringSchema,
-  isDeleted: z.boolean(),
 });
 
 export const CreateHelperConnectRequestSchema = z.object({
-  helperEmail: emailSchema,
+  helperId: idSchema, // Backend expects helperId, not helperEmail
 });
 
 export const HelperConnectWithDetailsSchema = HelperConnectSchema.extend({
-  userName: z.string().optional(),
-  helperName: z.string().optional(),
+  user: z.object({
+    id: idSchema,
+    name: z.string(),
+    mail: emailSchema,
+  }).optional(),
+  helper: z.object({
+    id: idSchema,
+    name: z.string(),
+    email: emailSchema,
+  }).optional(),
 });
 
 // Export inferred types

@@ -57,7 +57,7 @@ export default function RegisterHelperScreen() {
       await register({
         role: 'helper',
         name,
-        email,
+        mail: email,
         password,
         nickname,
         phoneNumber,
