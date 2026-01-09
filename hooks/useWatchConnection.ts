@@ -1,37 +1,27 @@
-import { useEffect, useState } from "react";
-import { watchEvents } from "react-native-watch-connectivity";
+import { useState } from "react";
 
-// Swift側からのデータ構造に合わせます
-type WatchHealthData = {
-  type?: string;
-  hrv?: number; // ← 今回はここを使います
-  // 他のデータも型定義しておくと安全ですが、省略も可能です
-  heartRate?: number;
-  oxygenLevel?: number;
-  steps?: number;
-};
+/**
+ * Watch連携機能は現在無効化されています
+ * Development Buildを使用する場合は、WatchConnectivityContextを有効化してください
+ */
 
 export const useWatchHrv = () => {
-  // 1. Stateの変数名を hrv に変更
-  const [hrv, setHrv] = useState<number | null>(null);
-
-  useEffect(() => {
-    const unsubscribe = watchEvents.on(
-      "message",
-      (message: WatchHealthData) => {
-        console.log("Watchからデータを受信:", message);
-
-        // 2. message.hrv を取り出すように変更
-        // "healthData" というタイプで、かつ hrv が数値であることを確認
-        if (message.type === "healthData" && typeof message.hrv === "number") {
-          setHrv(message.hrv);
-        }
-      }
-    );
-
-    return () => unsubscribe();
-  }, []);
-
-  // 3. hrv を返します
+  // Watch連携が無効なので、ダミー値を返す
+  const [hrv] = useState<number | null>(null);
   return hrv;
+};
+
+export const useWatchHeartRate = () => {
+  const [heartRate] = useState<number | null>(null);
+  return heartRate;
+};
+
+export const useWatchOxygenLevel = () => {
+  const [oxygenLevel] = useState<number | null>(null);
+  return oxygenLevel;
+};
+
+export const useWatchSteps = () => {
+  const [steps] = useState<number | null>(null);
+  return steps;
 };
