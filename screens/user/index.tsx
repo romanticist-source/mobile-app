@@ -1,7 +1,7 @@
 import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNavigation";
 import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
 
-import { useWatchHrv } from "@/hooks/useWatchConnection";
+import { useFatigue } from "@/hooks/useFatigue";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -12,10 +12,17 @@ export default function UserHomeScreen() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const router = useRouter();
 
-  // Mock data - 将来的にはAPIから取得
-  // const fatigueLevel = 45; // 疲労度 (0-100)
-  const hrv = useWatchHrv(); // 疲労度 (0-100)
-  const fatigueStatus = "注意"; // 良好 | 注意 | 警告
+  // useFatigueフックで疲労度を計算
+  const { hp, fatigueLevel, steps, isAvailable, error } = useFatigue();
+
+  // 疲労度に応じたステータス
+  const getFatigueStatus = (level: number) => {
+    if (level < 30) return "良好";
+    if (level < 60) return "注意";
+    return "警告";
+  };
+
+  const fatigueStatus = getFatigueStatus(fatigueLevel);
 
   const urgentNotifications = [
     {
@@ -51,7 +58,7 @@ export default function UserHomeScreen() {
     }
   };
 
-  const fatigueColors = getFatigueColors(hrv);
+  const fatigueColors = getFatigueColors(fatigueLevel);
 
   return (
     <>
@@ -120,7 +127,7 @@ export default function UserHomeScreen() {
             </View>
 
             <View style={styles.fatigueContent}>
-              <Text style={styles.fatigueValue}>{hrv}</Text>
+              <Text style={styles.fatigueValue}>{fatigueLevel}</Text>
               <Text style={styles.fatigueUnit}>%</Text>
             </View>
 
@@ -131,14 +138,17 @@ export default function UserHomeScreen() {
                   styles.fatigueProgressBar,
                   {
                     backgroundColor: fatigueColors.progress,
-                    width: `${hrv}%`,
+                    width: `${fatigueLevel}%`,
                   },
                 ]}
               />
             </View>
 
             <Text style={styles.fatigueDescription}>
-              センサーから取得した疲労度データです。休憩が必要な場合はお知らせします。
+              {isAvailable
+                ? `歩数: ${steps}歩 | 体力: ${hp}% から算出された疲労度です。`
+                : error || 'センサーから取得した疲労度データです。'}
+              休憩が必要な場合はお知らせします。
             </Text>
           </View>
 

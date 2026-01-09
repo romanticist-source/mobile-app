@@ -8,21 +8,29 @@
     "scheme": "mobileapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "extra": {
+      "eas": {
+        "projectId": "ffe4a17b-8720-4016-ada7-3c5d8dbe5b97"
+      }
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true,
           "NSExceptionAllowsInsecureHTTPLoads": true
-        }
+        },
+        "NSMotionUsageDescription": "このアプリは歩数を計測して疲労度を算出するために、モーションセンサーを使用します。"
       }
     },
     "android": {
+      "package": "com.hasegawa.miso",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": ["ACTIVITY_RECOGNITION"]
     },
     "web": {
       "bundler": "metro",
