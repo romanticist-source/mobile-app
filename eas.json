@@ -12,7 +12,10 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://backend-tau-jade-45.vercel.app"
+      }
     },
     "production": {
       "autoIncrement": true
