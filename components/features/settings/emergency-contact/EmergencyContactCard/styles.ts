@@ -64,4 +64,12 @@ export const styles = StyleSheet.create({
     color: textSecondary,
     flex: 1,
   },
+  callButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

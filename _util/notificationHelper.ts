@@ -5,6 +5,7 @@
 
 import { createAlert } from '@/api/alerts';
 import type { CreateAlertHistory } from '@/_schema/alert';
+import { sendLocalPushNotification } from './pushNotificationHelper';
 
 export type NotificationType =
   | 'medication'
@@ -27,6 +28,7 @@ export interface CreateNotificationParams {
 /**
  * Create a notification and add it to the user's notification list
  * This will make the notification appear in the notifications screen
+ * AND send a push notification to the user
  */
 export async function createNotification({
   userId,
@@ -44,8 +46,17 @@ export async function createNotification({
       alertType: type,
     };
 
+    // Create database alert
     await createAlert(alertData);
-    console.log(`✅ Notification created: ${type} - ${title}`);
+
+    // Send push notification
+    await sendLocalPushNotification(title, description, {
+      type,
+      userId,
+      importance,
+    });
+
+    console.log(`✅ Notification created with push: ${type} - ${title}`);
   } catch (error) {
     console.error('❌ Failed to create notification:', error);
     throw error;
@@ -116,5 +127,44 @@ export async function createAppointmentNotification(
       ? `${appointmentTime} - ${appointmentTitle}`
       : appointmentTitle,
     importance: 3,
+  });
+}
+
+/**
+ * Create a fatigue alert notification
+ */
+export async function createFatigueAlert(
+  userId: string,
+  fatigueLevel: number,
+  hp: number
+): Promise<void> {
+  const importance = fatigueLevel >= 80 ? 5 : 4;
+  const message =
+    fatigueLevel >= 80
+      ? `疲労度が非常に高くなっています（${fatigueLevel}%）。休憩をおすすめします。`
+      : `疲労度が上昇しています（${fatigueLevel}%）。体力残量: ${hp}%`;
+
+  await createNotification({
+    userId,
+    type: 'health',
+    title: '疲労度アラート',
+    description: message,
+    importance,
+  });
+}
+
+/**
+ * Create an emergency help request notification
+ */
+export async function createEmergencyHelpRequest(
+  userId: string,
+  userName: string
+): Promise<void> {
+  await createNotification({
+    userId,
+    type: 'emergency',
+    title: 'ヘルプ要請',
+    description: `${userName}さんから緊急のヘルプ要請がありました`,
+    importance: 5,
   });
 }

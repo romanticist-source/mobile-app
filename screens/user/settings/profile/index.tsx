@@ -6,6 +6,7 @@ import { Form, FormInput, FormSaveButton } from '@/components/forms';
 import { getUserById, updateUser } from '@/api/users';
 import type { UpdateUser } from '@/_schema';
 import { useUser } from '@/contexts/UserContext';
+import { setUserAge } from '@/_util/userSettingsHelper';
 import { styles } from './styles';
 
 interface ProfileFormData {
@@ -62,6 +63,12 @@ export default function ProfileSettingsScreen() {
 
     try {
       setIsSaving(true);
+
+      // Save age to AsyncStorage for fatigue calculation
+      if (data.age) {
+        await setUserAge(data.age);
+      }
+
       const updateData: UpdateUser = {
         name: data.name,
         age: data.age,
@@ -70,6 +77,7 @@ export default function ProfileSettingsScreen() {
       };
       await updateUser(selectedUserId, updateData);
       setIsEditing(false);
+      console.log('[Profile] Age synced to AsyncStorage for fatigue calculation');
     } catch (error) {
       console.error('Failed to update user:', error);
     } finally {

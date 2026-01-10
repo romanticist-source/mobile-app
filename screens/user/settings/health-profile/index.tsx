@@ -6,6 +6,7 @@ import { Form, FormInput, FormTextArea, FormSelect, FormTagInput, FormSaveButton
 import { getUserStatusCardByUserId, updateUserStatusCard, createUserStatusCard } from '@/api/user-status-cards';
 import type { UpdateUserStatusCard, CreateUserStatusCard, UserStatusCard } from '@/_schema';
 import { useUser } from '@/contexts/UserContext';
+import { setUserWeight, setUserAge, getUserAge, setWakeUpTime, getWakeUpTime } from '@/_util/userSettingsHelper';
 import { styles } from './styles';
 
 const bloodTypeOptions: SelectOption[] = [
@@ -25,6 +26,8 @@ interface HealthProfileFormData {
   bloodType: string;
   height: string;
   weight: string;
+  age: string;
+  wakeUpTime: string;
   allergies: string[];
   medicalHistory: string[];
   disabilities: string;
@@ -44,6 +47,8 @@ export default function HealthProfileScreen() {
       bloodType: '',
       height: '',
       weight: '',
+      age: '',
+      wakeUpTime: '',
       allergies: [],
       medicalHistory: [],
       disabilities: '',
@@ -77,10 +82,18 @@ export default function HealthProfileScreen() {
         const medicalHistory = statusCard.notes ? JSON.parse(statusCard.notes).medicalHistory || [] : [];
         const meds = statusCard.medicine ? JSON.parse(statusCard.medicine) : [];
 
+        // Get age and wake-up time from AsyncStorage for fatigue calculation
+        const [asyncAge, asyncWakeUpTime] = await Promise.all([
+          getUserAge(),
+          getWakeUpTime(),
+        ]);
+
         form.reset({
           bloodType: statusCard.bloodType || '',
           height: statusCard.height || '',
           weight: statusCard.weight || '',
+          age: asyncAge.toString(),
+          wakeUpTime: asyncWakeUpTime.toString(),
           allergies,
           medicalHistory,
           disabilities: statusCard.disability || '',
@@ -92,6 +105,16 @@ export default function HealthProfileScreen() {
       } catch (error) {
         // No existing status card, keep defaults
         console.log('No existing health profile found, creating new one');
+        // Still load age and wake-up time from AsyncStorage
+        const [asyncAge, asyncWakeUpTime] = await Promise.all([
+          getUserAge(),
+          getWakeUpTime(),
+        ]);
+        form.reset({
+          ...form.getValues(),
+          age: asyncAge.toString(),
+          wakeUpTime: asyncWakeUpTime.toString(),
+        });
       } finally {
         setIsLoading(false);
       }
@@ -116,6 +139,13 @@ export default function HealthProfileScreen() {
 
     try {
       setIsSaving(true);
+
+      // Save weight, age, and wake-up time to AsyncStorage for fatigue calculation
+      await Promise.all([
+        data.weight ? setUserWeight(parseFloat(data.weight)) : Promise.resolve(),
+        data.age ? setUserAge(parseInt(data.age, 10)) : Promise.resolve(),
+        data.wakeUpTime ? setWakeUpTime(parseInt(data.wakeUpTime, 10)) : Promise.resolve(),
+      ]);
 
       // Prepare data for API
       const apiData: UpdateUserStatusCard | CreateUserStatusCard = {
@@ -143,6 +173,7 @@ export default function HealthProfileScreen() {
 
       setSavedMedications(medications);
       setIsEditing(false);
+      console.log('[HealthProfile] Settings saved and synced to AsyncStorage for fatigue calculation');
     } catch (error) {
       console.error('Failed to save health profile:', error);
     } finally {
@@ -209,6 +240,9 @@ export default function HealthProfileScreen() {
                 <Text style={styles.noticeText}>
                   この情報は緊急時に医療従事者が参照します。正確な情報を入力してください。
                 </Text>
+                <Text style={styles.noticeText}>
+                  ※体重・年齢・起床時間は疲労度計算にも使用されます。
+                </Text>
               </View>
             </View>
 
@@ -238,6 +272,20 @@ export default function HealthProfileScreen() {
                     placeholder="65"
                     keyboardType="numeric"
                   />
+
+                  <FormInput
+                    name="age"
+                    label="年齢"
+                    placeholder="30"
+                    keyboardType="numeric"
+                  />
+
+                  <FormInput
+                    name="wakeUpTime"
+                    label="起床時間（時）"
+                    placeholder="7"
+                    keyboardType="numeric"
+                  />
                 </Form>
               ) : (
                 <View>
@@ -257,6 +305,20 @@ export default function HealthProfileScreen() {
                     <Text style={styles.displayLabel}>体重</Text>
                     <Text style={styles.displayValue}>
                       {formValues.weight ? `${formValues.weight} kg` : '未設定'}
+                    </Text>
+                  </View>
+
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>年齢</Text>
+                    <Text style={styles.displayValue}>
+                      {formValues.age ? `${formValues.age}歳` : '未設定'}
+                    </Text>
+                  </View>
+
+                  <View style={styles.displayField}>
+                    <Text style={styles.displayLabel}>起床時間</Text>
+                    <Text style={styles.displayValue}>
+                      {formValues.wakeUpTime ? `${formValues.wakeUpTime}時` : '未設定'}
                     </Text>
                   </View>
                 </View>

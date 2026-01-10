@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import { useController, useFormContext } from 'react-hook-form';
-import { YStack, Label, Text, Select, Adapt, Sheet } from 'tamagui';
-import { FiChevronDown, FiChevronUp, FiCheck } from 'react-icons/fi';
+import { Feather } from "@expo/vector-icons";
+import React, { useMemo } from "react";
+import { useController, useFormContext } from "react-hook-form";
+import { Adapt, Label, Select, Sheet, Text, YStack } from "tamagui";
 
 export interface SelectOption {
   label: string;
@@ -22,7 +22,7 @@ export function FormSelect({
   label,
   required,
   options,
-  placeholder = '選択してください',
+  placeholder = "選択してください",
   defaultValue,
 }: FormSelectProps) {
   const { control } = useFormContext();
@@ -55,8 +55,8 @@ export function FormSelect({
       >
         <Select.Trigger
           width="100%"
-          iconAfter={<FiChevronDown size={20} />}
-          borderColor={error ? '$red9' : '$borderColor'}
+          iconAfter={<Feather name="chevron-down" size={20} />}
+          borderColor={error ? "$red9" : "$borderColor"}
         >
           <Select.Value placeholder={placeholder} />
         </Select.Trigger>
@@ -67,7 +67,7 @@ export function FormSelect({
             modal
             dismissOnSnapToBottom
             animationConfig={{
-              type: 'spring',
+              type: "spring",
               damping: 20,
               mass: 1.2,
               stiffness: 250,
@@ -95,7 +95,7 @@ export function FormSelect({
             height="$3"
           >
             <YStack zIndex={10}>
-              <FiChevronUp size={20} />
+              <Feather name="chevron-up" size={20} />
             </YStack>
           </Select.ScrollUpButton>
 
@@ -111,7 +111,7 @@ export function FormSelect({
                     >
                       <Select.ItemText>{option.label}</Select.ItemText>
                       <Select.ItemIndicator marginLeft="auto">
-                        <FiCheck size={16} />
+                        <Feather name="check" size={16} />
                       </Select.ItemIndicator>
                     </Select.Item>
                   )),
@@ -128,7 +128,7 @@ export function FormSelect({
             height="$3"
           >
             <YStack zIndex={10}>
-              <FiChevronDown size={20} />
+              <Feather name="chevron-down" size={20} />
             </YStack>
           </Select.ScrollDownButton>
         </Select.Content>
