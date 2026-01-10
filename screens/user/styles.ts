@@ -182,6 +182,13 @@ export const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666666',
     lineHeight: 18,
+    marginBottom: 4,
+  },
+  fatigueSubDescription: {
+    fontSize: 11,
+    color: '#999999',
+    lineHeight: 16,
+    fontStyle: 'italic',
   },
   // Section
   section: {
@@ -247,6 +254,24 @@ export const styles = StyleSheet.create({
     fontSize: 13,
     color: '#666666',
     lineHeight: 18,
+  },
+  // Empty and Loading States
+  loadingContainer: {
+    paddingVertical: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyNotifications: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  emptyNotificationsText: {
+    fontSize: 14,
+    color: '#999999',
+    textAlign: 'center',
   },
   // Activity List
   activityList: {
@@ -488,6 +513,83 @@ export const styles = StyleSheet.create({
   sendHelpButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
+    color: '#FFFFFF',
+  },
+  closeButton: {
+    flex: 1,
+    backgroundColor: '#2196F3',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  modalSuccessDescription: {
+    fontSize: 15,
+    color: '#4CAF50',
+    fontWeight: '600',
+    textAlign: 'center',
+    marginBottom: 20,
+    paddingHorizontal: 20,
+  },
+  helperListContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  helperListTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333333',
+    marginBottom: 12,
+  },
+  helperCard: {
+    backgroundColor: '#F8F8F8',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  helperInfo: {
+    flex: 1,
+  },
+  helperName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333333',
+    marginBottom: 4,
+  },
+  helperRelationship: {
+    fontSize: 13,
+    color: '#666666',
+    marginBottom: 6,
+  },
+  helperPhoneRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  helperPhone: {
+    fontSize: 13,
+    color: '#666666',
+  },
+  helperCallButton: {
+    backgroundColor: '#4CAF50',
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  helperCallButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#FFFFFF',
   },
 });

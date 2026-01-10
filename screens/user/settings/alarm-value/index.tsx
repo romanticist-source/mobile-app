@@ -2,21 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormSaveButton } from '@/components/forms';
-import { HeartRateSection } from '@/components/features/settings/alarm-value/HeartRateSection/HeartRateSection';
+import { FatigueThresholdSection } from '@/components/features/settings/alarm-value/FatigueThresholdSection/FatigueThresholdSection';
 import { useUser } from '@/contexts/UserContext';
+import { getFatigueWarningThreshold, getFatigueCriticalThreshold, setFatigueWarningThreshold, setFatigueCriticalThreshold } from '@/_util/userSettingsHelper';
 import { styles } from './styles';
-
-const ALARM_VALUE_STORAGE_KEY = '@alarm_value_settings';
 
 export default function AlarmValueScreen() {
   const router = useRouter();
   const { selectedUserId } = useUser();
 
-  // Heart rate thresholds
-  const [minHeartRate, setMinHeartRate] = useState(60);
-  const [maxHeartRate, setMaxHeartRate] = useState(100);
+  // Fatigue thresholds
+  const [warningThreshold, setWarningThresholdState] = useState(70);
+  const [criticalThreshold, setCriticalThresholdState] = useState(80);
   const [loading, setLoading] = useState(true);
 
   // Load saved settings on mount
@@ -28,13 +26,12 @@ export default function AlarmValueScreen() {
       }
 
       try {
-        const storageKey = `${ALARM_VALUE_STORAGE_KEY}_${selectedUserId}`;
-        const savedSettings = await AsyncStorage.getItem(storageKey);
-        if (savedSettings) {
-          const { minHeartRate: savedMin, maxHeartRate: savedMax } = JSON.parse(savedSettings);
-          setMinHeartRate(savedMin);
-          setMaxHeartRate(savedMax);
-        }
+        const [warning, critical] = await Promise.all([
+          getFatigueWarningThreshold(),
+          getFatigueCriticalThreshold(),
+        ]);
+        setWarningThresholdState(warning);
+        setCriticalThresholdState(critical);
       } catch (error) {
         console.error('Failed to load alarm settings:', error);
       } finally {
@@ -50,10 +47,17 @@ export default function AlarmValueScreen() {
       return;
     }
 
+    // Validation: warning threshold should be less than critical threshold
+    if (warningThreshold >= criticalThreshold) {
+      Alert.alert('エラー', '警告レベルは危険レベルより低く設定してください');
+      return;
+    }
+
     try {
-      const settings = { minHeartRate, maxHeartRate };
-      const storageKey = `${ALARM_VALUE_STORAGE_KEY}_${selectedUserId}`;
-      await AsyncStorage.setItem(storageKey, JSON.stringify(settings));
+      await Promise.all([
+        setFatigueWarningThreshold(warningThreshold),
+        setFatigueCriticalThreshold(criticalThreshold),
+      ]);
       Alert.alert('成功', 'アラート閾値を保存しました');
       router.back();
     } catch (error) {
@@ -83,9 +87,9 @@ export default function AlarmValueScreen() {
               <View style={styles.headerIcon}>
                 <MaterialIcons name="notifications-active" size={24} color="#FF6B6B" />
               </View>
-              <Text style={styles.pageTitle}>アラート閾値設定</Text>
+              <Text style={styles.pageTitle}>疲労度アラート閾値設定</Text>
               <Text style={styles.pageDescription}>
-                バイタルデータが設定した閾値を超えた場合に通知します
+                疲労度が設定した閾値を超えた場合に通知します
               </Text>
             </View>
 
@@ -96,12 +100,12 @@ export default function AlarmValueScreen() {
               </Text>
             </View>
 
-            {/* Heart Rate Section */}
-            <HeartRateSection
-              minValue={minHeartRate}
-              maxValue={maxHeartRate}
-              onMinValueChange={setMinHeartRate}
-              onMaxValueChange={setMaxHeartRate}
+            {/* Fatigue Threshold Section */}
+            <FatigueThresholdSection
+              warningValue={warningThreshold}
+              criticalValue={criticalThreshold}
+              onWarningValueChange={setWarningThresholdState}
+              onCriticalValueChange={setCriticalThresholdState}
             />
           </View>
         </ScrollView>

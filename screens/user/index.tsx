@@ -4,16 +4,26 @@ import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayo
 import { useFatigue } from "@/hooks/useFatigue";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
-import React, { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import React, { useState, useEffect } from "react";
+import { Modal, Text, TouchableOpacity, View, ActivityIndicator, Alert, ScrollView } from "react-native";
+import { useAuth } from "@/contexts/AuthContext";
+import { getAlertsByUserId, getUserAlertHistory } from "@/api/alerts";
+import { getConnections } from "@/api/helper-connect";
+import { getHelperById } from "@/api/helpers";
+import { createEmergencyHelpRequest } from "@/_util/notificationHelper";
+import { makePhoneCall } from "@/_util/phoneHelper";
+import type { AlertHistory, UserAlertHistory, HelperConnectWithDetails, Helper } from "@/_schema";
 import { styles } from "./styles";
 
 export default function UserHomeScreen() {
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [urgentNotifications, setUrgentNotifications] = useState<AlertHistory[]>([]);
+  const [isLoadingAlerts, setIsLoadingAlerts] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
 
-  // useFatigueフックで疲労度を計算
-  const { hp, fatigueLevel, steps, isAvailable, error } = useFatigue();
+  // useFatigueフックで疲労度を計算（METs基準）
+  const { hp, fatigueLevel, steps, currentMETs, caloriesBurned, isAvailable, error } = useFatigue();
 
   // 疲労度に応じたステータス
   const getFatigueStatus = (level: number) => {
@@ -24,28 +34,44 @@ export default function UserHomeScreen() {
 
   const fatigueStatus = getFatigueStatus(fatigueLevel);
 
-  const urgentNotifications = [
-    {
-      id: "1",
-      title: "水分補給の時間です",
-      description: "前回の水分補給から2時間が経過しました",
-      time: "5分前",
-      color: "#FFA726",
-    },
-    {
-      id: "2",
-      title: "休憩のおすすめ",
-      description: "疲労度が上昇しています。15分程度の休憩をお勧めします",
-      time: "15分前",
-      color: "#42A5F5",
-    },
-  ];
+  // Load urgent notifications from API
+  useEffect(() => {
+    if (!user?.id) return;
 
-  const recentActivities = [
-    "午前の散歩を完了しました",
-    "水分補給リマインダー",
-    "朝のバイタル測定完了",
-  ];
+    const loadAlerts = async () => {
+      try {
+        setIsLoadingAlerts(true);
+
+        // Fetch all alerts
+        const alerts = await getAlertsByUserId(user.id);
+
+        // Fetch alert history to determine read status
+        let checkedIds = new Set<string>();
+        try {
+          const history = await getUserAlertHistory(user.id);
+          checkedIds = new Set(
+            history
+              .filter((h: UserAlertHistory) => h.isChecked)
+              .map((h: UserAlertHistory) => h.alertId)
+          );
+        } catch (err) {
+          console.error('[UserHome] Failed to fetch alert history:', err);
+        }
+
+        // Filter unread alerts with importance >= 4
+        const urgent = alerts
+          .filter((alert) => !checkedIds.has(alert.id) && alert.importance >= 4)
+          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        setUrgentNotifications(urgent);
+      } catch (error) {
+        console.error('[UserHome] Failed to load alerts:', error);
+      } finally {
+        setIsLoadingAlerts(false);
+      }
+    };
+
+    loadAlerts();
+  }, [user?.id]);
 
   // 疲労度に応じた背景色とボーダー色を取得
   const getFatigueColors = (level: number) => {
@@ -68,25 +94,21 @@ export default function UserHomeScreen() {
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>ホーム</Text>
-            <TouchableOpacity
-              style={styles.switchViewButton}
-              onPress={() => router.push("/helper")}
-            >
-              <Text style={styles.switchViewButtonText}>
-                介助者ビューに切替
-              </Text>
-            </TouchableOpacity>
           </View>
 
           {/* User Profile Card - Compact */}
           <View style={styles.profileCard}>
             <View style={styles.profileLeft}>
               <View style={styles.avatarCircle}>
-                <Text style={styles.avatarText}>田中</Text>
+                <Text style={styles.avatarText}>
+                  {user?.name ? user.name.slice(0, 2) : '未'}
+                </Text>
               </View>
               <View style={styles.profileInfo}>
-                <Text style={styles.profileName}>田中 太郎さん</Text>
-                <Text style={styles.profileStatus}>状態: 良好</Text>
+                <Text style={styles.profileName}>
+                  {user?.name ? `${user.name}さん` : 'ユーザー'}
+                </Text>
+                <Text style={styles.profileStatus}>状態: {fatigueStatus}</Text>
               </View>
             </View>
             <TouchableOpacity
@@ -146,9 +168,11 @@ export default function UserHomeScreen() {
 
             <Text style={styles.fatigueDescription}>
               {isAvailable
-                ? `歩数: ${steps}歩 | 体力: ${hp}% から算出された疲労度です。`
+                ? `体力: ${hp}%`
                 : error || 'センサーから取得した疲労度データです。'}
-              休憩が必要な場合はお知らせします。
+            </Text>
+            <Text style={styles.fatigueSubDescription}>
+              活動量と経過時間から疲労度を算出しています。
             </Text>
           </View>
 
@@ -163,54 +187,73 @@ export default function UserHomeScreen() {
               <Text style={styles.sectionTitle}>要対応</Text>
             </View>
 
-            <View style={styles.urgentNotificationsList}>
-              {urgentNotifications.map((notification) => (
-                <View
-                  key={notification.id}
-                  style={styles.urgentNotificationItem}
-                >
-                  <View
-                    style={[
-                      styles.urgentNotificationIndicator,
-                      { backgroundColor: notification.color },
-                    ]}
-                  />
-                  <View style={styles.urgentNotificationContent}>
-                    <View style={styles.urgentNotificationTop}>
-                      <Text style={styles.urgentNotificationTitle}>
-                        {notification.title}
-                      </Text>
-                      <View style={styles.urgentNotificationTime}>
-                        <MaterialIcons
-                          name="access-time"
-                          size={14}
-                          color="#999999"
-                        />
-                        <Text style={styles.urgentNotificationTimeText}>
-                          {notification.time}
+            {isLoadingAlerts ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color="#999999" />
+              </View>
+            ) : urgentNotifications.length === 0 ? (
+              <View style={styles.emptyNotifications}>
+                <Text style={styles.emptyNotificationsText}>
+                  要対応の通知はありません
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.urgentNotificationsList}>
+                {urgentNotifications.map((notification) => {
+                  const getNotificationColor = (importance: number) => {
+                    if (importance >= 5) return "#EF5350"; // 危険
+                    if (importance >= 4) return "#FFA726"; // 警告
+                    return "#42A5F5"; // 通常
+                  };
+
+                  const formatTime = (dateString: string) => {
+                    const now = new Date();
+                    const alertTime = new Date(dateString);
+                    const diffMs = now.getTime() - alertTime.getTime();
+                    const diffMins = Math.floor(diffMs / 60000);
+
+                    if (diffMins < 1) return "たった今";
+                    if (diffMins < 60) return `${diffMins}分前`;
+                    if (diffMins < 1440) return `${Math.floor(diffMins / 60)}時間前`;
+                    return `${Math.floor(diffMins / 1440)}日前`;
+                  };
+
+                  return (
+                    <View
+                      key={notification.id}
+                      style={styles.urgentNotificationItem}
+                    >
+                      <View
+                        style={[
+                          styles.urgentNotificationIndicator,
+                          { backgroundColor: getNotificationColor(notification.importance) },
+                        ]}
+                      />
+                      <View style={styles.urgentNotificationContent}>
+                        <View style={styles.urgentNotificationTop}>
+                          <Text style={styles.urgentNotificationTitle}>
+                            {notification.title}
+                          </Text>
+                          <View style={styles.urgentNotificationTime}>
+                            <MaterialIcons
+                              name="access-time"
+                              size={14}
+                              color="#999999"
+                            />
+                            <Text style={styles.urgentNotificationTimeText}>
+                              {formatTime(notification.createdAt)}
+                            </Text>
+                          </View>
+                        </View>
+                        <Text style={styles.urgentNotificationDescription}>
+                          {notification.description}
                         </Text>
                       </View>
                     </View>
-                    <Text style={styles.urgentNotificationDescription}>
-                      {notification.description}
-                    </Text>
-                  </View>
-                </View>
-              ))}
-            </View>
-          </View>
-
-          {/* Recent Activity Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>最近の活動</Text>
-            <View style={styles.activityList}>
-              {recentActivities.map((activity, index) => (
-                <View key={index} style={styles.activityItem}>
-                  <View style={styles.activityBullet} />
-                  <Text style={styles.activityText}>{activity}</Text>
-                </View>
-              ))}
-            </View>
+                  );
+                })}
+              </View>
+            )}
           </View>
         </UserHomeLayout>
 
@@ -234,11 +277,61 @@ interface HelpRequestModalProps {
 }
 
 function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
-  const [includeLocation, setIncludeLocation] = useState(true);
+  const { user } = useAuth();
+  const [isSending, setIsSending] = useState(false);
+  const [helpSent, setHelpSent] = useState(false);
+  const [connectedHelpers, setConnectedHelpers] = useState<HelperConnectWithDetails[]>([]);
+  const [helpersWithDetails, setHelpersWithDetails] = useState<Helper[]>([]);
 
-  const handleSendHelp = () => {
-    console.log("Send help request with location:", includeLocation);
-    onClose();
+  // Reset state when modal is closed
+  useEffect(() => {
+    if (!visible) {
+      setHelpSent(false);
+      setConnectedHelpers([]);
+      setHelpersWithDetails([]);
+    }
+  }, [visible]);
+
+  const handleSendHelp = async () => {
+    if (!user?.id || !user?.name) {
+      Alert.alert('エラー', 'ユーザー情報を取得できませんでした');
+      return;
+    }
+
+    try {
+      setIsSending(true);
+
+      // Get all connected helpers
+      const connections = await getConnections();
+
+      if (connections.length === 0) {
+        Alert.alert(
+          '通知なし',
+          '現在、登録されている介助者がいません。\n設定から介助者を登録してください。'
+        );
+        onClose();
+        return;
+      }
+
+      // Create a single emergency alert for the user
+      // This will be visible to all helpers connected to this user
+      await createEmergencyHelpRequest(user.id, user.name);
+
+      // Fetch full helper details (with phone numbers)
+      const helperDetails = await Promise.all(
+        connections.map((conn) => getHelperById(conn.helperId))
+      );
+
+      // Show success state with helper list
+      setConnectedHelpers(connections);
+      setHelpersWithDetails(helperDetails);
+      setHelpSent(true);
+    } catch (error) {
+      console.error('[HelpRequest] Failed to send help request:', error);
+      Alert.alert('エラー', 'ヘルプ要請の送信に失敗しました');
+    } finally {
+      setIsSending(false);
+    }
   };
 
   return (
@@ -256,7 +349,9 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
               <View style={styles.modalWarningIcon}>
                 <Text style={styles.modalWarningIconText}>!</Text>
               </View>
-              <Text style={styles.modalTitle}>ヘルプ要請の確認</Text>
+              <Text style={styles.modalTitle}>
+                {helpSent ? 'ヘルプ要請完了' : 'ヘルプ要請の確認'}
+              </Text>
             </View>
             <TouchableOpacity onPress={onClose} style={styles.modalCloseButton}>
               <Text style={styles.modalCloseIcon}>✕</Text>
@@ -264,115 +359,91 @@ function HelpRequestModal({ visible, onClose }: HelpRequestModalProps) {
           </View>
 
           {/* Modal Content */}
-          <View style={styles.modalContent}>
-            {/* Description */}
-            <Text style={styles.modalDescription}>
-              以下の情報を登録済み介助者と緊急連絡先に送信します
-            </Text>
+          {!helpSent ? (
+            <View style={styles.modalContent}>
+              {/* Description */}
+              <Text style={styles.modalDescription}>
+                登録済み介助者と緊急連絡先にヘルプ要請を送信します
+              </Text>
 
-            {/* Recipients Section */}
-            <View style={styles.modalSection}>
-              <Text style={styles.modalSectionTitle}>送信先</Text>
-              <View style={styles.recipientsList}>
-                <View style={styles.recipientItem}>
-                  <View
-                    style={[
-                      styles.recipientAvatar,
-                      { backgroundColor: "#FFE5E5" },
-                    ]}
-                  >
-                    <Text
-                      style={[styles.recipientAvatarText, { color: "#FF6B6B" }]}
-                    >
-                      山
-                    </Text>
+              {/* Information Section */}
+              <View style={styles.modalSection}>
+                <Text style={styles.modalSectionTitle}>送信される情報</Text>
+                <View style={styles.infoList}>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoBullet}>•</Text>
+                    <Text style={styles.infoText}>現在の疲労度データ</Text>
                   </View>
-                  <View style={styles.recipientInfo}>
-                    <Text style={styles.recipientName}>山田花子</Text>
-                    <Text style={styles.recipientRelation}>娘</Text>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoBullet}>•</Text>
+                    <Text style={styles.infoText}>体調カード情報</Text>
                   </View>
-                </View>
-                <View style={styles.recipientItem}>
-                  <View
-                    style={[
-                      styles.recipientAvatar,
-                      { backgroundColor: "#FFE5E5" },
-                    ]}
-                  >
-                    <Text
-                      style={[styles.recipientAvatarText, { color: "#FF6B6B" }]}
-                    >
-                      佐
-                    </Text>
-                  </View>
-                  <View style={styles.recipientInfo}>
-                    <Text style={styles.recipientName}>佐藤健太</Text>
-                    <Text style={styles.recipientRelation}>息子</Text>
+                  <View style={styles.infoItem}>
+                    <Text style={styles.infoBullet}>•</Text>
+                    <Text style={styles.infoText}>緊急連絡先</Text>
                   </View>
                 </View>
               </View>
             </View>
+          ) : (
+            <ScrollView style={styles.modalContent}>
+              <Text style={styles.modalSuccessDescription}>
+                {helpersWithDetails.length}人の介助者にヘルプ要請を送信しました
+              </Text>
 
-            {/* Information Section */}
-            <View style={styles.modalSection}>
-              <Text style={styles.modalSectionTitle}>送信される情報</Text>
-              <View style={styles.infoList}>
-                <View style={styles.infoItem}>
-                  <Text style={styles.infoBullet}>•</Text>
-                  <Text style={styles.infoText}>現在のバイタルデータ</Text>
-                </View>
-                <View style={styles.infoItem}>
-                  <Text style={styles.infoBullet}>•</Text>
-                  <Text style={styles.infoText}>体調カード情報</Text>
-                </View>
-                <View style={styles.infoItem}>
-                  <Text style={styles.infoBullet}>•</Text>
-                  <Text style={styles.infoText}>緊急連絡先</Text>
-                </View>
+              {/* Helper List with Call Buttons */}
+              <View style={styles.helperListContainer}>
+                <Text style={styles.helperListTitle}>介助者一覧</Text>
+                {helpersWithDetails.map((helper) => (
+                  <View key={helper.id} style={styles.helperCard}>
+                    <View style={styles.helperInfo}>
+                      <Text style={styles.helperName}>{helper.name}</Text>
+                      <Text style={styles.helperRelationship}>{helper.relationship}</Text>
+                      <View style={styles.helperPhoneRow}>
+                        <MaterialIcons name="phone" size={16} color="#666666" />
+                        <Text style={styles.helperPhone}>{helper.phoneNumber}</Text>
+                      </View>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.helperCallButton}
+                      onPress={() => makePhoneCall(helper.phoneNumber, helper.name)}
+                    >
+                      <MaterialIcons name="phone" size={20} color="#FFFFFF" />
+                      <Text style={styles.helperCallButtonText}>電話</Text>
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
-            </View>
-
-            {/* Location Section */}
-            <TouchableOpacity
-              style={styles.locationOption}
-              onPress={() => setIncludeLocation(!includeLocation)}
-            >
-              <View style={styles.locationIconContainer}>
-                <MaterialIcons name="location-on" size={24} color="#FF6B6B" />
-              </View>
-              <View style={styles.locationTextContainer}>
-                <Text style={styles.locationTitle}>位置情報を含めて送信</Text>
-                <Text style={styles.locationSubtitle}>現在地: 自宅</Text>
-              </View>
-              <View style={styles.checkboxContainer}>
-                <View
-                  style={[
-                    styles.checkbox,
-                    includeLocation && styles.checkboxChecked,
-                  ]}
-                >
-                  {includeLocation && (
-                    <Text style={styles.checkboxIcon}>✓</Text>
-                  )}
-                </View>
-              </View>
-            </TouchableOpacity>
-          </View>
+            </ScrollView>
+          )}
 
           {/* Modal Footer */}
           <View style={styles.modalFooter}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>キャンセル</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.sendHelpButton}
-              onPress={handleSendHelp}
-            >
-              <View style={styles.sendHelpButtonContent}>
-                <Text style={styles.sendHelpIcon}>⚠</Text>
-                <Text style={styles.sendHelpButtonText}>ヘルプを送信</Text>
-              </View>
-            </TouchableOpacity>
+            {!helpSent ? (
+              <>
+                <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                  <Text style={styles.cancelButtonText}>キャンセル</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.sendHelpButton, isSending && { opacity: 0.6 }]}
+                  onPress={handleSendHelp}
+                  disabled={isSending}
+                >
+                  {isSending ? (
+                    <ActivityIndicator color="#FFFFFF" />
+                  ) : (
+                    <View style={styles.sendHelpButtonContent}>
+                      <Text style={styles.sendHelpIcon}>⚠</Text>
+                      <Text style={styles.sendHelpButtonText}>ヘルプを送信</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </>
+            ) : (
+              <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+                <Text style={styles.closeButtonText}>閉じる</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>

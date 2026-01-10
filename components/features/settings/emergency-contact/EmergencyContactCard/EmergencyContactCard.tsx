@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import type { EmergencyContact } from '@/_schema/emergency-contact';
+import { makePhoneCall } from '@/_util/phoneHelper';
 import { styles } from './styles';
 
 interface EmergencyContactCardProps {
@@ -11,6 +12,10 @@ interface EmergencyContactCardProps {
 }
 
 export function EmergencyContactCard({ contact, onPress, onDelete }: EmergencyContactCardProps) {
+  const handlePhoneCall = () => {
+    makePhoneCall(contact.phoneNumber, contact.name);
+  };
+
   return (
     <View style={styles.contactCard}>
       <TouchableOpacity style={styles.contactContent} onPress={onPress}>
@@ -35,6 +40,9 @@ export function EmergencyContactCard({ contact, onPress, onDelete }: EmergencyCo
           <View style={styles.detailRow}>
             <MaterialIcons name="phone" size={16} color="#666666" />
             <Text style={styles.detailText}>{contact.phoneNumber}</Text>
+            <TouchableOpacity style={styles.callButton} onPress={handlePhoneCall}>
+              <MaterialIcons name="phone" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
           </View>
           {contact.email && (
             <View style={styles.detailRow}>

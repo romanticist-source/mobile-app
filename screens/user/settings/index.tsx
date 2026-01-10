@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, TextInput, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { UserHomeLayout } from '@/components/layouts/UserHomeLayout/UserHomeLayout';
@@ -7,6 +7,8 @@ import { BottomNavigation } from '@/components/layouts/BottomNavigation/BottomNa
 import { USER_ROUTES } from '@/_util/navigationRoutes';
 import { styles } from './styles';
 import type { ComponentProps } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { createFatigueAlert, createEmergencyHelpRequest, createMedicationNotification, createToiletNotification } from '@/_util/notificationHelper';
 
 type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 
@@ -25,9 +27,105 @@ interface SettingSection {
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Test notification handlers
+  const handleTestFatigueAlert = async () => {
+    if (!user?.id) {
+      Alert.alert('エラー', 'ユーザー情報が取得できませんでした');
+      return;
+    }
+
+    try {
+      await createFatigueAlert(user.id, 85, 30);
+      Alert.alert('成功', '疲労度アラート（危険レベル）を送信しました');
+    } catch (error) {
+      console.error('[Test] Failed to send fatigue alert:', error);
+      Alert.alert('エラー', '疲労度アラートの送信に失敗しました');
+    }
+  };
+
+  const handleTestEmergencyAlert = async () => {
+    if (!user?.id || !user?.name) {
+      Alert.alert('エラー', 'ユーザー情報が取得できませんでした');
+      return;
+    }
+
+    try {
+      await createEmergencyHelpRequest(user.id, user.name);
+      Alert.alert('成功', '緊急ヘルプ要請を送信しました');
+    } catch (error) {
+      console.error('[Test] Failed to send emergency alert:', error);
+      Alert.alert('エラー', '緊急アラートの送信に失敗しました');
+    }
+  };
+
+  const handleTestMedicationAlert = async () => {
+    if (!user?.id) {
+      Alert.alert('エラー', 'ユーザー情報が取得できませんでした');
+      return;
+    }
+
+    try {
+      await createMedicationNotification(user.id, '血圧の薬');
+      Alert.alert('成功', '服薬リマインダーを送信しました');
+    } catch (error) {
+      console.error('[Test] Failed to send medication alert:', error);
+      Alert.alert('エラー', '服薬アラートの送信に失敗しました');
+    }
+  };
+
+  const handleTestToiletAlert = async () => {
+    if (!user?.id) {
+      Alert.alert('エラー', 'ユーザー情報が取得できませんでした');
+      return;
+    }
+
+    try {
+      await createToiletNotification(user.id);
+      Alert.alert('成功', 'トイレリマインダーを送信しました');
+    } catch (error) {
+      console.error('[Test] Failed to send toilet alert:', error);
+      Alert.alert('エラー', 'トイレアラートの送信に失敗しました');
+    }
+  };
+
   const settingSections: SettingSection[] = [
+    // Development/Test section - only show in development mode
+    {
+      title: '🧪 テスト機能（開発用）',
+      items: [
+        {
+          id: 'test-fatigue-alert',
+          icon: 'warning',
+          title: '疲労度アラート通知をテスト',
+          description: '危険レベル（85%）の通知を送信（表示値は変わりません）',
+          onPress: handleTestFatigueAlert,
+        },
+        {
+          id: 'test-emergency-alert',
+          icon: 'emergency',
+          title: '緊急ヘルプ要請をテスト',
+          description: '緊急ヘルプ要請アラートを送信',
+          onPress: handleTestEmergencyAlert,
+        },
+        {
+          id: 'test-medication-alert',
+          icon: 'medication',
+          title: '服薬リマインダーをテスト',
+          description: '服薬時間のリマインダーを送信',
+          onPress: handleTestMedicationAlert,
+        },
+        {
+          id: 'test-toilet-alert',
+          icon: 'schedule',
+          title: 'トイレリマインダーをテスト',
+          description: 'トイレタイミングのリマインダーを送信',
+          onPress: handleTestToiletAlert,
+        },
+      ],
+    },
     {
       title: '通知とアラート',
       items: [
