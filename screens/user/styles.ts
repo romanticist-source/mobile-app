@@ -110,71 +110,85 @@ export const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  // Vital Data Grid
-  vitalGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 16,
-    marginBottom: 24,
-    gap: 12,
-  },
-  vitalCard: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
+  // Fatigue Card
+  fatigueCard: {
+    marginHorizontal: 16,
+    marginBottom: 20,
+    padding: 20,
     borderRadius: 16,
-    borderWidth: 2,
+    borderWidth: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 6,
     elevation: 3,
-    width: '48%',
   },
-  vitalCardLarge: {
-    width: '100%',
+  fatigueHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  vitalCardHeader: {
+  fatigueTitle: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginBottom: 12,
   },
-  vitalCardTitle: {
-    fontSize: 14,
+  fatigueTitleText: {
+    fontSize: 15,
     fontWeight: '600',
     color: '#333333',
   },
-  vitalCardContent: {
+  fatigueStatusBadge: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  fatigueStatusText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#333333',
+  },
+  fatigueContent: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginBottom: 8,
+    marginBottom: 16,
   },
-  vitalCardValue: {
-    fontSize: 32,
+  fatigueValue: {
+    fontSize: 56,
     fontWeight: 'bold',
     color: '#333333',
-    lineHeight: 36,
+    lineHeight: 56,
   },
-  vitalCardUnit: {
-    fontSize: 16,
+  fatigueUnit: {
+    fontSize: 24,
     fontWeight: '600',
     color: '#666666',
     marginLeft: 4,
   },
-  vitalCardSubtext: {
-    fontSize: 11,
-    color: '#666666',
-  },
   fatigueProgressContainer: {
-    height: 8,
+    height: 12,
     backgroundColor: '#E0E0E0',
-    borderRadius: 4,
+    borderRadius: 6,
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   fatigueProgressBar: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 6,
+  },
+  fatigueDescription: {
+    fontSize: 12,
+    color: '#666666',
+    lineHeight: 18,
+    marginBottom: 4,
+  },
+  fatigueSubDescription: {
+    fontSize: 11,
+    color: '#999999',
+    lineHeight: 16,
+    fontStyle: 'italic',
   },
   // Section
   section: {

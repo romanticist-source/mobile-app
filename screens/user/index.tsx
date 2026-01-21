@@ -1,9 +1,7 @@
 import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNavigation";
 import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
-import { VitalCard } from "@/components/features/vitals/VitalCard/VitalCard";
 
 import { useFatigue } from "@/hooks/useFatigue";
-import { useWatchData } from "@/hooks/useWatchData";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
@@ -26,9 +24,6 @@ export default function UserHomeScreen() {
 
   // useFatigueフックで疲労度を計算（METs基準）
   const { hp, fatigueLevel, steps, currentMETs, caloriesBurned, isAvailable, error } = useFatigue();
-
-  // Watch連携でバイタルデータを取得（iOS/Android自動切り替え）
-  const { vitalData, isLoading: isLoadingWatch } = useWatchData();
 
   // 疲労度に応じたステータス
   const getFatigueStatus = (level: number) => {
@@ -133,72 +128,52 @@ export default function UserHomeScreen() {
             <Text style={styles.helpButtonText}>ヘルプ要請</Text>
           </TouchableOpacity>
 
-          {/* Vital Data Grid */}
-          <View style={styles.vitalGrid}>
-            {/* Fatigue Level Card */}
-            <VitalCard
-              icon="show-chart"
-              iconColor="#333333"
-              title="疲労度"
-              value={fatigueLevel}
-              unit="%"
-              subtext={isAvailable ? `体力: ${hp}%` : '計測中...'}
-              backgroundColor={fatigueColors.bg}
-              borderColor={fatigueColors.border}
-              isLarge={true}
-              progressBar={{
-                percentage: fatigueLevel,
-                color: fatigueColors.progress,
-              }}
-            />
+          {/* Fatigue Level Card */}
+          <View
+            style={[
+              styles.fatigueCard,
+              {
+                backgroundColor: fatigueColors.bg,
+                borderColor: fatigueColors.border,
+              },
+            ]}
+          >
+            <View style={styles.fatigueHeader}>
+              <View style={styles.fatigueTitle}>
+                <MaterialIcons name="show-chart" size={20} color="#333333" />
+                <Text style={styles.fatigueTitleText}>現在の疲労度</Text>
+              </View>
+              <View style={styles.fatigueStatusBadge}>
+                <Text style={styles.fatigueStatusText}>{fatigueStatus}</Text>
+              </View>
+            </View>
 
-            {/* Heart Rate Card */}
-            <VitalCard
-              icon="favorite"
-              iconColor="#EF5350"
-              title="心拍数"
-              value={isLoadingWatch ? '...' : vitalData.heartRate ?? '--'}
-              unit="bpm"
-              subtext={vitalData.isConnected ? 'Watch接続中' : '正常範囲'}
-              backgroundColor="#FFEBEE"
-              borderColor="#EF5350"
-            />
+            <View style={styles.fatigueContent}>
+              <Text style={styles.fatigueValue}>{fatigueLevel}</Text>
+              <Text style={styles.fatigueUnit}>%</Text>
+            </View>
 
-            {/* Blood Pressure Card */}
-            <VitalCard
-              icon="water-drop"
-              iconColor="#42A5F5"
-              title="血圧"
-              value={isLoadingWatch ? '...' : vitalData.bloodPressureSystolic ?? '--'}
-              unit={`/${isLoadingWatch ? '..' : vitalData.bloodPressureDiastolic ?? '--'}`}
-              subtext="mmHg"
-              backgroundColor="#E3F2FD"
-              borderColor="#42A5F5"
-            />
+            {/* Progress Bar */}
+            <View style={styles.fatigueProgressContainer}>
+              <View
+                style={[
+                  styles.fatigueProgressBar,
+                  {
+                    backgroundColor: fatigueColors.progress,
+                    width: `${fatigueLevel}%`,
+                  },
+                ]}
+              />
+            </View>
 
-            {/* Body Temperature Card */}
-            <VitalCard
-              icon="thermostat"
-              iconColor="#FFA726"
-              title="体温"
-              value={isLoadingWatch ? '...' : vitalData.bodyTemperature?.toFixed(1) ?? '--'}
-              unit="°C"
-              subtext="平熱"
-              backgroundColor="#FFF3E0"
-              borderColor="#FFA726"
-            />
-
-            {/* SpO2 Card */}
-            <VitalCard
-              icon="air"
-              iconColor="#4CAF50"
-              title="SpO2"
-              value={isLoadingWatch ? '...' : vitalData.spo2 ?? '--'}
-              unit="%"
-              subtext="正常"
-              backgroundColor="#E8F5E9"
-              borderColor="#4CAF50"
-            />
+            <Text style={styles.fatigueDescription}>
+              {isAvailable
+                ? `体力: ${hp}%`
+                : error || 'センサーから取得した疲労度データです。'}
+            </Text>
+            <Text style={styles.fatigueSubDescription}>
+              活動量と経過時間から疲労度を算出しています。
+            </Text>
           </View>
 
           {/* Urgent Notifications Section */}
