@@ -4,7 +4,7 @@ import { Image, Text, View, TouchableOpacity, TextInput, Alert, ActivityIndicato
 import { styles, logoStyles } from './styles';
 import { useAuth } from '@/contexts/AuthContext';
 
-const logoImage = require('../../assets/images/logo.png');
+const logoImage = require('../../assets/images/mielink_logo2.png');
 
 // キャッチフレーズのコンポーネント
 function Catchphrase() {
