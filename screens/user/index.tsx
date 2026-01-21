@@ -95,7 +95,9 @@ export default function UserHomeScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <UserHomeLayout>
+        <UserHomeLayout
+          isWatchConnected={vitalData.isConnected}
+        >
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>ホーム</Text>
@@ -162,6 +164,7 @@ export default function UserHomeScreen() {
               subtext={vitalData.isConnected ? 'Watch接続中' : '正常範囲'}
               backgroundColor="#FFEBEE"
               borderColor="#EF5350"
+              lastUpdated={vitalData.lastUpdated}
             />
 
             {/* Blood Pressure Card */}
@@ -174,6 +177,7 @@ export default function UserHomeScreen() {
               subtext="mmHg"
               backgroundColor="#E3F2FD"
               borderColor="#42A5F5"
+              lastUpdated={vitalData.lastUpdated}
             />
 
             {/* Body Temperature Card */}
@@ -186,6 +190,7 @@ export default function UserHomeScreen() {
               subtext="平熱"
               backgroundColor="#FFF3E0"
               borderColor="#FFA726"
+              lastUpdated={vitalData.lastUpdated}
             />
 
             {/* SpO2 Card */}
@@ -198,6 +203,7 @@ export default function UserHomeScreen() {
               subtext="正常"
               backgroundColor="#E8F5E9"
               borderColor="#4CAF50"
+              lastUpdated={vitalData.lastUpdated}
             />
           </View>
 
