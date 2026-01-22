@@ -95,7 +95,9 @@ export default function UserHomeScreen() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <UserHomeLayout>
+        <UserHomeLayout
+          isWatchConnected={vitalData.isConnected}
+        >
           {/* Page Title */}
           <View style={styles.pageHeader}>
             <Text style={styles.pageTitle}>ホーム</Text>
@@ -157,35 +159,56 @@ export default function UserHomeScreen() {
               icon="favorite"
               iconColor="#EF5350"
               title="心拍数"
-              value={isLoadingWatch ? '...' : vitalData.heartRate ?? '--'}
-              unit="bpm"
-              subtext={vitalData.isConnected ? 'Watch接続中' : '正常範囲'}
+              value={isLoadingWatch ? '...' : vitalData.heartRate ?? '-'}
+              unit={vitalData.heartRate !== null ? 'bpm' : ''}
+              subtext={
+                vitalData.platform === 'web'
+                  ? 'Web版では利用不可'
+                  : vitalData.isConnected
+                    ? 'Watch接続中'
+                    : 'Watch未接続'
+              }
               backgroundColor="#FFEBEE"
               borderColor="#EF5350"
+              lastUpdated={vitalData.lastUpdated}
             />
 
-            {/* Blood Pressure Card */}
+            {/* Steps Card */}
             <VitalCard
-              icon="water-drop"
+              icon="directions-walk"
               iconColor="#42A5F5"
-              title="血圧"
-              value={isLoadingWatch ? '...' : vitalData.bloodPressureSystolic ?? '--'}
-              unit={`/${isLoadingWatch ? '..' : vitalData.bloodPressureDiastolic ?? '--'}`}
-              subtext="mmHg"
+              title="歩数"
+              value={isLoadingWatch ? '...' : vitalData.steps?.toLocaleString() ?? '-'}
+              unit={vitalData.steps !== null ? '歩' : ''}
+              subtext={
+                vitalData.platform === 'web'
+                  ? 'Web版では利用不可'
+                  : vitalData.isConnected
+                    ? '今日の歩数'
+                    : 'Watch未接続'
+              }
               backgroundColor="#E3F2FD"
               borderColor="#42A5F5"
+              lastUpdated={vitalData.lastUpdated}
             />
 
-            {/* Body Temperature Card */}
+            {/* HRV Card */}
             <VitalCard
-              icon="thermostat"
+              icon="timeline"
               iconColor="#FFA726"
-              title="体温"
-              value={isLoadingWatch ? '...' : vitalData.bodyTemperature?.toFixed(1) ?? '--'}
-              unit="°C"
-              subtext="平熱"
+              title="HRV"
+              value={isLoadingWatch ? '...' : vitalData.hrv ?? '-'}
+              unit={vitalData.hrv !== null ? 'ms' : ''}
+              subtext={
+                vitalData.platform === 'web'
+                  ? 'Web版では利用不可'
+                  : vitalData.isConnected
+                    ? '心拍変動'
+                    : 'Watch未接続'
+              }
               backgroundColor="#FFF3E0"
               borderColor="#FFA726"
+              lastUpdated={vitalData.lastUpdated}
             />
 
             {/* SpO2 Card */}
@@ -193,11 +216,18 @@ export default function UserHomeScreen() {
               icon="air"
               iconColor="#4CAF50"
               title="SpO2"
-              value={isLoadingWatch ? '...' : vitalData.spo2 ?? '--'}
-              unit="%"
-              subtext="正常"
+              value={isLoadingWatch ? '...' : vitalData.spo2 ?? '-'}
+              unit={vitalData.spo2 !== null ? '%' : ''}
+              subtext={
+                vitalData.platform === 'web'
+                  ? 'Web版では利用不可'
+                  : vitalData.isConnected
+                    ? '血中酸素濃度'
+                    : 'Watch未接続'
+              }
               backgroundColor="#E8F5E9"
               borderColor="#4CAF50"
+              lastUpdated={vitalData.lastUpdated}
             />
           </View>
 

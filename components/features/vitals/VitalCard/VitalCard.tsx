@@ -20,6 +20,23 @@ interface VitalCardProps {
     percentage: number;
     color: string;
   };
+  lastUpdated?: Date | null;
+}
+
+/**
+ * 最終更新時間を「○分前」形式でフォーマット
+ */
+function formatLastUpdated(date: Date | null | undefined): string {
+  if (!date) return '';
+
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+
+  if (diffMins < 1) return '今';
+  if (diffMins < 60) return `${diffMins}分前`;
+  if (diffMins < 1440) return `${Math.floor(diffMins / 60)}時間前`;
+  return `${Math.floor(diffMins / 1440)}日前`;
 }
 
 export function VitalCard({
@@ -33,6 +50,7 @@ export function VitalCard({
   borderColor,
   isLarge = false,
   progressBar,
+  lastUpdated,
 }: VitalCardProps) {
   return (
     <View
@@ -43,8 +61,13 @@ export function VitalCard({
       ]}
     >
       <View style={styles.vitalCardHeader}>
-        <MaterialIcons name={icon} size={isLarge ? 20 : 18} color={iconColor} />
-        <Text style={styles.vitalCardTitle}>{title}</Text>
+        <View style={styles.vitalCardTitleRow}>
+          <MaterialIcons name={icon} size={isLarge ? 20 : 18} color={iconColor} />
+          <Text style={styles.vitalCardTitle}>{title}</Text>
+        </View>
+        {lastUpdated && (
+          <Text style={styles.lastUpdated}>{formatLastUpdated(lastUpdated)}</Text>
+        )}
       </View>
 
       <View style={styles.vitalCardContent}>

@@ -19,13 +19,22 @@ export const styles = StyleSheet.create({
   vitalCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'space-between',
     marginBottom: 12,
+  },
+  vitalCardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   vitalCardTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: '#333333',
+  },
+  lastUpdated: {
+    fontSize: 10,
+    color: '#999999',
   },
   vitalCardContent: {
     flexDirection: 'row',
