@@ -3,22 +3,22 @@ import { Platform } from 'react-native';
 
 export interface WatchVitalData {
   heartRate: number | null;
-  bloodPressureSystolic: number | null;
-  bloodPressureDiastolic: number | null;
-  bodyTemperature: number | null;
   spo2: number | null;
+  hrv: number | null;
+  steps: number | null;
   lastUpdated: Date | null;
   isConnected: boolean;
+  platform: 'ios' | 'android' | 'web';
 }
 
 const initialData: WatchVitalData = {
   heartRate: null,
-  bloodPressureSystolic: null,
-  bloodPressureDiastolic: null,
-  bodyTemperature: null,
   spo2: null,
+  hrv: null,
+  steps: null,
   lastUpdated: null,
   isConnected: false,
+  platform: 'web',
 };
 
 /**
@@ -47,45 +47,49 @@ export function useWatchData() {
           console.log('[useWatchData] iOS platform detected - Apple Watch integration');
           // TODO: iOS用のWatch連携実装
           // import { getWatchDataIOS } from '@/_util/watchConnector.ios';
-          // data = await getWatchDataIOS();
+          // const watchData = await getWatchDataIOS();
+          // if (watchData.isConnected) { data = watchData; }
 
-          // 暫定的にモックデータ
+          // 暫定的にWatch未接続状態（実装後は実際の接続状態を返す）
+          const isWatchConnected = false; // TODO: 実際のWatch接続状態を取得
           data = {
-            heartRate: 72,
-            bloodPressureSystolic: 120,
-            bloodPressureDiastolic: 80,
-            bodyTemperature: 36.5,
-            spo2: 98,
-            lastUpdated: new Date(),
-            isConnected: false,
+            heartRate: isWatchConnected ? 72 : null,
+            spo2: isWatchConnected ? 98 : null,
+            hrv: isWatchConnected ? 45 : null,
+            steps: isWatchConnected ? 5432 : null,
+            lastUpdated: isWatchConnected ? new Date() : null,
+            isConnected: isWatchConnected,
+            platform: 'ios',
           };
         } else if (Platform.OS === 'android') {
           console.log('[useWatchData] Android platform detected - Wear OS integration');
           // TODO: Android用のWatch連携実装
           // import { getWatchDataAndroid } from '@/_util/watchConnector.android';
-          // data = await getWatchDataAndroid();
+          // const watchData = await getWatchDataAndroid();
+          // if (watchData.isConnected) { data = watchData; }
 
-          // 暫定的にモックデータ
+          // 暫定的にWatch未接続状態（実装後は実際の接続状態を返す）
+          const isWatchConnected = false; // TODO: 実際のWatch接続状態を取得
           data = {
-            heartRate: 75,
-            bloodPressureSystolic: 118,
-            bloodPressureDiastolic: 78,
-            bodyTemperature: 36.6,
-            spo2: 97,
-            lastUpdated: new Date(),
-            isConnected: false,
+            heartRate: isWatchConnected ? 75 : null,
+            spo2: isWatchConnected ? 97 : null,
+            hrv: isWatchConnected ? 42 : null,
+            steps: isWatchConnected ? 6128 : null,
+            lastUpdated: isWatchConnected ? new Date() : null,
+            isConnected: isWatchConnected,
+            platform: 'android',
           };
         } else {
-          // Web環境の場合はモックデータ
-          console.log('[useWatchData] Web platform detected, using mock data');
+          // Web環境ではWatch連携不可
+          console.log('[useWatchData] Web platform detected - Watch integration not available');
           data = {
-            heartRate: 72,
-            bloodPressureSystolic: 120,
-            bloodPressureDiastolic: 80,
-            bodyTemperature: 36.5,
-            spo2: 98,
-            lastUpdated: new Date(),
+            heartRate: null,
+            spo2: null,
+            hrv: null,
+            steps: null,
+            lastUpdated: null,
             isConnected: false,
+            platform: 'web',
           };
         }
 

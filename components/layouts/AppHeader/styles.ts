@@ -19,18 +19,24 @@ export const styles = StyleSheet.create({
     zIndex: 10,
   },
   headerLeft: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  appTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333333',
+  headerCenter: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  logo: {
+    height: 32,
+    width: 120,
   },
   headerRight: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    justifyContent: 'flex-end',
   },
   watchStatus: {
     flexDirection: 'row',
@@ -56,6 +62,11 @@ export const styles = StyleSheet.create({
     fontSize: 11,
     color: '#666666',
     marginLeft: 2,
+  },
+  connectionStatus: {
+    padding: 8,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 16,
   },
   notificationButton: {
     padding: 4,

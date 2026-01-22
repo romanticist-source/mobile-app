@@ -1,6 +1,5 @@
-import { usePathname, useRouter } from 'expo-router';
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { styles } from './styles';
 
@@ -10,31 +9,22 @@ interface AppHeaderProps {
 }
 
 export function AppHeader({ isWatchConnected = false, watchBattery }: AppHeaderProps) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const isHelperMode = pathname.startsWith('/helper');
-
-  // Determine UI content based on mode
-  const title = isHelperMode ? '介助者アプリ' : 'みまもりケア';
-
-  const handleNotificationPress = () => {
-    if (isHelperMode) {
-      router.push('/helper/notifications');
-    } else {
-      router.push('/user/notifications');
-    }
-  };
-
   return (
     <View style={styles.header}>
-      {/* Left: App Title */}
-      <View style={styles.headerLeft}>
-        <Text style={styles.appTitle}>{title}</Text>
+      {/* Left: Empty for balance */}
+      <View style={styles.headerLeft} />
+
+      {/* Center: Logo */}
+      <View style={styles.headerCenter}>
+        <Image
+          source={require('@/assets/images/mielink_new .png')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
       </View>
 
-      {/* Right: Watch Status + Notification Bell */}
+      {/* Right: Watch Status */}
       <View style={styles.headerRight}>
-        {/* Watch Connection Status */}
         <View style={styles.watchStatus}>
           <View style={[
             styles.watchIndicator,
@@ -49,14 +39,6 @@ export function AppHeader({ isWatchConnected = false, watchBattery }: AppHeaderP
             <Text style={styles.watchBattery}>{watchBattery}%</Text>
           )}
         </View>
-
-        {/* Notification Bell */}
-        <TouchableOpacity
-          style={styles.notificationButton}
-          onPress={handleNotificationPress}
-        >
-          <MaterialIcons name="notifications" size={24} color="#333333" />
-        </TouchableOpacity>
       </View>
     </View>
   );
