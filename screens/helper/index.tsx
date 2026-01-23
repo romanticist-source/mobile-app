@@ -5,6 +5,7 @@ import {
   getUserAlertHistory,
   markAlertAsCheckedByUser,
 } from "@/api/alerts";
+import { getUserFatigueByUserId } from "@/api/user-fatigue";
 import { getUserSchedulesByUserId } from "@/api/user-schedules";
 import { getUserById } from "@/api/users";
 import { NotificationCard } from "@/components/features/notifications/NotificationCard/NotificationCard";
@@ -14,7 +15,7 @@ import { useHelperUserConnection } from "@/hooks/useHelperUserConnection";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 import { logout } from "@/api/auth";
 
@@ -29,12 +30,10 @@ export default function HelperHomeScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkedAlertIds, setCheckedAlertIds] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
-
-  // Mock data for fatigue level - 将来的にはAPIから取得
-  const fatigueLevel = 45;
-  const fatigueStatus = getFatigueStatus(fatigueLevel);
+  const [fatigueLevel, setFatigueLevel] = useState<number | null>(null);
+  const [fatigueLoading, setFatigueLoading] = useState(false);
 
   const getFatigueColors = (level: number) => {
     if (level < 30) {
@@ -61,16 +60,37 @@ export default function HelperHomeScreen() {
     }
   };
 
-  const fatigueColors = getFatigueColors(fatigueLevel);
+  const fatigueColors = getFatigueColors(fatigueLevel ?? 0);
 
   const fetchData = async () => {
     if (!userId || connectionLoading) return;
 
     setLoading(true);
+    setFatigueLoading(true);
     try {
       // Fetch user data
       const userData = await getUserById(userId);
       setUser(userData);
+
+      // Fetch fatigue from DB
+      try {
+        const fatigueRecords = await getUserFatigueByUserId(userId);
+        if (fatigueRecords.length > 0) {
+          // Get the most recent fatigue record
+          const latestFatigue = fatigueRecords.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          )[0];
+          setFatigueLevel(latestFatigue.fatigueLevel);
+        } else {
+          setFatigueLevel(null);
+        }
+      } catch (err) {
+        console.error("Failed to fetch fatigue:", err);
+        setFatigueLevel(null);
+      } finally {
+        setFatigueLoading(false);
+      }
 
       // Fetch alerts
       const alerts = await getAlertsByUserId(userId);
@@ -82,7 +102,7 @@ export default function HelperHomeScreen() {
         checkedIds = new Set(
           history
             .filter((h: UserAlertHistory) => h.isChecked)
-            .map((h: UserAlertHistory) => h.alertId)
+            .map((h: UserAlertHistory) => h.alertId),
         );
         setCheckedAlertIds(checkedIds);
       } catch (err) {
@@ -99,7 +119,7 @@ export default function HelperHomeScreen() {
       const schedules = await getUserSchedulesByUserId(userId);
       const today = new Date().toISOString().split("T")[0];
       const todaySchedules = schedules.filter((schedule) =>
-        schedule.startAt?.startsWith(today)
+        schedule.startAt?.startsWith(today),
       );
       setTodayScheduleCount(todaySchedules.length);
     } catch (error) {
@@ -135,11 +155,82 @@ export default function HelperHomeScreen() {
   };
 
   const unreadHighCount = urgentNotifications.filter(
-    (n) => n.importance === 3
+    (n) => n.importance === 3,
   ).length;
   const unreadMediumCount = urgentNotifications.filter(
-    (n) => n.importance === 2
+    (n) => n.importance === 2,
   ).length;
+
+  // Show "not connected" view when no user is connected
+  if (!connectionLoading && !userId) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={styles.container}>
+          <UserHomeLayout>
+            <View style={styles.pageHeader}>
+              <Text style={styles.pageTitle}>ホーム</Text>
+              <TouchableOpacity
+                style={styles.switchViewButton}
+                onPress={() => router.push("/user")}
+              >
+                <Text style={styles.switchViewButtonText}>
+                  ユーザービューに切替
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Not Connected Card */}
+            <View
+              style={[
+                styles.userOverviewCard,
+                { alignItems: "center", paddingVertical: 40 },
+              ]}
+            >
+              <MaterialIcons name="person-off" size={64} color="#CCCCCC" />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "600",
+                  color: "#333",
+                  marginTop: 16,
+                  marginBottom: 8,
+                }}
+              >
+                ユーザーと連携していません
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: "#666",
+                  textAlign: "center",
+                  marginBottom: 20,
+                }}
+              >
+                ユーザーと連携することで、{"\n"}健康状態や予定を確認できます
+              </Text>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "#FF6B6B",
+                  paddingHorizontal: 24,
+                  paddingVertical: 12,
+                  borderRadius: 8,
+                }}
+                onPress={() => router.push("/helper/requests")}
+              >
+                <Text
+                  style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "600" }}
+                >
+                  連携設定へ
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </UserHomeLayout>
+          <BottomNavigation activeTab="home" />
+        </View>
+      </>
+    );
+  }
 
   return (
     <>
@@ -198,21 +289,39 @@ export default function HelperHomeScreen() {
           >
             <View style={styles.fatigueHeader}>
               <Text style={styles.fatigueTitle}>疲労度</Text>
-              <Text
-                style={[
-                  styles.fatigueStatusText,
-                  { color: fatigueColors.text },
-                ]}
-              >
-                {fatigueColors.status}
-              </Text>
+              {fatigueLoading ? (
+                <ActivityIndicator size="small" color="#FF6B6B" />
+              ) : fatigueLevel !== null ? (
+                <Text
+                  style={[
+                    styles.fatigueStatusText,
+                    { color: fatigueColors.text },
+                  ]}
+                >
+                  {fatigueColors.status}
+                </Text>
+              ) : (
+                <Text style={[styles.fatigueStatusText, { color: "#999" }]}>
+                  データなし
+                </Text>
+              )}
             </View>
             <View style={styles.fatigueBody}>
-              <Text
-                style={[styles.fatigueValue, { color: fatigueColors.text }]}
-              >
-                {fatigueLevel}%
-              </Text>
+              {fatigueLoading ? (
+                <Text style={[styles.fatigueValue, { color: "#CCCCCC" }]}>
+                  ---%
+                </Text>
+              ) : fatigueLevel !== null ? (
+                <Text
+                  style={[styles.fatigueValue, { color: fatigueColors.text }]}
+                >
+                  {fatigueLevel}%
+                </Text>
+              ) : (
+                <Text style={[styles.fatigueValue, { color: "#CCCCCC" }]}>
+                  ---%
+                </Text>
+              )}
             </View>
             <View style={styles.fatigueProgressContainer}>
               <View style={styles.fatigueProgressBg}>
@@ -220,7 +329,7 @@ export default function HelperHomeScreen() {
                   style={[
                     styles.fatigueProgressBar,
                     {
-                      width: `${fatigueLevel}%`,
+                      width: fatigueLevel !== null ? `${fatigueLevel}%` : "0%",
                       backgroundColor: fatigueColors.text,
                     },
                   ]}

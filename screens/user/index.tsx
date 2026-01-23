@@ -2,7 +2,7 @@ import { BottomNavigation } from "@/components/layouts/BottomNavigation/BottomNa
 import { UserHomeLayout } from "@/components/layouts/UserHomeLayout/UserHomeLayout";
 import { VitalCard } from "@/components/features/vitals/VitalCard/VitalCard";
 
-import { useFatigue } from "@/hooks/useFatigue";
+import { useFatigueContext } from "@/contexts/FatigueContext";
 import { useWatchData } from "@/hooks/useWatchData";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
@@ -24,8 +24,8 @@ export default function UserHomeScreen() {
   const router = useRouter();
   const { user } = useAuth();
 
-  // useFatigueフックで疲労度を計算（METs基準）
-  const { hp, fatigueLevel, steps, currentMETs, caloriesBurned, isAvailable, error } = useFatigue();
+  // FatigueContextから疲労度を取得（METs基準）
+  const { hp, fatigueLevel, isAvailable } = useFatigueContext();
 
   // Watch連携でバイタルデータを取得（iOS/Android自動切り替え）
   const { vitalData, isLoading: isLoadingWatch } = useWatchData();
