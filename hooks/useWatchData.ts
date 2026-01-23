@@ -24,8 +24,9 @@ const initialData: WatchVitalData = {
 
 /**
  * Watch連携でバイタルデータを取得するカスタムフック
- * iOS: Apple Watch (HealthKit)
- * Android: Wear OS (Health Services API)
+ *
+ * iOS: Apple Watch (HealthKit) - heartRate, spo2, hrv, steps
+ * Android: Wear OS (Health Services API) - heartRate, hrv のみ
  */
 export function useWatchData() {
   const [vitalData, setVitalData] = useState<WatchVitalData>(initialData);
@@ -43,11 +44,15 @@ export function useWatchData() {
         };
       }
 
+      // Android: heartRate と hrv のみ
+      // iOS: すべてのデータ
+      const isAndroid = Platform.OS === 'android';
+
       return {
         heartRate: healthData.heartRate ?? null,
-        spo2: healthData.oxygenLevel ?? null,
+        spo2: isAndroid ? null : (healthData.oxygenLevel ?? null),
         hrv: healthData.hrv ?? null,
-        steps: healthData.steps ?? null,
+        steps: isAndroid ? null : (healthData.steps ?? null),
         lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
         isConnected: true,
         platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
@@ -100,17 +105,26 @@ export function useWatchData() {
       setIsLoading(true);
       setError(null);
       const healthData = await getLatestHealthData();
-      const convertedData = healthData
-        ? {
-            heartRate: healthData.heartRate ?? null,
-            spo2: healthData.oxygenLevel ?? null,
-            hrv: healthData.hrv ?? null,
-            steps: healthData.steps ?? null,
-            lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
-            isConnected: true,
-            platform: (Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web') as 'ios' | 'android' | 'web',
-          }
-        : initialData;
+
+      if (!healthData) {
+        setVitalData(initialData);
+        return;
+      }
+
+      // Android: heartRate と hrv のみ
+      // iOS: すべてのデータ
+      const isAndroid = Platform.OS === 'android';
+
+      const convertedData: WatchVitalData = {
+        heartRate: healthData.heartRate ?? null,
+        spo2: isAndroid ? null : (healthData.oxygenLevel ?? null),
+        hrv: healthData.hrv ?? null,
+        steps: isAndroid ? null : (healthData.steps ?? null),
+        lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
+        isConnected: true,
+        platform: (Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web') as 'ios' | 'android' | 'web',
+      };
+
       setVitalData(convertedData);
     } catch (err) {
       console.error('[useWatchData] Failed to refresh watch data:', err);
