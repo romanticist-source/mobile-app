@@ -3,6 +3,7 @@
     <string name="app_name">Health Monitor</string>
     <string name="heart_rate">心拍数</string>
     <string name="oxygen_saturation">血中酸素</string>
+    <string name="spo2">血中酸素</string>
     <string name="steps">歩数</string>
     <string name="bpm">bpm</string>
     <string name="spo2_percent">%</string>

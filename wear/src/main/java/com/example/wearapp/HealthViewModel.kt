@@ -31,13 +31,15 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
             val hasHeartRate = healthServicesManager.hasHeartRateCapability()
             val hasHRV = healthServicesManager.hasHRVCapability()
             val hasSteps = healthServicesManager.hasStepsCapability()
+            val hasSpO2 = healthServicesManager.hasSpO2Capability()
 
-            Log.d(TAG, "Capabilities - HeartRate: $hasHeartRate, HRV: $hasHRV, Steps: $hasSteps")
+            Log.d(TAG, "Capabilities - HeartRate: $hasHeartRate, HRV: $hasHRV, Steps: $hasSteps, SpO2: $hasSpO2")
 
             _uiState.value = _uiState.value.copy(
                 supportsHeartRate = hasHeartRate,
                 supportsHRV = hasHRV,
-                supportsSteps = hasSteps
+                supportsSteps = hasSteps,
+                supportsSpO2 = hasSpO2
             )
 
             // Start measuring automatically after checking capabilities
@@ -107,6 +109,32 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 Log.w(TAG, "Steps not supported, skipping")
             }
+
+            if (_uiState.value.supportsSpO2) {
+                Log.d(TAG, "Starting SpO2 measurement")
+                launch {
+                    healthServicesManager.spO2MeasureFlow().collect { message ->
+                        Log.d(TAG, "Received SpO2 message: $message")
+                        when (message) {
+                            is MeasureMessage.SpO2Data -> {
+                                Log.d(TAG, "Updating SpO2: ${message.spO2}")
+                                _uiState.value = _uiState.value.copy(
+                                    spO2 = message.spO2
+                                )
+                            }
+                            is MeasureMessage.SpO2Availability -> {
+                                Log.d(TAG, "Updating SpO2 availability: ${message.availability}")
+                                _uiState.value = _uiState.value.copy(
+                                    spO2Availability = message.availability
+                                )
+                            }
+                            else -> {}
+                        }
+                    }
+                }
+            } else {
+                Log.w(TAG, "SpO2 not supported, skipping")
+            }
         }
     }
 }
@@ -115,9 +143,12 @@ data class HealthUiState(
     val heartRate: Double? = null,
     val steps: Long? = null,
     val hrvMetrics: HRVMetrics? = null,
+    val spO2: Double? = null,
     val heartRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
     val stepsAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
+    val spO2Availability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
     val supportsHeartRate: Boolean = false,
     val supportsSteps: Boolean = false,
-    val supportsHRV: Boolean = false
+    val supportsHRV: Boolean = false,
+    val supportsSpO2: Boolean = false
 )

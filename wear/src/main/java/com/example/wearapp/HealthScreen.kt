@@ -84,14 +84,14 @@ fun HealthScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // 歩数表示（常に表示）
+            // SpO2表示（常に表示）
             item {
                 HealthMetricCard(
-                    label = stringResource(R.string.steps),
-                    value = uiState.steps?.toDouble(),
-                    unit = stringResource(R.string.steps_unit),
-                    availability = if (uiState.supportsSteps) uiState.stepsAvailability else DataTypeAvailability.UNAVAILABLE,
-                    color = Color(0xFFFF9800)
+                    label = stringResource(R.string.spo2),
+                    value = uiState.spO2,
+                    unit = "%",
+                    availability = if (uiState.supportsSpO2) uiState.spO2Availability else DataTypeAvailability.UNAVAILABLE,
+                    color = Color(0xFF2196F3)
                 )
             }
 

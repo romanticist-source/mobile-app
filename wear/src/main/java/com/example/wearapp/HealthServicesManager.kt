@@ -64,6 +64,13 @@ class HealthServicesManager(context: Context) {
         }
     }
 
+    suspend fun hasSpO2Capability(): Boolean {
+        // SpO2 is not available in current Health Services API for Wear OS
+        // Keeping this for future compatibility
+        Log.d(TAG, "hasSpO2Capability: false (not supported in current API)")
+        return false
+    }
+
     private fun addHeartRateSample(bpm: Double) {
         heartRateSamples.add(HeartRateSample(bpm, System.currentTimeMillis()))
         if (heartRateSamples.size > maxSamples) {
@@ -122,8 +129,12 @@ class HealthServicesManager(context: Context) {
 
     suspend fun hasStepsCapability(): Boolean {
         val capabilities = measureClient.getCapabilitiesAsync().await()
-        // STEPS_DAILY is typically used for measure callbacks in Wear OS
-        return DataType.STEPS_DAILY in capabilities.supportedDataTypesMeasure
+        Log.d(TAG, "Available measure data types: ${capabilities.supportedDataTypesMeasure}")
+        // Check both STEPS_DAILY and STEPS data types
+        val hasStepsDaily = DataType.STEPS_DAILY in capabilities.supportedDataTypesMeasure
+        val hasSteps = DataType.STEPS in capabilities.supportedDataTypesMeasure
+        Log.d(TAG, "hasStepsCapability - STEPS_DAILY: $hasStepsDaily, STEPS: $hasSteps")
+        return hasStepsDaily || hasSteps
     }
 
 
@@ -160,6 +171,7 @@ class HealthServicesManager(context: Context) {
                 if (heartRateBpm != null) {
                     // Add sample for HRV calculation
                     addHeartRateSample(heartRateBpm)
+                    Log.d(TAG, "Heart rate samples collected: ${heartRateSamples.size}")
 
                     // Send heart rate data
                     Log.d(TAG, "Sending HeartRateData: $heartRateBpm")
@@ -167,10 +179,15 @@ class HealthServicesManager(context: Context) {
 
                     // Calculate and send HRV data if we have enough samples
                     if (heartRateSamples.size >= 10) {
-                        calculateHRV()?.let { hrv ->
-                            Log.d(TAG, "Sending HRV data: SDNN=${hrv.sdnn}")
+                        val hrv = calculateHRV()
+                        if (hrv != null) {
+                            Log.d(TAG, "Sending HRV data: SDNN=${hrv.sdnn}, RMSSD=${hrv.rmssd}, pNN50=${hrv.pnn50}")
                             trySend(MeasureMessage.HRVData(hrv))
+                        } else {
+                            Log.w(TAG, "HRV calculation returned null despite having ${heartRateSamples.size} samples")
                         }
+                    } else {
+                        Log.d(TAG, "Not enough samples for HRV: ${heartRateSamples.size}/10")
                     }
                 }
             }
@@ -188,6 +205,13 @@ class HealthServicesManager(context: Context) {
 
     fun stepsMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
         Log.d(TAG, "stepsMeasureFlow: Starting steps measurement")
+
+        // Determine which data type to use
+        val capabilities = measureClient.getCapabilitiesAsync().await()
+        val useStepsDaily = DataType.STEPS_DAILY in capabilities.supportedDataTypesMeasure
+        val dataType = if (useStepsDaily) DataType.STEPS_DAILY else DataType.STEPS
+        Log.d(TAG, "Using data type for steps: $dataType")
+
         val callback = object : MeasureCallback {
             override fun onAvailabilityChanged(
                 dataType: DeltaDataType<*, *>,
@@ -210,10 +234,10 @@ class HealthServicesManager(context: Context) {
 
             override fun onDataReceived(data: DataPointContainer) {
                 Log.d(TAG, "onDataReceived called for steps")
-                // Try STEPS_DAILY first (preferred for measure callbacks)
-                val stepsPoints = data.getData(DataType.STEPS_DAILY)
+                // Try the determined data type
+                val stepsPoints = data.getData(dataType)
                 val stepsValue = stepsPoints.lastOrNull()?.value
-                Log.d(TAG, "Steps value: $stepsValue, points size: ${stepsPoints.size}")
+                Log.d(TAG, "Steps value: $stepsValue, points size: ${stepsPoints.size}, dataType: $dataType")
 
                 if (stepsValue != null) {
                     Log.d(TAG, "Sending StepsData: $stepsValue")
@@ -222,12 +246,21 @@ class HealthServicesManager(context: Context) {
             }
         }
 
-        Log.d(TAG, "Registering steps measure callback")
-        measureClient.registerMeasureCallback(DataType.STEPS_DAILY, callback)
+        Log.d(TAG, "Registering steps measure callback for: $dataType")
+        measureClient.registerMeasureCallback(dataType, callback)
 
         awaitClose {
-            Log.d(TAG, "Unregistering steps measure callback")
-            measureClient.unregisterMeasureCallbackAsync(DataType.STEPS_DAILY, callback)
+            Log.d(TAG, "Unregistering steps measure callback for: $dataType")
+            measureClient.unregisterMeasureCallbackAsync(dataType, callback)
+        }
+    }
+
+    fun spO2MeasureFlow(): Flow<MeasureMessage> = callbackFlow {
+        // SpO2 is not available in current Health Services API for Wear OS
+        Log.w(TAG, "spO2MeasureFlow: SpO2 not supported in current API")
+        trySend(MeasureMessage.SpO2Availability(DataTypeAvailability.UNAVAILABLE))
+        awaitClose {
+            // Nothing to unregister
         }
     }
 }
@@ -238,4 +271,6 @@ sealed class MeasureMessage {
     data class HRVData(val hrvMetrics: HRVMetrics) : MeasureMessage()
     data class StepsData(val steps: Long) : MeasureMessage()
     data class StepsAvailability(val availability: DataTypeAvailability) : MeasureMessage()
+    data class SpO2Data(val spO2: Double) : MeasureMessage()
+    data class SpO2Availability(val availability: DataTypeAvailability) : MeasureMessage()
 }
