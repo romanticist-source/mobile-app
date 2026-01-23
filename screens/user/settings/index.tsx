@@ -27,8 +27,15 @@ interface SettingSection {
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
+
+
+  const handleLogout = async () => {
+    await logout();
+    // ログイン画面へ遷移
+    router.replace("/login");
+  };
 
   // Test notification handlers
   const handleTestFatigueAlert = async () => {
@@ -304,6 +311,14 @@ export default function SettingsScreen() {
 
         {/* Bottom Navigation */}
         <BottomNavigation activeTab="settings" />
+
+        {/* Logout Button */}
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={styles.logoutButton}
+        >
+          <Text style={styles.logoutButtonText}>ログアウト</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
