@@ -46,8 +46,6 @@ class WatchConnectivityModule(reactContext: ReactApplicationContext) :
                     val healthData = Arguments.createMap().apply {
                         putDouble("heartRate", dataMap.getDouble("heartRate", 0.0))
                         putDouble("hrv", dataMap.getDouble("hrv", 0.0))
-                        putDouble("oxygenLevel", dataMap.getDouble("oxygenLevel", 0.0))
-                        putInt("steps", dataMap.getInt("steps", 0))
                         putDouble("timestamp", dataMap.getLong("timestamp", 0).toDouble())
                     }
 
@@ -75,8 +73,6 @@ class WatchConnectivityModule(reactContext: ReactApplicationContext) :
                     val healthData = Arguments.createMap().apply {
                         putDouble("heartRate", dataMap.getDouble("heartRate", 0.0))
                         putDouble("hrv", dataMap.getDouble("hrv", 0.0))
-                        putDouble("oxygenLevel", dataMap.getDouble("oxygenLevel", 0.0))
-                        putInt("steps", dataMap.getInt("steps", 0))
                         putDouble("timestamp", dataMap.getLong("timestamp", 0).toDouble())
                     }
 
