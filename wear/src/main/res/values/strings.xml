@@ -2,9 +2,11 @@
 <resources>
     <string name="app_name">Health Monitor</string>
     <string name="heart_rate">心拍数</string>
-    <string name="respiratory_rate">呼吸数</string>
+    <string name="oxygen_saturation">血中酸素</string>
+    <string name="steps">歩数</string>
     <string name="bpm">bpm</string>
-    <string name="rpm">rpm</string>
+    <string name="spo2_percent">%</string>
+    <string name="steps_unit">歩</string>
     <string name="measuring">測定中…</string>
     <string name="not_available">利用不可</string>
     <string name="permission_required">権限が必要です</string>

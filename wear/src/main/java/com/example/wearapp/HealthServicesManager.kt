@@ -15,10 +15,10 @@ import kotlinx.coroutines.guava.await
 
 data class HealthData(
     val heartRate: Double? = null,
-    val respiratoryRate: Double? = null,
     val hrv: Double? = null,
+    val steps: Long? = null,
     val heartRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
-    val respiratoryRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN
+    val stepsAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN
 )
 
 data class HRVMetrics(
@@ -32,9 +32,14 @@ class HealthServicesManager(context: Context) {
     private val healthServicesClient = HealthServices.getClient(context)
     private val measureClient = healthServicesClient.measureClient
 
-    // Store recent RR intervals for HRV calculation
-    private val rrIntervals = mutableListOf<Long>()
-    private val maxRRIntervals = 100 // Keep last 100 intervals for calculation
+    // Store recent heart rate samples with timestamps for HRV calculation
+    private val heartRateSamples = mutableListOf<HeartRateSample>()
+    private val maxSamples = 60 // Keep last 60 samples (approximately 1 minute at 1Hz)
+
+    data class HeartRateSample(
+        val bpm: Double,
+        val timestampMillis: Long
+    )
 
     suspend fun hasHeartRateCapability(): Boolean {
         val capabilities = measureClient.getCapabilitiesAsync().await()
@@ -52,8 +57,30 @@ class HealthServicesManager(context: Context) {
         }
     }
 
-    fun calculateHRV(rrIntervals: List<Long>): HRVMetrics? {
-        if (rrIntervals.size < 2) return null
+    private fun addHeartRateSample(bpm: Double) {
+        heartRateSamples.add(HeartRateSample(bpm, System.currentTimeMillis()))
+        if (heartRateSamples.size > maxSamples) {
+            heartRateSamples.removeAt(0)
+        }
+    }
+
+    private fun estimateRRIntervalsFromHeartRate(): List<Long> {
+        if (heartRateSamples.size < 2) return emptyList()
+
+        // Estimate RR intervals from heart rate
+        // RR interval (ms) ≈ 60000 / heart_rate_bpm
+        return heartRateSamples.map { sample ->
+            if (sample.bpm > 0) {
+                (60000.0 / sample.bpm).toLong()
+            } else {
+                800L // Default ~75 bpm
+            }
+        }
+    }
+
+    fun calculateHRV(): HRVMetrics? {
+        val rrIntervals = estimateRRIntervalsFromHeartRate()
+        if (rrIntervals.size < 10) return null // Need at least 10 samples for meaningful HRV
 
         // Calculate SDNN (Standard Deviation of NN intervals)
         val mean = rrIntervals.average()
@@ -85,11 +112,13 @@ class HealthServicesManager(context: Context) {
         )
     }
 
-    suspend fun hasRespiratoryRateCapability(): Boolean {
-        // Respiratory rate is not commonly available on most Wear OS devices
-        // This can be extended when more devices support it
-        return false
+
+    suspend fun hasStepsCapability(): Boolean {
+        val capabilities = measureClient.getCapabilitiesAsync().await()
+        // STEPS_DAILY is typically used for measure callbacks in Wear OS
+        return DataType.STEPS_DAILY in capabilities.supportedDataTypesMeasure
     }
+
 
     fun heartRateMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
         val callback = object : MeasureCallback {
@@ -116,7 +145,18 @@ class HealthServicesManager(context: Context) {
                 val heartRateBpm = heartRatePoints.lastOrNull()?.value
 
                 if (heartRateBpm != null) {
+                    // Add sample for HRV calculation
+                    addHeartRateSample(heartRateBpm)
+
+                    // Send heart rate data
                     trySend(MeasureMessage.HeartRateData(heartRateBpm))
+
+                    // Calculate and send HRV data if we have enough samples
+                    if (heartRateSamples.size >= 10) {
+                        calculateHRV()?.let { hrv ->
+                            trySend(MeasureMessage.HRVData(hrv))
+                        }
+                    }
                 }
             }
         }
@@ -128,11 +168,40 @@ class HealthServicesManager(context: Context) {
         }
     }
 
-    fun respiratoryRateMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
-        // Respiratory rate measurement is not commonly available on most Wear OS devices
-        // This is a placeholder implementation
+
+    fun stepsMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
+        val callback = object : MeasureCallback {
+            override fun onAvailabilityChanged(
+                dataType: DeltaDataType<*, *>,
+                availability: Availability
+            ) {
+                val dataTypeAvailability = try {
+                    when (availability.id) {
+                        1 -> DataTypeAvailability.ACQUIRING
+                        2, 3 -> DataTypeAvailability.UNAVAILABLE
+                        else -> DataTypeAvailability.AVAILABLE
+                    }
+                } catch (e: Exception) {
+                    DataTypeAvailability.UNKNOWN
+                }
+                trySend(MeasureMessage.StepsAvailability(dataTypeAvailability))
+            }
+
+            override fun onDataReceived(data: DataPointContainer) {
+                // Try STEPS_DAILY first (preferred for measure callbacks)
+                val stepsPoints = data.getData(DataType.STEPS_DAILY)
+                val stepsValue = stepsPoints.lastOrNull()?.value
+
+                if (stepsValue != null) {
+                    trySend(MeasureMessage.StepsData(stepsValue))
+                }
+            }
+        }
+
+        measureClient.registerMeasureCallback(DataType.STEPS_DAILY, callback)
+
         awaitClose {
-            // No cleanup needed
+            measureClient.unregisterMeasureCallbackAsync(DataType.STEPS_DAILY, callback)
         }
     }
 }
@@ -140,7 +209,7 @@ class HealthServicesManager(context: Context) {
 sealed class MeasureMessage {
     data class HeartRateData(val heartRate: Double) : MeasureMessage()
     data class HeartRateAvailability(val availability: DataTypeAvailability) : MeasureMessage()
-    data class RespiratoryRateData(val respiratoryRate: Double) : MeasureMessage()
-    data class RespiratoryRateAvailability(val availability: DataTypeAvailability) : MeasureMessage()
     data class HRVData(val hrvMetrics: HRVMetrics) : MeasureMessage()
+    data class StepsData(val steps: Long) : MeasureMessage()
+    data class StepsAvailability(val availability: DataTypeAvailability) : MeasureMessage()
 }

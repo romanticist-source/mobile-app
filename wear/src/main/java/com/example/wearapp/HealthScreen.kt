@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,6 +42,8 @@ fun HealthScreen(
         viewModel.startMeasuring()
     }
 
+    val listState = rememberScalingLazyListState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -47,53 +51,76 @@ fun HealthScreen(
     ) {
         TimeText()
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        ScalingLazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = "Health Monitor",
-                style = MaterialTheme.typography.title3,
-                color = MaterialTheme.colors.primary,
-                textAlign = TextAlign.Center
-            )
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
+            }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            item {
+                Text(
+                    text = "Health Monitor",
+                    style = MaterialTheme.typography.title3,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Center
+                )
+            }
 
-            // 心拍数表示
-            if (uiState.supportsHeartRate) {
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            // 心拍数表示（常に表示）
+            item {
                 HealthMetricCard(
                     label = stringResource(R.string.heart_rate),
                     value = uiState.heartRate,
                     unit = stringResource(R.string.bpm),
-                    availability = uiState.heartRateAvailability,
+                    availability = if (uiState.supportsHeartRate) uiState.heartRateAvailability else DataTypeAvailability.UNAVAILABLE,
                     color = Color(0xFFE91E63)
                 )
-
-                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // 呼吸数表示
-            if (uiState.supportsRespiratoryRate) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            // 歩数表示（常に表示）
+            item {
                 HealthMetricCard(
-                    label = stringResource(R.string.respiratory_rate),
-                    value = uiState.respiratoryRate,
-                    unit = stringResource(R.string.rpm),
-                    availability = uiState.respiratoryRateAvailability,
-                    color = Color(0xFF2196F3)
+                    label = stringResource(R.string.steps),
+                    value = uiState.steps?.toDouble(),
+                    unit = stringResource(R.string.steps_unit),
+                    availability = if (uiState.supportsSteps) uiState.stepsAvailability else DataTypeAvailability.UNAVAILABLE,
+                    color = Color(0xFFFF9800)
                 )
             }
 
-            if (!uiState.supportsHeartRate && !uiState.supportsRespiratoryRate) {
-                Text(
-                    text = stringResource(R.string.not_available),
-                    style = MaterialTheme.typography.body2,
-                    color = MaterialTheme.colors.onBackground,
-                    textAlign = TextAlign.Center
-                )
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            // HRV表示（常に表示）
+            item {
+                val hrvMetrics = uiState.hrvMetrics
+                if (hrvMetrics != null) {
+                    HRVMetricCard(
+                        hrvMetrics = hrvMetrics,
+                        color = Color(0xFF4CAF50)
+                    )
+                } else {
+                    HRVMetricCardPlaceholder(
+                        availability = if (uiState.supportsHRV) DataTypeAvailability.ACQUIRING else DataTypeAvailability.UNAVAILABLE,
+                        color = Color(0xFF4CAF50)
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -169,6 +196,132 @@ fun HealthMetricCard(
                     fontWeight = FontWeight.Bold,
                     color = color.copy(alpha = 0.5f),
                     textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun HRVMetricCardPlaceholder(
+    availability: DataTypeAvailability,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "HRV (SDNN)",
+            style = MaterialTheme.typography.caption1,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(8.dp)
+                    .background(
+                        color = when (availability) {
+                            DataTypeAvailability.ACQUIRING -> Color.Yellow
+                            DataTypeAvailability.AVAILABLE -> Color.Green
+                            else -> Color.Gray
+                        },
+                        shape = CircleShape
+                    )
+            )
+
+            Spacer(modifier = Modifier.size(12.dp))
+
+            Text(
+                text = when (availability) {
+                    DataTypeAvailability.ACQUIRING -> stringResource(R.string.measuring)
+                    else -> "--"
+                },
+                fontSize = 36.sp,
+                fontWeight = FontWeight.Bold,
+                color = color.copy(alpha = 0.5f),
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun HRVMetricCard(
+    hrvMetrics: HRVMetrics,
+    color: Color,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "HRV (SDNN)",
+            style = MaterialTheme.typography.caption1,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = "${hrvMetrics.sdnn.toInt()}",
+            fontSize = 36.sp,
+            fontWeight = FontWeight.Bold,
+            color = color,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.size(4.dp))
+
+        Text(
+            text = "ms",
+            style = MaterialTheme.typography.caption1,
+            color = MaterialTheme.colors.onBackground.copy(alpha = 0.7f)
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Additional HRV metrics
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "RMSSD",
+                    style = MaterialTheme.typography.caption2,
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+                )
+                Text(
+                    text = "${hrvMetrics.rmssd.toInt()}ms",
+                    style = MaterialTheme.typography.caption1,
+                    color = color
+                )
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "pNN50",
+                    style = MaterialTheme.typography.caption2,
+                    color = MaterialTheme.colors.onBackground.copy(alpha = 0.5f)
+                )
+                Text(
+                    text = "${hrvMetrics.pnn50.toInt()}%",
+                    style = MaterialTheme.typography.caption1,
+                    color = color
                 )
             }
         }

@@ -22,11 +22,13 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
     private fun checkCapabilities() {
         viewModelScope.launch {
             val hasHeartRate = healthServicesManager.hasHeartRateCapability()
-            val hasRespiratoryRate = healthServicesManager.hasRespiratoryRateCapability()
+            val hasHRV = healthServicesManager.hasHRVCapability()
+            val hasSteps = healthServicesManager.hasStepsCapability()
 
             _uiState.value = _uiState.value.copy(
                 supportsHeartRate = hasHeartRate,
-                supportsRespiratoryRate = hasRespiratoryRate
+                supportsHRV = hasHRV,
+                supportsSteps = hasSteps
             )
         }
     }
@@ -47,24 +49,29 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
                                     heartRateAvailability = message.availability
                                 )
                             }
+                            is MeasureMessage.HRVData -> {
+                                _uiState.value = _uiState.value.copy(
+                                    hrvMetrics = message.hrvMetrics
+                                )
+                            }
                             else -> {}
                         }
                     }
                 }
             }
 
-            if (_uiState.value.supportsRespiratoryRate) {
+            if (_uiState.value.supportsSteps) {
                 launch {
-                    healthServicesManager.respiratoryRateMeasureFlow().collect { message ->
+                    healthServicesManager.stepsMeasureFlow().collect { message ->
                         when (message) {
-                            is MeasureMessage.RespiratoryRateData -> {
+                            is MeasureMessage.StepsData -> {
                                 _uiState.value = _uiState.value.copy(
-                                    respiratoryRate = message.respiratoryRate
+                                    steps = message.steps
                                 )
                             }
-                            is MeasureMessage.RespiratoryRateAvailability -> {
+                            is MeasureMessage.StepsAvailability -> {
                                 _uiState.value = _uiState.value.copy(
-                                    respiratoryRateAvailability = message.availability
+                                    stepsAvailability = message.availability
                                 )
                             }
                             else -> {}
@@ -78,9 +85,11 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
 
 data class HealthUiState(
     val heartRate: Double? = null,
-    val respiratoryRate: Double? = null,
+    val steps: Long? = null,
+    val hrvMetrics: HRVMetrics? = null,
     val heartRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
-    val respiratoryRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
+    val stepsAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
     val supportsHeartRate: Boolean = false,
-    val supportsRespiratoryRate: Boolean = false
+    val supportsSteps: Boolean = false,
+    val supportsHRV: Boolean = false
 )
