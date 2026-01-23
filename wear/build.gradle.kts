@@ -52,6 +52,9 @@ dependencies {
     // Health Services
     implementation("androidx.health:health-services-client:1.0.0")
 
+    // Google Play Services for Wearable Data Layer
+    implementation("com.google.android.gms:play-services-wearable:18.2.0")
+
     // Compose
     implementation(platform("androidx.compose:compose-bom:2024.12.01"))
     implementation("androidx.compose.ui:ui")

@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 
 class HealthViewModel(application: Application) : AndroidViewModel(application) {
     private val healthServicesManager = HealthServicesManager(application)
+    private val phoneConnectivityManager = PhoneConnectivityManager(application)
 
     private val _uiState = MutableStateFlow(HealthUiState())
     val uiState: StateFlow<HealthUiState> = _uiState.asStateFlow()
@@ -30,14 +31,12 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch {
             val hasHeartRate = healthServicesManager.hasHeartRateCapability()
             val hasHRV = healthServicesManager.hasHRVCapability()
-            val hasSteps = healthServicesManager.hasStepsCapability()
 
-            Log.d(TAG, "Capabilities - HeartRate: $hasHeartRate, HRV: $hasHRV, Steps: $hasSteps")
+            Log.d(TAG, "Capabilities - HeartRate: $hasHeartRate, HRV: $hasHRV")
 
             _uiState.value = _uiState.value.copy(
                 supportsHeartRate = hasHeartRate,
-                supportsHRV = hasHRV,
-                supportsSteps = hasSteps
+                supportsHRV = hasHRV
             )
 
             // Start measuring automatically after checking capabilities
@@ -47,7 +46,7 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
 
     fun startMeasuring() {
         Log.d(TAG, "startMeasuring called")
-        Log.d(TAG, "Current capabilities - HeartRate: ${_uiState.value.supportsHeartRate}, Steps: ${_uiState.value.supportsSteps}")
+        Log.d(TAG, "Current capabilities - HeartRate: ${_uiState.value.supportsHeartRate}")
 
         viewModelScope.launch {
             if (_uiState.value.supportsHeartRate) {
@@ -61,6 +60,8 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
                                 _uiState.value = _uiState.value.copy(
                                     heartRate = message.heartRate
                                 )
+                                // データが更新されたらPhoneに送信
+                                sendDataToPhone()
                             }
                             is MeasureMessage.HeartRateAvailability -> {
                                 Log.d(TAG, "Updating heart rate availability: ${message.availability}")
@@ -73,6 +74,8 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
                                 _uiState.value = _uiState.value.copy(
                                     hrvMetrics = message.hrvMetrics
                                 )
+                                // データが更新されたらPhoneに送信
+                                sendDataToPhone()
                             }
                             else -> {}
                         }
@@ -81,43 +84,28 @@ class HealthViewModel(application: Application) : AndroidViewModel(application) 
             } else {
                 Log.w(TAG, "Heart rate not supported, skipping")
             }
-
-            if (_uiState.value.supportsSteps) {
-                Log.d(TAG, "Starting steps measurement")
-                launch {
-                    healthServicesManager.stepsMeasureFlow().collect { message ->
-                        Log.d(TAG, "Received steps message: $message")
-                        when (message) {
-                            is MeasureMessage.StepsData -> {
-                                Log.d(TAG, "Updating steps: ${message.steps}")
-                                _uiState.value = _uiState.value.copy(
-                                    steps = message.steps
-                                )
-                            }
-                            is MeasureMessage.StepsAvailability -> {
-                                Log.d(TAG, "Updating steps availability: ${message.availability}")
-                                _uiState.value = _uiState.value.copy(
-                                    stepsAvailability = message.availability
-                                )
-                            }
-                            else -> {}
-                        }
-                    }
-                }
-            } else {
-                Log.w(TAG, "Steps not supported, skipping")
-            }
         }
+    }
+
+    private fun sendDataToPhone() {
+        val currentState = _uiState.value
+        val heartRate = currentState.heartRate
+        val hrv = currentState.hrvMetrics?.sdnn
+
+        Log.d(TAG, "Sending data to phone - HeartRate: $heartRate, HRV: $hrv")
+
+        // Data Layer API で送信（ペアリングされたPhoneへ）
+        phoneConnectivityManager.sendHealthData(heartRate, hrv)
+
+        // ローカルブロードキャスト送信（同一デバイスのReact Nativeアプリへ）
+        phoneConnectivityManager.sendHealthDataLocally(heartRate, hrv)
     }
 }
 
 data class HealthUiState(
     val heartRate: Double? = null,
-    val steps: Long? = null,
     val hrvMetrics: HRVMetrics? = null,
     val heartRateAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
-    val stepsAvailability: DataTypeAvailability = DataTypeAvailability.UNKNOWN,
     val supportsHeartRate: Boolean = false,
-    val supportsSteps: Boolean = false,
     val supportsHRV: Boolean = false
 )
