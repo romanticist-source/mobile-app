@@ -108,7 +108,7 @@ export function useWatchData() {
             steps: healthData.steps ?? null,
             lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
             isConnected: true,
-            platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
+            platform: (Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web') as 'ios' | 'android' | 'web',
           }
         : initialData;
       setVitalData(convertedData);
