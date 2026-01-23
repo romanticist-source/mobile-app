@@ -16,6 +16,7 @@ import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
+import { logout } from "@/api/auth";
 
 export default function HelperHomeScreen() {
   const router = useRouter();
@@ -139,6 +140,12 @@ export default function HelperHomeScreen() {
   const unreadMediumCount = urgentNotifications.filter(
     (n) => n.importance === 2
   ).length;
+
+  const handleLogout = async () => {
+    await logout();
+    // ログイン画面へ遷移
+    router.replace("/login");
+  };
 
   return (
     <>
@@ -325,6 +332,14 @@ export default function HelperHomeScreen() {
 
         {/* Bottom Navigation */}
         <BottomNavigation activeTab="home" />
+
+        {/* Logout Button */}
+        <TouchableOpacity
+          onPress={handleLogout}
+          style={styles.logoutButton}
+        >
+          <Text style={styles.logoutButtonText}>ログアウト</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
