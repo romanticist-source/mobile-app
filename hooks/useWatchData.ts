@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Platform } from 'react-native';
+import { getLatestHealthData, addHealthDataListener, type HealthData } from '@/modules/watch-connectivity';
 
 export interface WatchVitalData {
   heartRate: number | null;
@@ -18,7 +19,7 @@ const initialData: WatchVitalData = {
   steps: null,
   lastUpdated: null,
   isConnected: false,
-  platform: 'web',
+  platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
 };
 
 /**
@@ -33,68 +34,38 @@ export function useWatchData() {
 
   useEffect(() => {
     let isMounted = true;
-    let updateInterval: ReturnType<typeof setInterval> | null = null;
+
+    const convertHealthData = (healthData: HealthData | null): WatchVitalData => {
+      if (!healthData) {
+        return {
+          ...initialData,
+          isConnected: false,
+        };
+      }
+
+      return {
+        heartRate: healthData.heartRate ?? null,
+        spo2: healthData.oxygenLevel ?? null,
+        hrv: healthData.hrv ?? null,
+        steps: healthData.steps ?? null,
+        lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
+        isConnected: true,
+        platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
+      };
+    };
 
     const fetchWatchData = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        let data: WatchVitalData;
+        console.log(`[useWatchData] ${Platform.OS} platform detected - Fetching watch data`);
 
-        // プラットフォームに応じてデータ取得関数を切り替え
-        if (Platform.OS === 'ios') {
-          console.log('[useWatchData] iOS platform detected - Apple Watch integration');
-          // TODO: iOS用のWatch連携実装
-          // import { getWatchDataIOS } from '@/_util/watchConnector.ios';
-          // const watchData = await getWatchDataIOS();
-          // if (watchData.isConnected) { data = watchData; }
-
-          // 暫定的にWatch未接続状態（実装後は実際の接続状態を返す）
-          const isWatchConnected = false; // TODO: 実際のWatch接続状態を取得
-          data = {
-            heartRate: isWatchConnected ? 72 : null,
-            spo2: isWatchConnected ? 98 : null,
-            hrv: isWatchConnected ? 45 : null,
-            steps: isWatchConnected ? 5432 : null,
-            lastUpdated: isWatchConnected ? new Date() : null,
-            isConnected: isWatchConnected,
-            platform: 'ios',
-          };
-        } else if (Platform.OS === 'android') {
-          console.log('[useWatchData] Android platform detected - Wear OS integration');
-          // TODO: Android用のWatch連携実装
-          // import { getWatchDataAndroid } from '@/_util/watchConnector.android';
-          // const watchData = await getWatchDataAndroid();
-          // if (watchData.isConnected) { data = watchData; }
-
-          // 暫定的にWatch未接続状態（実装後は実際の接続状態を返す）
-          const isWatchConnected = false; // TODO: 実際のWatch接続状態を取得
-          data = {
-            heartRate: isWatchConnected ? 75 : null,
-            spo2: isWatchConnected ? 97 : null,
-            hrv: isWatchConnected ? 42 : null,
-            steps: isWatchConnected ? 6128 : null,
-            lastUpdated: isWatchConnected ? new Date() : null,
-            isConnected: isWatchConnected,
-            platform: 'android',
-          };
-        } else {
-          // Web環境ではWatch連携不可
-          console.log('[useWatchData] Web platform detected - Watch integration not available');
-          data = {
-            heartRate: null,
-            spo2: null,
-            hrv: null,
-            steps: null,
-            lastUpdated: null,
-            isConnected: false,
-            platform: 'web',
-          };
-        }
+        const healthData = await getLatestHealthData();
+        const convertedData = convertHealthData(healthData);
 
         if (isMounted) {
-          setVitalData(data);
+          setVitalData(convertedData);
           setIsLoading(false);
         }
       } catch (err) {
@@ -109,26 +80,50 @@ export function useWatchData() {
     // 初回データ取得
     fetchWatchData();
 
-    // 30秒ごとにデータを更新
-    updateInterval = setInterval(() => {
-      fetchWatchData();
-    }, 30000);
+    // リアルタイムデータ受信のリスナーをセットアップ
+    const unsubscribe = addHealthDataListener((healthData) => {
+      console.log('[useWatchData] Received health data from watch:', healthData);
+      if (isMounted) {
+        const convertedData = convertHealthData(healthData);
+        setVitalData(convertedData);
+      }
+    });
 
     return () => {
       isMounted = false;
-      if (updateInterval) {
-        clearInterval(updateInterval);
-      }
+      unsubscribe();
     };
   }, []);
+
+  const refresh = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const healthData = await getLatestHealthData();
+      const convertedData = healthData
+        ? {
+            heartRate: healthData.heartRate ?? null,
+            spo2: healthData.oxygenLevel ?? null,
+            hrv: healthData.hrv ?? null,
+            steps: healthData.steps ?? null,
+            lastUpdated: healthData.timestamp ? new Date(healthData.timestamp * 1000) : null,
+            isConnected: true,
+            platform: Platform.OS === 'ios' ? 'ios' : Platform.OS === 'android' ? 'android' : 'web',
+          }
+        : initialData;
+      setVitalData(convertedData);
+    } catch (err) {
+      console.error('[useWatchData] Failed to refresh watch data:', err);
+      setError(err instanceof Error ? err.message : 'データ取得に失敗しました');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     vitalData,
     isLoading,
     error,
-    refresh: () => {
-      // 手動でデータをリフレッシュする関数（将来的に実装）
-      setIsLoading(true);
-    },
+    refresh,
   };
 }

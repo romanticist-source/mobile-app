@@ -1,21 +1,22 @@
 /**
  * Watch Connectivity Module
- * Apple Watch からのヘルスデータを受信するためのモジュール
+ * Apple Watch / Wear OS からのヘルスデータを受信するためのモジュール
  */
 
 import { NativeModules, NativeEventEmitter, Platform } from 'react-native';
 
 export interface HealthData {
   heartRate: number;
-  oxygenLevel: number;
-  steps: number;
+  hrv?: number;
+  oxygenLevel?: number;
+  steps?: number;
   timestamp: number;
 }
 
 const { WatchConnectivityModule } = NativeModules;
 
-// iOS のみで利用可能
-const isAvailable = Platform.OS === 'ios' && WatchConnectivityModule != null;
+// iOS と Android の両方で利用可能
+const isAvailable = WatchConnectivityModule != null;
 
 // イベントエミッター
 const eventEmitter = isAvailable ? new NativeEventEmitter(WatchConnectivityModule) : null;
@@ -25,7 +26,7 @@ const eventEmitter = isAvailable ? new NativeEventEmitter(WatchConnectivityModul
  */
 export async function getLatestHealthData(): Promise<HealthData | null> {
   if (!isAvailable) {
-    console.warn('WatchConnectivity is only available on iOS');
+    console.warn(`WatchConnectivity is not available on ${Platform.OS}`);
     return null;
   }
 
@@ -44,7 +45,7 @@ export function addHealthDataListener(
   callback: (data: HealthData) => void
 ): () => void {
   if (!isAvailable || !eventEmitter) {
-    console.warn('WatchConnectivity is only available on iOS');
+    console.warn(`WatchConnectivity is not available on ${Platform.OS}`);
     return () => {};
   }
 
