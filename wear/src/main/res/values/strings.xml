@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Health Monitor</string>
+    <string name="heart_rate">心拍数</string>
+    <string name="respiratory_rate">呼吸数</string>
+    <string name="bpm">bpm</string>
+    <string name="rpm">rpm</string>
+    <string name="measuring">測定中…</string>
+    <string name="not_available">利用不可</string>
+    <string name="permission_required">権限が必要です</string>
+</resources>
