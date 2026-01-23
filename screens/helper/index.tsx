@@ -15,7 +15,7 @@ import { useHelperUserConnection } from "@/hooks/useHelperUserConnection";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Stack, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./styles";
 
 export default function HelperHomeScreen() {
@@ -29,7 +29,7 @@ export default function HelperHomeScreen() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [checkedAlertIds, setCheckedAlertIds] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [fatigueLevel, setFatigueLevel] = useState<number | null>(null);
   const [fatigueLoading, setFatigueLoading] = useState(false);
@@ -77,7 +77,8 @@ export default function HelperHomeScreen() {
         if (fatigueRecords.length > 0) {
           // Get the most recent fatigue record
           const latestFatigue = fatigueRecords.sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
           )[0];
           setFatigueLevel(latestFatigue.fatigueLevel);
         } else {
@@ -100,7 +101,7 @@ export default function HelperHomeScreen() {
         checkedIds = new Set(
           history
             .filter((h: UserAlertHistory) => h.isChecked)
-            .map((h: UserAlertHistory) => h.alertId)
+            .map((h: UserAlertHistory) => h.alertId),
         );
         setCheckedAlertIds(checkedIds);
       } catch (err) {
@@ -117,7 +118,7 @@ export default function HelperHomeScreen() {
       const schedules = await getUserSchedulesByUserId(userId);
       const today = new Date().toISOString().split("T")[0];
       const todaySchedules = schedules.filter((schedule) =>
-        schedule.startAt?.startsWith(today)
+        schedule.startAt?.startsWith(today),
       );
       setTodayScheduleCount(todaySchedules.length);
     } catch (error) {
@@ -153,10 +154,10 @@ export default function HelperHomeScreen() {
   };
 
   const unreadHighCount = urgentNotifications.filter(
-    (n) => n.importance === 3
+    (n) => n.importance === 3,
   ).length;
   const unreadMediumCount = urgentNotifications.filter(
-    (n) => n.importance === 2
+    (n) => n.importance === 2,
   ).length;
 
   // Show "not connected" view when no user is connected
@@ -179,24 +180,46 @@ export default function HelperHomeScreen() {
             </View>
 
             {/* Not Connected Card */}
-            <View style={[styles.userOverviewCard, { alignItems: 'center', paddingVertical: 40 }]}>
+            <View
+              style={[
+                styles.userOverviewCard,
+                { alignItems: "center", paddingVertical: 40 },
+              ]}
+            >
               <MaterialIcons name="person-off" size={64} color="#CCCCCC" />
-              <Text style={{ fontSize: 18, fontWeight: '600', color: '#333', marginTop: 16, marginBottom: 8 }}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "600",
+                  color: "#333",
+                  marginTop: 16,
+                  marginBottom: 8,
+                }}
+              >
                 ユーザーと連携していません
               </Text>
-              <Text style={{ fontSize: 14, color: '#666', textAlign: 'center', marginBottom: 20 }}>
-                ユーザーと連携することで、{'\n'}健康状態や予定を確認できます
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: "#666",
+                  textAlign: "center",
+                  marginBottom: 20,
+                }}
+              >
+                ユーザーと連携することで、{"\n"}健康状態や予定を確認できます
               </Text>
               <TouchableOpacity
                 style={{
-                  backgroundColor: '#FF6B6B',
+                  backgroundColor: "#FF6B6B",
                   paddingHorizontal: 24,
                   paddingVertical: 12,
                   borderRadius: 8,
                 }}
-                onPress={() => router.push("/helper/settings/caregiver")}
+                onPress={() => router.push("/helper/requests")}
               >
-                <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '600' }}>
+                <Text
+                  style={{ color: "#FFFFFF", fontSize: 16, fontWeight: "600" }}
+                >
                   連携設定へ
                 </Text>
               </TouchableOpacity>
@@ -277,14 +300,14 @@ export default function HelperHomeScreen() {
                   {fatigueColors.status}
                 </Text>
               ) : (
-                <Text style={[styles.fatigueStatusText, { color: '#999' }]}>
+                <Text style={[styles.fatigueStatusText, { color: "#999" }]}>
                   データなし
                 </Text>
               )}
             </View>
             <View style={styles.fatigueBody}>
               {fatigueLoading ? (
-                <Text style={[styles.fatigueValue, { color: '#CCCCCC' }]}>
+                <Text style={[styles.fatigueValue, { color: "#CCCCCC" }]}>
                   ---%
                 </Text>
               ) : fatigueLevel !== null ? (
@@ -294,7 +317,7 @@ export default function HelperHomeScreen() {
                   {fatigueLevel}%
                 </Text>
               ) : (
-                <Text style={[styles.fatigueValue, { color: '#CCCCCC' }]}>
+                <Text style={[styles.fatigueValue, { color: "#CCCCCC" }]}>
                   ---%
                 </Text>
               )}
@@ -305,7 +328,7 @@ export default function HelperHomeScreen() {
                   style={[
                     styles.fatigueProgressBar,
                     {
-                      width: fatigueLevel !== null ? `${fatigueLevel}%` : '0%',
+                      width: fatigueLevel !== null ? `${fatigueLevel}%` : "0%",
                       backgroundColor: fatigueColors.text,
                     },
                   ]}
