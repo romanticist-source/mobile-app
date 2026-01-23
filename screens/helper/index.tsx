@@ -141,11 +141,6 @@ export default function HelperHomeScreen() {
     (n) => n.importance === 2
   ).length;
 
-  const handleLogout = async () => {
-    await logout();
-    // ログイン画面へ遷移
-    router.replace("/login");
-  };
 
   return (
     <>
@@ -332,14 +327,6 @@ export default function HelperHomeScreen() {
 
         {/* Bottom Navigation */}
         <BottomNavigation activeTab="home" />
-
-        {/* Logout Button */}
-        <TouchableOpacity
-          onPress={handleLogout}
-          style={styles.logoutButton}
-        >
-          <Text style={styles.logoutButtonText}>ログアウト</Text>
-        </TouchableOpacity>
       </View>
     </>
   );
