@@ -64,12 +64,6 @@ class HealthServicesManager(context: Context) {
         }
     }
 
-    suspend fun hasSpO2Capability(): Boolean {
-        // SpO2 is not available in current Health Services API for Wear OS
-        // Keeping this for future compatibility
-        Log.d(TAG, "hasSpO2Capability: false (not supported in current API)")
-        return false
-    }
 
     private fun addHeartRateSample(bpm: Double) {
         heartRateSamples.add(HeartRateSample(bpm, System.currentTimeMillis()))
@@ -255,14 +249,6 @@ class HealthServicesManager(context: Context) {
         }
     }
 
-    fun spO2MeasureFlow(): Flow<MeasureMessage> = callbackFlow {
-        // SpO2 is not available in current Health Services API for Wear OS
-        Log.w(TAG, "spO2MeasureFlow: SpO2 not supported in current API")
-        trySend(MeasureMessage.SpO2Availability(DataTypeAvailability.UNAVAILABLE))
-        awaitClose {
-            // Nothing to unregister
-        }
-    }
 }
 
 sealed class MeasureMessage {
@@ -271,6 +257,4 @@ sealed class MeasureMessage {
     data class HRVData(val hrvMetrics: HRVMetrics) : MeasureMessage()
     data class StepsData(val steps: Long) : MeasureMessage()
     data class StepsAvailability(val availability: DataTypeAvailability) : MeasureMessage()
-    data class SpO2Data(val spO2: Double) : MeasureMessage()
-    data class SpO2Availability(val availability: DataTypeAvailability) : MeasureMessage()
 }

@@ -84,21 +84,6 @@ fun HealthScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // SpO2表示（常に表示）
-            item {
-                HealthMetricCard(
-                    label = stringResource(R.string.spo2),
-                    value = uiState.spO2,
-                    unit = "%",
-                    availability = if (uiState.supportsSpO2) uiState.spO2Availability else DataTypeAvailability.UNAVAILABLE,
-                    color = Color(0xFF2196F3)
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-
             // HRV表示（常に表示）
             item {
                 val hrvMetrics = uiState.hrvMetrics
