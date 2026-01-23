@@ -38,10 +38,6 @@ fun HealthScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.startMeasuring()
-    }
-
     val listState = rememberScalingLazyListState()
 
     Box(
@@ -169,7 +165,7 @@ fun HealthMetricCard(
 
             Spacer(modifier = Modifier.size(12.dp))
 
-            if (value != null && availability == DataTypeAvailability.AVAILABLE) {
+            if (value != null && (availability == DataTypeAvailability.AVAILABLE || availability == DataTypeAvailability.ACQUIRING)) {
                 Text(
                     text = "${value.toInt()}",
                     fontSize = 36.sp,

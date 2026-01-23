@@ -1,6 +1,7 @@
 package com.example.wearapp
 
 import android.content.Context
+import android.util.Log
 import androidx.health.services.client.HealthServices
 import androidx.health.services.client.MeasureCallback
 import androidx.health.services.client.data.Availability
@@ -32,6 +33,10 @@ class HealthServicesManager(context: Context) {
     private val healthServicesClient = HealthServices.getClient(context)
     private val measureClient = healthServicesClient.measureClient
 
+    companion object {
+        private const val TAG = "HealthServicesManager"
+    }
+
     // Store recent heart rate samples with timestamps for HRV calculation
     private val heartRateSamples = mutableListOf<HeartRateSample>()
     private val maxSamples = 60 // Keep last 60 samples (approximately 1 minute at 1Hz)
@@ -43,7 +48,9 @@ class HealthServicesManager(context: Context) {
 
     suspend fun hasHeartRateCapability(): Boolean {
         val capabilities = measureClient.getCapabilitiesAsync().await()
-        return DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure
+        val hasCapability = DataType.HEART_RATE_BPM in capabilities.supportedDataTypesMeasure
+        Log.d(TAG, "hasHeartRateCapability: $hasCapability")
+        return hasCapability
     }
 
     suspend fun hasHRVCapability(): Boolean {
@@ -121,11 +128,13 @@ class HealthServicesManager(context: Context) {
 
 
     fun heartRateMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
+        Log.d(TAG, "heartRateMeasureFlow: Starting heart rate measurement")
         val callback = object : MeasureCallback {
             override fun onAvailabilityChanged(
                 dataType: DeltaDataType<*, *>,
                 availability: Availability
             ) {
+                Log.d(TAG, "onAvailabilityChanged: dataType=$dataType, availability=${availability.id}")
                 // Convert Availability to DataTypeAvailability based on ordinal
                 // Availability class has a similar structure to DataTypeAvailability
                 val dataTypeAvailability = try {
@@ -135,25 +144,31 @@ class HealthServicesManager(context: Context) {
                         else -> DataTypeAvailability.AVAILABLE
                     }
                 } catch (e: Exception) {
+                    Log.e(TAG, "Error converting availability", e)
                     DataTypeAvailability.UNKNOWN
                 }
+                Log.d(TAG, "Sending HeartRateAvailability: $dataTypeAvailability")
                 trySend(MeasureMessage.HeartRateAvailability(dataTypeAvailability))
             }
 
             override fun onDataReceived(data: DataPointContainer) {
+                Log.d(TAG, "onDataReceived called for heart rate")
                 val heartRatePoints = data.getData(DataType.HEART_RATE_BPM)
                 val heartRateBpm = heartRatePoints.lastOrNull()?.value
+                Log.d(TAG, "Heart rate BPM: $heartRateBpm, points size: ${heartRatePoints.size}")
 
                 if (heartRateBpm != null) {
                     // Add sample for HRV calculation
                     addHeartRateSample(heartRateBpm)
 
                     // Send heart rate data
+                    Log.d(TAG, "Sending HeartRateData: $heartRateBpm")
                     trySend(MeasureMessage.HeartRateData(heartRateBpm))
 
                     // Calculate and send HRV data if we have enough samples
                     if (heartRateSamples.size >= 10) {
                         calculateHRV()?.let { hrv ->
+                            Log.d(TAG, "Sending HRV data: SDNN=${hrv.sdnn}")
                             trySend(MeasureMessage.HRVData(hrv))
                         }
                     }
@@ -161,20 +176,24 @@ class HealthServicesManager(context: Context) {
             }
         }
 
+        Log.d(TAG, "Registering heart rate measure callback")
         measureClient.registerMeasureCallback(DataType.HEART_RATE_BPM, callback)
 
         awaitClose {
+            Log.d(TAG, "Unregistering heart rate measure callback")
             measureClient.unregisterMeasureCallbackAsync(DataType.HEART_RATE_BPM, callback)
         }
     }
 
 
     fun stepsMeasureFlow(): Flow<MeasureMessage> = callbackFlow {
+        Log.d(TAG, "stepsMeasureFlow: Starting steps measurement")
         val callback = object : MeasureCallback {
             override fun onAvailabilityChanged(
                 dataType: DeltaDataType<*, *>,
                 availability: Availability
             ) {
+                Log.d(TAG, "Steps onAvailabilityChanged: dataType=$dataType, availability=${availability.id}")
                 val dataTypeAvailability = try {
                     when (availability.id) {
                         1 -> DataTypeAvailability.ACQUIRING
@@ -182,25 +201,32 @@ class HealthServicesManager(context: Context) {
                         else -> DataTypeAvailability.AVAILABLE
                     }
                 } catch (e: Exception) {
+                    Log.e(TAG, "Error converting steps availability", e)
                     DataTypeAvailability.UNKNOWN
                 }
+                Log.d(TAG, "Sending StepsAvailability: $dataTypeAvailability")
                 trySend(MeasureMessage.StepsAvailability(dataTypeAvailability))
             }
 
             override fun onDataReceived(data: DataPointContainer) {
+                Log.d(TAG, "onDataReceived called for steps")
                 // Try STEPS_DAILY first (preferred for measure callbacks)
                 val stepsPoints = data.getData(DataType.STEPS_DAILY)
                 val stepsValue = stepsPoints.lastOrNull()?.value
+                Log.d(TAG, "Steps value: $stepsValue, points size: ${stepsPoints.size}")
 
                 if (stepsValue != null) {
+                    Log.d(TAG, "Sending StepsData: $stepsValue")
                     trySend(MeasureMessage.StepsData(stepsValue))
                 }
             }
         }
 
+        Log.d(TAG, "Registering steps measure callback")
         measureClient.registerMeasureCallback(DataType.STEPS_DAILY, callback)
 
         awaitClose {
+            Log.d(TAG, "Unregistering steps measure callback")
             measureClient.unregisterMeasureCallbackAsync(DataType.STEPS_DAILY, callback)
         }
     }

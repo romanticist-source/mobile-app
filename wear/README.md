@@ -54,7 +54,7 @@ cd mobile-app/wear
 ```bash
 cd mobile-app/wear
 ./gradlew installDebug
-```
+
 
 ### adb経由でインストール
 
