@@ -1,4 +1,4 @@
-package com.example.wearapp
+package com.hasegawa.miso.wear
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

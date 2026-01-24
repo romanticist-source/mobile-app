@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.wearapp"
+    namespace = "com.hasegawa.miso.wear"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.wearapp"
+        applicationId = "com.hasegawa.miso.wear"
         minSdk = 30
         targetSdk = 35
         versionCode = 1

@@ -1,4 +1,4 @@
-package com.example.wearapp
+package com.hasegawa.miso.wear
 
 import android.app.Application
 import android.util.Log
