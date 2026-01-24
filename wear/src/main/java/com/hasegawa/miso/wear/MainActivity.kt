@@ -1,4 +1,4 @@
-package com.example.wearapp
+package com.hasegawa.miso.wear
 
 import android.Manifest
 import android.os.Bundle

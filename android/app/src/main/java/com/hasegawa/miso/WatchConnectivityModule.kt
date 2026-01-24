@@ -1,5 +1,6 @@
 package com.hasegawa.miso
 
+import android.net.Uri
 import android.util.Log
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
@@ -30,11 +31,6 @@ class WatchConnectivityModule(reactContext: ReactApplicationContext) :
 
     override fun getName(): String = MODULE_NAME
 
-    init {
-        // Listen for data changes from Wear OS
-        dataClient.addListener(dataListener)
-    }
-
     private val dataListener = DataClient.OnDataChangedListener { dataEvents ->
         for (event in dataEvents) {
             if (event.type == DataEvent.TYPE_CHANGED) {
@@ -55,6 +51,11 @@ class WatchConnectivityModule(reactContext: ReactApplicationContext) :
         }
     }
 
+    init {
+        // Listen for data changes from Wear OS
+        dataClient.addListener(dataListener)
+    }
+
     @ReactMethod
     fun getLatestHealthData(promise: Promise) {
         scope.launch {
@@ -62,9 +63,11 @@ class WatchConnectivityModule(reactContext: ReactApplicationContext) :
                 Log.d(TAG, "Fetching latest health data from Wear OS")
 
                 // Get the DataItem from Wear OS
-                val dataItems = dataClient.getDataItems(
-                    WearableUris.fromPathPattern(HEALTH_DATA_PATH, WearableUris.PatternType.PREFIX)
-                ).await()
+                val uri = Uri.Builder()
+                    .scheme(PutDataRequest.WEAR_URI_SCHEME)
+                    .path(HEALTH_DATA_PATH)
+                    .build()
+                val dataItems = dataClient.getDataItems(uri).await()
 
                 if (dataItems.count > 0) {
                     val dataItem = dataItems.first()
